@@ -1,29 +1,32 @@
-import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
+import { type HTMLAttributes, forwardRef } from 'react';
+import { cn } from '@/lib/utils';
 
-import { cn } from "@/lib/utils";
-
-const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-  {
-    variants: {
-      variant: {
-        default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-        secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  },
-);
-
-export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {}
-
-function Badge({ className, variant, ...props }: BadgeProps) {
-  return <div className={cn(badgeVariants({ variant }), className)} {...props} />;
+export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
+  variant?: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' | 'info' | 'purple';
 }
 
-export { Badge, badgeVariants };
+const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
+  ({ className, variant = 'default', ...props }, ref) => {
+    return (
+      <span
+        ref={ref}
+        className={cn(
+          'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors gap-2',
+          variant === 'default' && 'bg-[var(--surface-hover)] text-[var(--text-secondary)] border border-[var(--border)]',
+          variant === 'secondary' && 'bg-[var(--surface-hover)] text-[var(--text-secondary)] border border-[var(--border)]',
+          variant === 'destructive' && 'bg-[rgba(239,68,68,0.15)] text-[var(--error)] border border-[rgba(239,68,68,0.3)]',
+          variant === 'outline' && 'border border-[var(--border-strong)] text-[var(--text-secondary)]',
+          variant === 'success' && 'bg-[rgba(16,185,129,0.15)] text-[var(--success)] border border-[rgba(16,185,129,0.3)]',
+          variant === 'warning' && 'bg-[rgba(245,158,11,0.15)] text-[var(--warning)] border border-[rgba(245,158,11,0.3)]',
+          variant === 'info' && 'bg-[rgba(59,130,246,0.15)] text-[var(--info)] border border-[rgba(59,130,246,0.3)]',
+          variant === 'purple' && 'bg-[rgba(139,92,246,0.15)] text-[var(--accent-purple)] border border-[rgba(139,92,246,0.3)]',
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+);
+Badge.displayName = 'Badge';
+
+export { Badge };

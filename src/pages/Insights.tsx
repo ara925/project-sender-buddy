@@ -1,0 +1,311 @@
+import { useState } from 'react';
+import {
+  TrendingUp, TrendingDown, Lightbulb, Target, BarChart3, ArrowRight,
+  Filter, DollarSign, Zap, AlertTriangle,
+} from 'lucide-react';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { Badge, Button, Card } from '@/components/ui';
+import { cn } from '@/lib/utils';
+
+const weeklyBreakdown = [
+  { source: 'Google Ads', current: 142, lastWeek: 158, threeWeeks: 120, cost: 4200, cpl: 29.57, roas: 3.2, quality: 8.5 },
+  { source: 'Intaker', current: 115, lastWeek: 98, threeWeeks: 95, cost: 1200, cpl: 10.43, roas: 5.8, quality: 9.2 },
+  { source: 'Forms', current: 85, lastWeek: 92, threeWeeks: 88, cost: 0, cpl: 0, roas: 0, quality: 7.4 },
+  { source: 'CallRail', current: 78, lastWeek: 75, threeWeeks: 82, cost: 850, cpl: 10.89, roas: 4.1, quality: 8.0 },
+  { source: 'Manual', current: 32, lastWeek: 28, threeWeeks: 35, cost: 0, cpl: 0, roas: 0, quality: 10.0 },
+];
+
+type FunnelStep = { stage: string; count: number; dropoff: string | number };
+
+const funnelData: Record<'google' | 'intaker', FunnelStep[]> = {
+  google: [
+    { stage: 'Impressions', count: 15400, dropoff: 0 },
+    { stage: 'Clicks', count: 3200, dropoff: '79%' },
+    { stage: 'Leads', count: 142, dropoff: '95%' },
+    { stage: 'Qualified', count: 48, dropoff: '66%' },
+    { stage: 'Retained', count: 12, dropoff: '75%' },
+  ],
+  intaker: [
+    { stage: 'Views', count: 850, dropoff: 0 },
+    { stage: 'Engaged', count: 620, dropoff: '27%' },
+    { stage: 'Leads', count: 115, dropoff: '81%' },
+    { stage: 'Qualified', count: 85, dropoff: '26%' },
+    { stage: 'Retained', count: 42, dropoff: '50%' },
+  ],
+};
+
+const suggestions = [
+  {
+    id: 1, type: 'critical', title: 'Reallocate Budget to Intaker',
+    description: 'Intaker CPL is $10.43 vs Google Ads $29.57. Moving 20% of budget could yield ~15 extra leads/week.',
+    metric: '+15 Leads', action: 'View Intaker Settings',
+  },
+  {
+    id: 2, type: 'warning', title: 'Google Ads Quality Score Drop',
+    description: 'Quality score dropped from 9.1 to 8.5. Check landing page loading speed and keyword relevance.',
+    metric: '-0.6 Score', action: 'Review Campaign',
+  },
+  {
+    id: 3, type: 'success', title: 'CallRail Conversion Spike',
+    description: 'Phone leads are converting at 28% this week, significantly above the 19% average.',
+    metric: '+9% Conv.', action: 'Analyze Calls',
+  },
+];
+
+const getPercentageChange = (current: number, previous: number) => {
+  const diff = current - previous;
+  const percentage = Math.round((diff / previous) * 100);
+  return { value: Math.abs(percentage), isPositive: diff >= 0, text: `${Math.abs(percentage)}%` };
+};
+
+const suggestionTone = (type: string) => {
+  switch (type) {
+    case 'critical': return {
+      Icon: TrendingDown, iconWrap: 'bg-red-500/10 text-red-600', topBorder: 'bg-red-500/70',
+      metric: 'bg-red-500/10 text-red-600 border-red-500/20',
+    };
+    case 'warning': return {
+      Icon: AlertTriangle, iconWrap: 'bg-amber-500/10 text-amber-700', topBorder: 'bg-amber-500/70',
+      metric: 'bg-amber-500/10 text-amber-700 border-amber-500/20',
+    };
+    default: return {
+      Icon: TrendingUp, iconWrap: 'bg-emerald-500/10 text-emerald-700', topBorder: 'bg-emerald-500/70',
+      metric: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20',
+    };
+  }
+};
+
+export function Insights() {
+  const [activeTab, setActiveTab] = useState<'weekly' | 'funnels'>('weekly');
+  const [selectedFunnel, setSelectedFunnel] = useState<keyof typeof funnelData>('google');
+
+  const tabClass = (active: boolean) =>
+    cn(
+      'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors',
+      active ? 'bg-[var(--surface-hover)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)]'
+    );
+
+  return (
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-[var(--text-secondary)]">
+            <Lightbulb size={18} className="text-[var(--accent-purple)]" />
+            <span className="text-sm font-medium">Insights</span>
+          </div>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Advanced Insights</h1>
+          <p className="text-[var(--text-secondary)]">AI-driven analysis and deep-dive metrics to optimize your intake performance.</p>
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+          <div className="inline-flex w-full justify-between rounded-xl border border-[var(--border)] bg-[var(--surface)] p-1 sm:w-auto">
+            <button onClick={() => setActiveTab('weekly')} className={tabClass(activeTab === 'weekly')}>
+              <BarChart3 size={16} /> Weekly
+            </button>
+            <button onClick={() => setActiveTab('funnels')} className={tabClass(activeTab === 'funnels')}>
+              <Target size={16} /> Funnels
+            </button>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm"><Filter size={16} /> Filter</Button>
+            <Button variant="outline" size="sm" className="hidden sm:inline-flex"><DollarSign size={16} /> Columns</Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Key Suggestions */}
+      <div className="grid gap-4 md:grid-cols-3">
+        {suggestions.map((suggestion) => {
+          const tone = suggestionTone(suggestion.type);
+          return (
+            <Card key={suggestion.id} className="relative overflow-hidden p-5">
+              <div className={cn('absolute inset-x-0 top-0 h-0.5', tone.topBorder)} aria-hidden="true" />
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-xl', tone.iconWrap)}>
+                    <tone.Icon size={18} />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)]">{suggestion.title}</h3>
+                    <p className="mt-1 text-sm text-[var(--text-secondary)]">{suggestion.description}</p>
+                  </div>
+                </div>
+                <span className={cn('shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold', tone.metric)}>
+                  {suggestion.metric}
+                </span>
+              </div>
+              <div className="mt-4 flex items-center justify-between text-xs font-medium text-[var(--text-muted)]">
+                <span>{suggestion.action}</span>
+                <ArrowRight size={14} className="text-[var(--text-muted)]" />
+              </div>
+            </Card>
+          );
+        })}
+      </div>
+
+      {activeTab === 'weekly' ? (
+        <Card className="overflow-hidden">
+          <div className="flex items-start justify-between gap-4 border-b border-[var(--border)] px-5 py-4">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--surface-hover)] text-[var(--accent-purple)]">
+                <BarChart3 size={18} />
+              </div>
+              <div className="space-y-1">
+                <h2 className="text-base font-semibold text-[var(--text-primary)]">Weekly Performance Matrix</h2>
+                <p className="text-xs text-[var(--text-muted)]">Compare volume, spend, and quality by source.</p>
+              </div>
+            </div>
+            <Badge variant="outline" className="hidden sm:inline-flex">Last 7 days</Badge>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr>
+                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Source</th>
+                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Volume</th>
+                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Trend</th>
+                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Velocity</th>
+                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Spend</th>
+                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">CPL</th>
+                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">ROAS</th>
+                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Quality</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[var(--border)]">
+                {weeklyBreakdown.map((row) => {
+                  const vsLast = getPercentageChange(row.current, row.lastWeek);
+                  const vsThree = getPercentageChange(row.current, row.threeWeeks);
+                  return (
+                    <tr key={row.source} className="hover:bg-[var(--surface-hover)] transition-colors">
+                      <td className="px-4 py-3 font-medium text-[var(--text-primary)]">{row.source}</td>
+                      <td className="px-4 py-3 text-right font-semibold text-[var(--text-primary)]">{row.current}</td>
+                      <td className="px-4 py-3 text-right">
+                        <Badge variant="outline" className={cn('border-0', vsLast.isPositive ? 'bg-emerald-500/10 text-emerald-700' : 'bg-red-500/10 text-red-700')}>
+                          {vsLast.isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                          {vsLast.text}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="inline-flex items-end justify-end gap-1 opacity-80" aria-label="Velocity indicator">
+                          <span className="w-1.5 rounded-full bg-[var(--border)]" style={{ height: '35%' }} />
+                          <span className="w-1.5 rounded-full bg-[var(--border)]" style={{ height: '60%' }} />
+                          <span className={cn('w-1.5 rounded-full', vsThree.isPositive ? 'bg-emerald-500' : 'bg-red-500')} style={{ height: '85%' }} />
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-secondary)]">
+                        {row.cost > 0 ? `$${row.cost.toLocaleString()}` : '-'}
+                      </td>
+                      <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-primary)]">
+                        {row.cpl > 0 ? <span className={row.cpl < 20 ? 'text-emerald-700 font-semibold' : ''}>${row.cpl}</span> : '-'}
+                      </td>
+                      <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-primary)]">
+                        {row.roas > 0 ? <span className={row.roas > 4 ? 'text-emerald-700 font-semibold' : ''}>{row.roas}x</span> : '-'}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {row.quality > 0 && (
+                          <div className="flex items-center justify-end gap-3">
+                            <div className="h-2 w-24 overflow-hidden rounded-full bg-[var(--surface-active)]">
+                              <div
+                                className={cn('h-full rounded-full', row.quality >= 9 ? 'bg-emerald-500' : row.quality >= 8 ? 'bg-[var(--primary)]' : 'bg-amber-500')}
+                                style={{ width: `${row.quality * 10}%` }}
+                              />
+                            </div>
+                            <span className="w-6 text-right text-xs font-semibold text-[var(--text-primary)]">{row.quality}</span>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      ) : (
+        <div className="grid gap-4 lg:grid-cols-3">
+          <div className="space-y-3">
+            <h2 className="text-sm font-semibold text-[var(--text-primary)]">Select Pipeline</h2>
+            <button type="button" onClick={() => setSelectedFunnel('google')}
+              className={cn('w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-left transition-colors hover:bg-[var(--surface-hover)]',
+                selectedFunnel === 'google' && 'border-[var(--primary)] bg-[var(--primary)]/5')}>
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', selectedFunnel === 'google' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--surface-hover)] text-[var(--text-secondary)]')}>
+                    <Target size={18} />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-[var(--text-primary)]">Google Ads</div>
+                    <div className="text-xs text-[var(--text-secondary)]">High intent • PPC</div>
+                  </div>
+                </div>
+                {selectedFunnel === 'google' && <div className="h-2 w-2 rounded-full bg-[var(--primary)]" />}
+              </div>
+            </button>
+            <button type="button" onClick={() => setSelectedFunnel('intaker')}
+              className={cn('w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-left transition-colors hover:bg-[var(--surface-hover)]',
+                selectedFunnel === 'intaker' && 'border-[var(--primary)] bg-[var(--primary)]/5')}>
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', selectedFunnel === 'intaker' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--surface-hover)] text-[var(--text-secondary)]')}>
+                    <Zap size={18} />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-[var(--text-primary)]">Intaker Chat</div>
+                    <div className="text-xs text-[var(--text-secondary)]">Automated • High volume</div>
+                  </div>
+                </div>
+                {selectedFunnel === 'intaker' && <div className="h-2 w-2 rounded-full bg-[var(--primary)]" />}
+              </div>
+            </button>
+          </div>
+
+          <Card className="overflow-hidden lg:col-span-2">
+            <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
+              <div>
+                <h2 className="text-base font-semibold text-[var(--text-primary)]">Funnel Visualization</h2>
+                <p className="text-xs text-[var(--text-muted)]">Last 30 days</p>
+              </div>
+            </div>
+            <div className="p-5">
+              <div className="h-[340px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={funnelData[selectedFunnel]} layout="vertical" margin={{ left: 24, right: 24, top: 8, bottom: 8 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
+                    <XAxis type="number" stroke="var(--text-muted)" tick={{ fill: 'var(--text-muted)', fontSize: 12 }} axisLine={false} tickLine={false} />
+                    <YAxis dataKey="stage" type="category" width={110} stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} axisLine={false} tickLine={false} />
+                    <Tooltip
+                      cursor={{ fill: 'var(--surface-hover)' }}
+                      contentStyle={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', borderRadius: '12px', color: 'var(--text-primary)', boxShadow: '0 12px 24px rgba(0,0,0,0.18)' }}
+                    />
+                    <Bar dataKey="count" fill="url(#funnelGradientInsights)" radius={[0, 8, 8, 0]} barSize={34} />
+                    <defs>
+                      <linearGradient id="funnelGradientInsights" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.9} />
+                        <stop offset="100%" stopColor="var(--accent-purple)" stopOpacity={0.75} />
+                      </linearGradient>
+                    </defs>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-5">
+                {funnelData[selectedFunnel].map((step, idx) => (
+                  <div key={idx} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 text-center hover:bg-[var(--surface-hover)] transition-colors">
+                    <div className="text-[10px] uppercase tracking-wider text-[var(--text-muted)] mb-1">{step.stage}</div>
+                    <div className="text-lg font-bold text-[var(--text-primary)]">{step.count.toLocaleString()}</div>
+                    {step.dropoff !== 0 && (
+                      <div className="mt-1 text-[10px] font-semibold text-red-600 bg-red-500/10 py-0.5 px-2 rounded-full inline-block">
+                        {step.dropoff} drop
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+    </div>
+  );
+}
