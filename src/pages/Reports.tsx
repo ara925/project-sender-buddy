@@ -83,8 +83,8 @@ export function Reports() {
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-purple)] to-[var(--accent-pink)]" />
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl">
-                <img src={conversionFunnelIcon} alt="Conversion Rate" className="h-10 w-10 object-contain" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl">
+                <img src={conversionFunnelIcon} alt="Conversion Rate" className="h-12 w-12 object-contain" />
               </div>
               <div>
                 <p className="text-sm text-[var(--text-secondary)]">Conversion Rate</p>
