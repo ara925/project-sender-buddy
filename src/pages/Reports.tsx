@@ -82,7 +82,7 @@ export function Reports() {
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-purple)] to-[var(--accent-pink)]" />
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-purple)] to-[var(--accent-pink)]">
+              <div className="icon-box flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-purple)] to-[var(--accent-pink)]">
                 <Percent size={20} className="text-white" />
               </div>
               <div>
@@ -96,7 +96,7 @@ export function Reports() {
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-blue)] to-[var(--accent-purple)]" />
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-blue)] to-[var(--accent-purple)]">
+              <div className="icon-box flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-blue)] to-[var(--accent-purple)]">
                 <TrendingUp size={20} className="text-white" />
               </div>
               <div>
@@ -110,7 +110,7 @@ export function Reports() {
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-emerald)] to-[var(--accent-cyan)]" />
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-emerald)] to-[var(--accent-cyan)]">
+              <div className="icon-box flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-emerald)] to-[var(--accent-cyan)]">
                 <CircleUser size={20} className="text-white" />
               </div>
               <div>
@@ -124,7 +124,7 @@ export function Reports() {
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-amber)] to-[var(--accent-rose)]" />
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-amber)] to-[var(--accent-rose)]">
+              <div className="icon-box flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-amber)] to-[var(--accent-rose)]">
                 <Users size={20} className="text-white" />
               </div>
               <div>
@@ -165,13 +165,13 @@ export function Reports() {
                   return (
                     <tr key={agent.id} className="border-b border-[var(--border)] hover:bg-[var(--surface-hover)] transition-colors">
                       <td className="px-4 py-3">
-                        <span className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold ${rankBadge.bg} text-white`}>
+                        <span className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold ${rankBadge.bg} text-white`}>
                           {rankBadge.text}
                         </span>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-purple)] to-[var(--accent-pink)]">
+                          <div className="icon-box flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-purple)] to-[var(--accent-pink)]">
                             <span className="text-xs font-bold text-white">{agent.avatar}</span>
                           </div>
                           <span className="font-medium text-[var(--text-primary)]">{agent.name}</span>

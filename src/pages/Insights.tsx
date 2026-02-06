@@ -122,7 +122,7 @@ export function Insights() {
               <div className={cn('absolute inset-x-0 top-0 h-0.5', tone.topBorder)} aria-hidden="true" />
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3 min-w-0">
-                  <div className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-xl', tone.iconWrap)}>
+                  <div className={cn('icon-box flex h-9 w-9 shrink-0 items-center justify-center rounded-xl', tone.iconWrap)}>
                     <tone.Icon size={18} />
                   </div>
                   <div className="min-w-0">
@@ -147,7 +147,7 @@ export function Insights() {
         <Card className="overflow-hidden">
           <div className="flex items-start justify-between gap-4 border-b border-[var(--border)] px-5 py-4">
             <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--surface-hover)] text-[var(--primary)]">
+              <div className="icon-box flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--surface-hover)] text-[var(--primary)]">
                 <BarChart3 size={18} />
               </div>
               <div className="space-y-1">
@@ -231,7 +231,7 @@ export function Insights() {
                 selectedFunnel === 'google' && 'border-[var(--primary)] bg-[var(--primary)]/5')}>
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', selectedFunnel === 'google' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--surface-hover)] text-[var(--text-secondary)]')}>
+                  <div className={cn('icon-box flex h-10 w-10 items-center justify-center rounded-xl', selectedFunnel === 'google' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--surface-hover)] text-[var(--text-secondary)]')}>
                     <Crosshair size={18} />
                   </div>
                   <div>
@@ -247,7 +247,7 @@ export function Insights() {
                 selectedFunnel === 'intaker' && 'border-[var(--primary)] bg-[var(--primary)]/5')}>
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', selectedFunnel === 'intaker' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--surface-hover)] text-[var(--text-secondary)]')}>
+                  <div className={cn('icon-box flex h-10 w-10 items-center justify-center rounded-xl', selectedFunnel === 'intaker' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--surface-hover)] text-[var(--text-secondary)]')}>
                     <MessageSquare size={18} />
                   </div>
                   <div>
