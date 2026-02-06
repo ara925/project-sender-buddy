@@ -48,3 +48,36 @@ export interface Activity {
   details: Record<string, unknown> | null;
   created_at: string;
 }
+
+export type LeadActivityPlatform = 'callrail' | 'regal' | 'intaker' | 'litify' | 'google_ads' | 'forms' | 'internal';
+
+export type LeadActivityType =
+  | 'call_inbound'
+  | 'call_outbound'
+  | 'call_missed'
+  | 'voicemail'
+  | 'form_submission'
+  | 'email_sent'
+  | 'email_received'
+  | 'sms_sent'
+  | 'sms_received'
+  | 'status_change'
+  | 'note_added'
+  | 'assigned'
+  | 'litify_synced'
+  | 'litify_matter_created'
+  | 'ad_click'
+  | 'retainer_signed'
+  | 'document_uploaded';
+
+export interface LeadActivity {
+  id: string;
+  lead_id: string;
+  platform: LeadActivityPlatform;
+  type: LeadActivityType;
+  title: string;
+  description: string | null;
+  agent_name: string | null;
+  metadata: Record<string, unknown> | null;
+  created_at: string;
+}

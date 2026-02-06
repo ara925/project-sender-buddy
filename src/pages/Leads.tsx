@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Search, Filter, MoreHorizontal, FileDown, Plus } from 'lucide-react';
 import { Button, Badge, Select } from '@/components/ui';
 import { formatDate } from '@/lib/utils';
+import { LeadDetailDrawer } from '@/components/leads/LeadDetailDrawer';
 import type { Lead } from '@/types';
 
 const mockLeads: Lead[] = [
@@ -32,6 +33,8 @@ export function Leads() {
   const [statusFilter, setStatusFilter] = useState('');
   const [sourceFilter, setSourceFilter] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const filteredLeads = mockLeads.filter(lead => {
     const matchesSearch =
@@ -42,6 +45,11 @@ export function Leads() {
     const matchesSource = sourceFilter ? lead.source === sourceFilter : true;
     return matchesSearch && matchesStatus && matchesSource;
   });
+
+  const handleLeadClick = (lead: Lead) => {
+    setSelectedLead(lead);
+    setDrawerOpen(true);
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -131,7 +139,11 @@ export function Leads() {
             </thead>
             <tbody>
               {filteredLeads.map((lead) => (
-                <tr key={lead.id} className="group">
+                <tr
+                  key={lead.id}
+                  className="group cursor-pointer"
+                  onClick={() => handleLeadClick(lead)}
+                >
                   <td>
                     <p className="font-medium text-[var(--text-primary)]">{lead.first_name} {lead.last_name}</p>
                   </td>
@@ -156,7 +168,13 @@ export function Leads() {
                   </td>
                   <td>
                     <div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="icon">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
                         <MoreHorizontal size={18} className="text-[var(--text-secondary)]" />
                       </Button>
                     </div>
@@ -177,6 +195,12 @@ export function Leads() {
           </div>
         </div>
       </div>
+
+      <LeadDetailDrawer
+        lead={selectedLead}
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+      />
     </div>
   );
 }
