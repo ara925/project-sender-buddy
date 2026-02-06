@@ -1,4 +1,4 @@
-import { Download, BarChart3, Users, TrendingUp, Percent, CircleUser } from 'lucide-react';
+import { Download, Trophy, Users, TrendingUp, Target, Award } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent, Button, Select, Badge } from '@/components/ui';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 
@@ -51,9 +51,9 @@ const dateRangeOptions = [
 ];
 
 const getRankBadge = (rank: number) => {
-  if (rank === 1) return { bg: 'rank-gold', text: '#1' };
-  if (rank === 2) return { bg: 'rank-silver', text: '#2' };
-  if (rank === 3) return { bg: 'rank-bronze', text: '#3' };
+  if (rank === 1) return { bg: 'rank-gold', text: '🥇' };
+  if (rank === 2) return { bg: 'rank-silver', text: '🥈' };
+  if (rank === 3) return { bg: 'rank-bronze', text: '🥉' };
   return { bg: 'bg-[var(--surface-hover)]', text: `#${rank}` };
 };
 
@@ -82,8 +82,8 @@ export function Reports() {
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-purple)] to-[var(--accent-pink)]" />
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="icon-box flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-purple)] to-[var(--accent-pink)]">
-                <Percent size={20} className="text-white" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-purple)] to-[var(--accent-pink)]">
+                <Target size={20} className="text-white" />
               </div>
               <div>
                 <p className="text-sm text-[var(--text-secondary)]">Conversion Rate</p>
@@ -96,7 +96,7 @@ export function Reports() {
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-blue)] to-[var(--accent-purple)]" />
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="icon-box flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-blue)] to-[var(--accent-purple)]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-blue)] to-[var(--accent-purple)]">
                 <TrendingUp size={20} className="text-white" />
               </div>
               <div>
@@ -110,8 +110,8 @@ export function Reports() {
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-emerald)] to-[var(--accent-cyan)]" />
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="icon-box flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-emerald)] to-[var(--accent-cyan)]">
-                <CircleUser size={20} className="text-white" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-emerald)] to-[var(--accent-cyan)]">
+                <Award size={20} className="text-white" />
               </div>
               <div>
                 <p className="text-sm text-[var(--text-secondary)]">Top Agent</p>
@@ -124,7 +124,7 @@ export function Reports() {
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-amber)] to-[var(--accent-rose)]" />
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="icon-box flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-amber)] to-[var(--accent-rose)]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-amber)] to-[var(--accent-rose)]">
                 <Users size={20} className="text-white" />
               </div>
               <div>
@@ -140,7 +140,7 @@ export function Reports() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div className="flex items-center gap-3">
-            <BarChart3 size={20} className="text-[var(--primary)]" />
+            <Trophy size={24} className="text-[var(--accent-amber)]" />
             <CardTitle>Agent Performance Leaderboard</CardTitle>
           </div>
           <Badge variant="purple">Live Rankings</Badge>
@@ -165,13 +165,13 @@ export function Reports() {
                   return (
                     <tr key={agent.id} className="border-b border-[var(--border)] hover:bg-[var(--surface-hover)] transition-colors">
                       <td className="px-4 py-3">
-                        <span className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold ${rankBadge.bg} text-white`}>
+                        <span className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold ${rankBadge.bg} text-white`}>
                           {rankBadge.text}
                         </span>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="icon-box flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-purple)] to-[var(--accent-pink)]">
+                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-purple)] to-[var(--accent-pink)]">
                             <span className="text-xs font-bold text-white">{agent.avatar}</span>
                           </div>
                           <span className="font-medium text-[var(--text-primary)]">{agent.name}</span>
@@ -205,7 +205,7 @@ export function Reports() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div className="flex items-center gap-3">
-            <TrendingUp size={20} className="text-[var(--primary)]" />
+            <TrendingUp size={24} className="text-[var(--accent-cyan)]" />
             <CardTitle>Pipeline Performance by Case Type</CardTitle>
           </div>
         </CardHeader>
