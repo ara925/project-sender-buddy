@@ -72,9 +72,7 @@ export function Calls() {
               <div className="text-sm font-medium text-[var(--text-secondary)]">Today</div>
               <div className="mt-2 text-3xl font-bold text-[var(--text-primary)]">89</div>
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--surface-hover)] text-[var(--text-secondary)]">
-              <Clock size={18} />
-            </div>
+            <Clock size={18} className="text-[var(--text-muted)]" />
           </div>
         </Card>
         <Card className="p-5">
@@ -83,9 +81,7 @@ export function Calls() {
               <div className="text-sm font-medium text-[var(--text-secondary)]">Completed</div>
               <div className="mt-2 text-3xl font-bold text-[var(--text-primary)]">72</div>
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600">
-              <PhoneIncoming size={18} />
-            </div>
+            <PhoneIncoming size={18} className="text-[var(--text-muted)]" />
           </div>
         </Card>
         <Card className="p-5">
@@ -94,9 +90,7 @@ export function Calls() {
               <div className="text-sm font-medium text-[var(--text-secondary)]">Missed</div>
               <div className="mt-2 text-3xl font-bold text-[var(--text-primary)]">12</div>
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-600">
-              <PhoneMissed size={18} />
-            </div>
+            <PhoneMissed size={18} className="text-[var(--text-muted)]" />
           </div>
         </Card>
         <Card className="p-5">
@@ -105,9 +99,7 @@ export function Calls() {
               <div className="text-sm font-medium text-[var(--text-secondary)]">Avg Duration</div>
               <div className="mt-2 text-3xl font-bold text-[var(--text-primary)]">4:32</div>
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600">
-              <PhoneOutgoing size={18} />
-            </div>
+            <PhoneOutgoing size={18} className="text-[var(--text-muted)]" />
           </div>
         </Card>
       </div>
@@ -121,11 +113,7 @@ export function Calls() {
           {mockCalls.map((call) => (
             <div key={call.id} className="flex items-center justify-between gap-4 p-4 hover:bg-[var(--surface-hover)] transition-colors group">
               <div className="flex items-center gap-4 min-w-0">
-                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-                  call.status === 'missed' ? 'bg-red-500/10 text-red-600' :
-                  call.status === 'voicemail' ? 'bg-amber-500/10 text-amber-600' :
-                  call.direction === 'inbound' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-500/10 text-blue-600'
-                }`}>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center text-[var(--text-muted)]">
                   {getCallIcon(call.direction, call.status)}
                 </div>
                 <div className="min-w-0">

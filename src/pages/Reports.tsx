@@ -41,7 +41,7 @@ const pipelinePerformance = [
   { name: 'Other', leads: 74, converted: 15, rate: 20.3, avgValue: '$22,000', trend: '+2%', up: true },
 ];
 
-const COLORS = ['#8b5cf6', '#ec4899', '#06b6d4', '#f59e0b', '#64748b'];
+const COLORS = ['var(--primary)', 'var(--text-muted)', 'var(--text-secondary)', 'var(--border)', 'var(--surface-active)'];
 
 const dateRangeOptions = [
   { value: '7d', label: 'Last 7 Days' },
@@ -51,10 +51,10 @@ const dateRangeOptions = [
 ];
 
 const getRankBadge = (rank: number) => {
-  if (rank === 1) return { bg: 'rank-gold', text: '🥇' };
-  if (rank === 2) return { bg: 'rank-silver', text: '🥈' };
-  if (rank === 3) return { bg: 'rank-bronze', text: '🥉' };
-  return { bg: 'bg-[var(--surface-hover)]', text: `#${rank}` };
+  if (rank === 1) return { bg: 'bg-[var(--surface-hover)] border border-[var(--border)]', text: '#1' };
+  if (rank === 2) return { bg: 'bg-[var(--surface-hover)] border border-[var(--border)]', text: '#2' };
+  if (rank === 3) return { bg: 'bg-[var(--surface-hover)] border border-[var(--border)]', text: '#3' };
+  return { bg: 'bg-[var(--surface-hover)] border border-[var(--border)]', text: `#${rank}` };
 };
 
 export function Reports() {
@@ -79,12 +79,10 @@ export function Reports() {
       {/* KPI Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-purple)] to-[var(--accent-pink)]" />
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-[var(--border)]" />
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-purple)] to-[var(--accent-pink)]">
-                <Target size={20} className="text-white" />
-              </div>
+              <Target size={18} className="text-[var(--text-muted)]" />
               <div>
                 <p className="text-sm text-[var(--text-secondary)]">Conversion Rate</p>
                 <p className="text-2xl font-bold text-[var(--success)]">24.3%</p>
@@ -93,12 +91,10 @@ export function Reports() {
           </CardContent>
         </Card>
         <Card className="relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-blue)] to-[var(--accent-purple)]" />
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-[var(--border)]" />
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-blue)] to-[var(--accent-purple)]">
-                <TrendingUp size={20} className="text-white" />
-              </div>
+              <TrendingUp size={18} className="text-[var(--text-muted)]" />
               <div>
                 <p className="text-sm text-[var(--text-secondary)]">Avg. Time to Convert</p>
                 <p className="text-2xl font-bold text-[var(--text-primary)]">4.2 days</p>
@@ -107,12 +103,10 @@ export function Reports() {
           </CardContent>
         </Card>
         <Card className="relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-emerald)] to-[var(--accent-cyan)]" />
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-[var(--border)]" />
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-emerald)] to-[var(--accent-cyan)]">
-                <Award size={20} className="text-white" />
-              </div>
+              <Award size={18} className="text-[var(--text-muted)]" />
               <div>
                 <p className="text-sm text-[var(--text-secondary)]">Top Agent</p>
                 <p className="text-2xl font-bold text-[var(--text-primary)]">Sarah M.</p>
@@ -121,12 +115,10 @@ export function Reports() {
           </CardContent>
         </Card>
         <Card className="relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-amber)] to-[var(--accent-rose)]" />
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-[var(--border)]" />
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-amber)] to-[var(--accent-rose)]">
-                <Users size={20} className="text-white" />
-              </div>
+              <Users size={18} className="text-[var(--text-muted)]" />
               <div>
                 <p className="text-sm text-[var(--text-secondary)]">Active Agents</p>
                 <p className="text-2xl font-bold text-[var(--text-primary)]">12</p>
@@ -140,10 +132,10 @@ export function Reports() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div className="flex items-center gap-3">
-            <Trophy size={24} className="text-[var(--accent-amber)]" />
+            <Trophy size={20} className="text-[var(--text-muted)]" />
             <CardTitle>Agent Performance Leaderboard</CardTitle>
           </div>
-          <Badge variant="purple">Live Rankings</Badge>
+          <Badge variant="outline">Live Rankings</Badge>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -165,14 +157,14 @@ export function Reports() {
                   return (
                     <tr key={agent.id} className="border-b border-[var(--border)] hover:bg-[var(--surface-hover)] transition-colors">
                       <td className="px-4 py-3">
-                        <span className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold ${rankBadge.bg} text-white`}>
+                        <span className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold ${rankBadge.bg} text-[var(--text-secondary)]`}>
                           {rankBadge.text}
                         </span>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-purple)] to-[var(--accent-pink)]">
-                            <span className="text-xs font-bold text-white">{agent.avatar}</span>
+                          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--surface-hover)] border border-[var(--border)]">
+                            <span className="text-xs font-semibold text-[var(--text-secondary)]">{agent.avatar}</span>
                           </div>
                           <span className="font-medium text-[var(--text-primary)]">{agent.name}</span>
                         </div>
@@ -182,7 +174,7 @@ export function Reports() {
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <div className="w-16 h-2 rounded-full bg-[var(--surface-hover)] overflow-hidden">
-                            <div className="h-full rounded-full bg-gradient-to-r from-[var(--accent-purple)] to-[var(--accent-pink)]" style={{ width: `${agent.conversionRate}%` }} />
+                            <div className="h-full rounded-full bg-[var(--primary)]" style={{ width: `${agent.conversionRate}%` }} />
                           </div>
                           <span className="font-medium text-[var(--text-primary)]">{agent.conversionRate}%</span>
                         </div>
@@ -205,7 +197,7 @@ export function Reports() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div className="flex items-center gap-3">
-            <TrendingUp size={24} className="text-[var(--accent-cyan)]" />
+            <TrendingUp size={20} className="text-[var(--text-muted)]" />
             <CardTitle>Pipeline Performance by Case Type</CardTitle>
           </div>
         </CardHeader>
@@ -227,7 +219,7 @@ export function Reports() {
                   <tr key={pipeline.name} className="border-b border-[var(--border)] hover:bg-[var(--surface-hover)] transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-3 w-3 rounded-full" style={{ backgroundColor: COLORS[index], boxShadow: `0 0 10px ${COLORS[index]}60` }} />
+                        <div className="h-2.5 w-2.5 rounded-full bg-[var(--text-muted)]" />
                         <span className="font-medium text-[var(--text-primary)]">{pipeline.name}</span>
                       </div>
                     </td>
@@ -263,8 +255,8 @@ export function Reports() {
                 <BarChart data={conversionFunnel} layout="vertical">
                   <defs>
                     <linearGradient id="funnelGradientReports" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#8b5cf6" />
-                      <stop offset="100%" stopColor="#ec4899" />
+                      <stop offset="0%" stopColor="var(--primary)" />
+                      <stop offset="100%" stopColor="var(--primary)" stopOpacity={0.6} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
