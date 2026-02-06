@@ -84,7 +84,7 @@ export function Reports() {
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl">
-                <img src={conversionFunnelIcon} alt="Conversion Rate" className="h-8 w-8 object-contain" />
+                <img src={conversionFunnelIcon} alt="Conversion Rate" className="h-10 w-10 object-contain" />
               </div>
               <div>
                 <p className="text-sm text-[var(--text-secondary)]">Conversion Rate</p>
