@@ -6,8 +6,8 @@ import { cn } from '@/lib/utils';
 const themes: { value: Theme; label: string; icon: typeof Moon; color?: string }[] = [
   { value: 'dark', label: 'Dark', icon: Moon },
   { value: 'light', label: 'Light', icon: Sun },
-  { value: 'purple', label: 'Purple', icon: Sparkles, color: '#8b5cf6' },
-  { value: 'midnight', label: 'Midnight', icon: Moon, color: '#1e3a5f' },
+  { value: 'purple', label: 'Contrast', icon: Sparkles, color: '#f47920' },
+  { value: 'midnight', label: 'Midnight', icon: Moon, color: '#0c1a2e' },
   { value: 'system', label: 'System', icon: Monitor },
 ];
 

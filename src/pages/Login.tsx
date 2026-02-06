@@ -27,7 +27,7 @@ export function Login() {
         {/* Logo */}
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] bg-clip-text text-transparent">
-            Maryman
+            Wilshire Law Hub
           </h1>
           <p className="mt-2 text-[var(--muted-foreground)]">Lead Management Platform</p>
         </div>

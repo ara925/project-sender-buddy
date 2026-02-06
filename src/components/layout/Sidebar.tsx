@@ -49,7 +49,7 @@ export function Sidebar({ userRole = 'agent' }: SidebarProps) {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--primary)] text-white shadow-sm">
               <Zap size={18} className="fill-current" />
             </div>
-            <span className="text-lg font-bold text-[var(--text-primary)] tracking-tight">Maryman</span>
+            <span className="text-lg font-bold text-[var(--text-primary)] tracking-tight">Wilshire Hub</span>
           </div>
         ) : (
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--primary)] text-white shadow-sm">
