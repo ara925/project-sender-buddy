@@ -30,10 +30,10 @@ const recentActivity = [
 ];
 
 const statsCards = [
-  { title: 'Total Leads', value: '1,284', change: '+12%', up: true, icon: Users, color: 'text-blue-500' },
-  { title: 'New Today', value: '47', change: '+8%', up: true, icon: Clock, color: 'text-purple-500' },
-  { title: 'Qualified', value: '312', change: '+23%', up: true, icon: TrendingUp, color: 'text-emerald-500' },
-  { title: 'Calls Today', value: '89', change: '-5%', up: false, icon: Phone, color: 'text-amber-500' },
+  { title: 'Total Leads', value: '1,284', change: '+12%', up: true, icon: Users },
+  { title: 'New Today', value: '47', change: '+8%', up: true, icon: Clock },
+  { title: 'Qualified', value: '312', change: '+23%', up: true, icon: TrendingUp },
+  { title: 'Calls Today', value: '89', change: '-5%', up: false, icon: Phone },
 ];
 
 export function Dashboard() {
@@ -57,9 +57,7 @@ export function Dashboard() {
           <div key={stat.title} className="card p-5 transition-shadow hover:shadow-md">
             <div className="flex justify-between items-start mb-2">
               <div className="text-sm font-medium text-[var(--text-secondary)]">{stat.title}</div>
-              <div className={`p-2 rounded-md bg-[var(--surface-active)] ${stat.color}`}>
-                <stat.icon size={16} />
-              </div>
+              <stat.icon size={16} className="text-[var(--text-muted)]" />
             </div>
             <div className="flex items-end gap-2 mt-2">
               <div className="text-2xl font-bold text-[var(--text-primary)]">{stat.value}</div>
