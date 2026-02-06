@@ -4,16 +4,16 @@ import { Button, Badge, Input, Select } from '@/components/ui';
 import type { User } from '@/types';
 
 const mockUsers: User[] = [
-  { id: '1', email: 'admin@maryman.com', name: 'John Admin', role: 'admin', is_active: true, created_at: '2024-01-01T00:00:00Z' },
-  { id: '2', email: 'manager@maryman.com', name: 'Sarah Manager', role: 'manager', is_active: true, created_at: '2024-01-02T00:00:00Z' },
-  { id: '3', email: 'agent1@maryman.com', name: 'Mike Agent_1', role: 'agent', is_active: true, created_at: '2024-01-03T00:00:00Z' },
-  { id: '4', email: 'agent2@maryman.com', name: 'Emily Agent_2', role: 'agent', is_active: true, created_at: '2024-01-04T00:00:00Z' },
-  { id: '5', email: 'viewer@maryman.com', name: 'David Viewer', role: 'viewer', is_active: false, created_at: '2024-01-05T00:00:00Z' },
-  { id: '6', email: 'agent3@maryman.com', name: 'Jessica Agent_3', role: 'agent', is_active: true, created_at: '2024-01-06T00:00:00Z' },
-  { id: '7', email: 'agent4@maryman.com', name: 'Robert Agent_4', role: 'agent', is_active: true, created_at: '2024-01-07T00:00:00Z' },
-  { id: '8', email: 'manager2@maryman.com', name: 'Lisa Manager_2', role: 'manager', is_active: true, created_at: '2024-01-08T00:00:00Z' },
-  { id: '9', email: 'analyst@maryman.com', name: 'Tom Analyst', role: 'viewer', is_active: true, created_at: '2024-01-09T00:00:00Z' },
-  { id: '10', email: 'agent5@maryman.com', name: 'Karen Agent_5', role: 'agent', is_active: false, created_at: '2024-01-10T00:00:00Z' },
+  { id: '1', email: 'admin@wilshirelaw.com', name: 'John Admin', role: 'admin', is_active: true, created_at: '2024-01-01T00:00:00Z' },
+  { id: '2', email: 'manager@wilshirelaw.com', name: 'Sarah Manager', role: 'manager', is_active: true, created_at: '2024-01-02T00:00:00Z' },
+  { id: '3', email: 'agent1@wilshirelaw.com', name: 'Mike Agent_1', role: 'agent', is_active: true, created_at: '2024-01-03T00:00:00Z' },
+  { id: '4', email: 'agent2@wilshirelaw.com', name: 'Emily Agent_2', role: 'agent', is_active: true, created_at: '2024-01-04T00:00:00Z' },
+  { id: '5', email: 'viewer@wilshirelaw.com', name: 'David Viewer', role: 'viewer', is_active: false, created_at: '2024-01-05T00:00:00Z' },
+  { id: '6', email: 'agent3@wilshirelaw.com', name: 'Jessica Agent_3', role: 'agent', is_active: true, created_at: '2024-01-06T00:00:00Z' },
+  { id: '7', email: 'agent4@wilshirelaw.com', name: 'Robert Agent_4', role: 'agent', is_active: true, created_at: '2024-01-07T00:00:00Z' },
+  { id: '8', email: 'manager2@wilshirelaw.com', name: 'Lisa Manager_2', role: 'manager', is_active: true, created_at: '2024-01-08T00:00:00Z' },
+  { id: '9', email: 'analyst@wilshirelaw.com', name: 'Tom Analyst', role: 'viewer', is_active: true, created_at: '2024-01-09T00:00:00Z' },
+  { id: '10', email: 'agent5@wilshirelaw.com', name: 'Karen Agent_5', role: 'agent', is_active: false, created_at: '2024-01-10T00:00:00Z' },
 ];
 
 type AdminTab = 'users' | 'settings' | 'integrations';
@@ -114,8 +114,8 @@ export function Admin() {
               <h3 className="text-lg font-semibold text-[var(--text-primary)]">General Settings</h3>
             </div>
             <div className="space-y-4">
-              <Input label="Company Name" defaultValue="Maryman Law Firm" />
-              <Input label="Support Email" defaultValue="support@maryman.com" />
+              <Input label="Company Name" defaultValue="Wilshire Law Firm" />
+              <Input label="Support Email" defaultValue="support@wilshirelaw.com" />
               <Select label="Timezone" options={[
                 { value: 'EST', label: 'Eastern Time (EST)' },
                 { value: 'CST', label: 'Central Time (CST)' },
