@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
-  TrendingUp, TrendingDown, Lightbulb, Target, BarChart3, ArrowRight,
-  Filter, DollarSign, Zap, AlertTriangle,
+  TrendingUp, TrendingDown, BarChart2, Crosshair, BarChart3, ArrowRight,
+  Filter, DollarSign, MessageSquare, AlertTriangle,
 } from 'lucide-react';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { Badge, Button, Card } from '@/components/ui';
@@ -90,7 +90,7 @@ export function Insights() {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-            <Lightbulb size={18} className="text-[var(--accent-purple)]" />
+            <BarChart2 size={18} className="text-[var(--primary)]" />
             <span className="text-sm font-medium">Insights</span>
           </div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)]">Advanced Insights</h1>
@@ -103,7 +103,7 @@ export function Insights() {
               <BarChart3 size={16} /> Weekly
             </button>
             <button onClick={() => setActiveTab('funnels')} className={tabClass(activeTab === 'funnels')}>
-              <Target size={16} /> Funnels
+              <Crosshair size={16} /> Funnels
             </button>
           </div>
           <div className="flex gap-2">
@@ -122,7 +122,9 @@ export function Insights() {
               <div className={cn('absolute inset-x-0 top-0 h-0.5', tone.topBorder)} aria-hidden="true" />
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3 min-w-0">
-                  <tone.Icon size={18} className="shrink-0 text-[var(--text-muted)]" />
+                  <div className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-xl', tone.iconWrap)}>
+                    <tone.Icon size={18} />
+                  </div>
                   <div className="min-w-0">
                     <h3 className="text-sm font-semibold text-[var(--text-primary)]">{suggestion.title}</h3>
                     <p className="mt-1 text-sm text-[var(--text-secondary)]">{suggestion.description}</p>
@@ -145,7 +147,9 @@ export function Insights() {
         <Card className="overflow-hidden">
           <div className="flex items-start justify-between gap-4 border-b border-[var(--border)] px-5 py-4">
             <div className="flex items-start gap-3">
-              <BarChart3 size={18} className="text-[var(--text-muted)]" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--surface-hover)] text-[var(--primary)]">
+                <BarChart3 size={18} />
+              </div>
               <div className="space-y-1">
                 <h2 className="text-base font-semibold text-[var(--text-primary)]">Weekly Performance Matrix</h2>
                 <p className="text-xs text-[var(--text-muted)]">Compare volume, spend, and quality by source.</p>
@@ -227,7 +231,9 @@ export function Insights() {
                 selectedFunnel === 'google' && 'border-[var(--primary)] bg-[var(--primary)]/5')}>
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <Target size={18} className={cn(selectedFunnel === 'google' ? 'text-[var(--primary)]' : 'text-[var(--text-muted)]')} />
+                  <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', selectedFunnel === 'google' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--surface-hover)] text-[var(--text-secondary)]')}>
+                    <Crosshair size={18} />
+                  </div>
                   <div>
                     <div className="font-semibold text-[var(--text-primary)]">Google Ads</div>
                     <div className="text-xs text-[var(--text-secondary)]">High intent • PPC</div>
@@ -241,7 +247,9 @@ export function Insights() {
                 selectedFunnel === 'intaker' && 'border-[var(--primary)] bg-[var(--primary)]/5')}>
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <Zap size={18} className={cn(selectedFunnel === 'intaker' ? 'text-[var(--primary)]' : 'text-[var(--text-muted)]')} />
+                  <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', selectedFunnel === 'intaker' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--surface-hover)] text-[var(--text-secondary)]')}>
+                    <MessageSquare size={18} />
+                  </div>
                   <div>
                     <div className="font-semibold text-[var(--text-primary)]">Intaker Chat</div>
                     <div className="text-xs text-[var(--text-secondary)]">Automated • High volume</div>

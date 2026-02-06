@@ -1,4 +1,4 @@
-import { Users, Phone, TrendingUp, Clock, ArrowUpRight, ArrowDownRight, Sparkles } from 'lucide-react';
+import { Briefcase, Phone, TrendingUp, Clock, ArrowUpRight, ArrowDownRight, Activity, CircleUser } from 'lucide-react';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 
 const leadsByDay = [
@@ -30,10 +30,10 @@ const recentActivity = [
 ];
 
 const statsCards = [
-  { title: 'Total Leads', value: '1,284', change: '+12%', up: true, icon: Users },
-  { title: 'New Today', value: '47', change: '+8%', up: true, icon: Clock },
-  { title: 'Qualified', value: '312', change: '+23%', up: true, icon: TrendingUp },
-  { title: 'Calls Today', value: '89', change: '-5%', up: false, icon: Phone },
+  { title: 'Total Leads', value: '1,284', change: '+12%', up: true, icon: Briefcase, color: 'text-blue-500' },
+  { title: 'New Today', value: '47', change: '+8%', up: true, icon: Clock, color: 'text-purple-500' },
+  { title: 'Qualified', value: '312', change: '+23%', up: true, icon: TrendingUp, color: 'text-emerald-500' },
+  { title: 'Calls Today', value: '89', change: '-5%', up: false, icon: Phone, color: 'text-amber-500' },
 ];
 
 export function Dashboard() {
@@ -46,7 +46,7 @@ export function Dashboard() {
           <p className="text-[var(--text-secondary)] mt-1">Overview of your lead pipeline performance</p>
         </div>
         <div className="px-3 py-1.5 rounded-md bg-[var(--surface)] border border-[var(--border)] flex items-center gap-2">
-          <Sparkles size={14} className="text-[var(--primary)]" />
+          <Activity size={14} className="text-[var(--primary)]" />
           <span className="text-xs font-medium text-[var(--text-secondary)]">Live Updates</span>
         </div>
       </div>
@@ -57,7 +57,9 @@ export function Dashboard() {
           <div key={stat.title} className="card p-5 transition-shadow hover:shadow-md">
             <div className="flex justify-between items-start mb-2">
               <div className="text-sm font-medium text-[var(--text-secondary)]">{stat.title}</div>
-              <stat.icon size={16} className="text-[var(--text-muted)]" />
+              <div className={`p-2 rounded-md bg-[var(--surface-active)] ${stat.color}`}>
+                <stat.icon size={16} />
+              </div>
             </div>
             <div className="flex items-end gap-2 mt-2">
               <div className="text-2xl font-bold text-[var(--text-primary)]">{stat.value}</div>
@@ -174,7 +176,7 @@ export function Dashboard() {
             <div key={activity.id} className="flex items-center justify-between p-4 hover:bg-[var(--surface-hover)] transition-colors">
               <div className="flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--surface-active)]">
-                  <Users size={14} className="text-[var(--text-secondary)]" />
+                  <CircleUser size={14} className="text-[var(--text-secondary)]" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">{activity.action}</p>
