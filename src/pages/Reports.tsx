@@ -1,4 +1,5 @@
-import { Download, Trophy, Users, TrendingUp, Target, Award } from 'lucide-react';
+import { Download, Trophy, Users, TrendingUp, Award } from 'lucide-react';
+import conversionFunnelIcon from '@/assets/conversion-funnel-icon.png';
 import { Card, CardHeader, CardTitle, CardContent, Button, Select, Badge } from '@/components/ui';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 
@@ -82,8 +83,8 @@ export function Reports() {
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-purple)] to-[var(--accent-pink)]" />
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-purple)] to-[var(--accent-pink)]">
-                <Target size={20} className="text-white" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl">
+                <img src={conversionFunnelIcon} alt="Conversion Rate" className="h-8 w-8 object-contain" />
               </div>
               <div>
                 <p className="text-sm text-[var(--text-secondary)]">Conversion Rate</p>
