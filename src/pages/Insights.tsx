@@ -27,14 +27,18 @@ const keyMetrics = [
 const weeklyBreakdown = [
   { source: 'Google Ads', current: 142, lastWeek: 158, threeWeeks: 120, cost: 4200, cpl: 29.57, roas: 3.2, quality: 8.5 },
   { source: 'Intaker', current: 115, lastWeek: 98, threeWeeks: 95, cost: 1200, cpl: 10.43, roas: 5.8, quality: 9.2 },
-  { source: 'Forms', current: 85, lastWeek: 92, threeWeeks: 88, cost: 0, cpl: 0, roas: 0, quality: 7.4 },
+  { source: 'Organic', current: 312, lastWeek: 264, threeWeeks: 248, cost: 0, cpl: 0, roas: 0, quality: 8.8 },
+  { source: 'Referrals', current: 156, lastWeek: 150, threeWeeks: 142, cost: 0, cpl: 0, roas: 0, quality: 9.5 },
+  { source: 'Direct', current: 203, lastWeek: 207, threeWeeks: 195, cost: 0, cpl: 0, roas: 0, quality: 7.8 },
+  { source: 'Social Media', current: 89, lastWeek: 73, threeWeeks: 62, cost: 1840, cpl: 20.67, roas: 2.4, quality: 7.2 },
   { source: 'CallRail', current: 78, lastWeek: 75, threeWeeks: 82, cost: 850, cpl: 10.89, roas: 4.1, quality: 8.0 },
+  { source: 'Forms', current: 85, lastWeek: 92, threeWeeks: 88, cost: 0, cpl: 0, roas: 0, quality: 7.4 },
   { source: 'Manual', current: 32, lastWeek: 28, threeWeeks: 35, cost: 0, cpl: 0, roas: 0, quality: 10.0 },
 ];
 
 type FunnelStep = { stage: string; count: number; dropoff: string | number };
 
-const funnelData: Record<'google' | 'intaker', FunnelStep[]> = {
+const funnelData: Record<string, FunnelStep[]> = {
   google: [
     { stage: 'Impressions', count: 15400, dropoff: 0 },
     { stage: 'Clicks', count: 3200, dropoff: '79%' },
@@ -48,6 +52,34 @@ const funnelData: Record<'google' | 'intaker', FunnelStep[]> = {
     { stage: 'Leads', count: 115, dropoff: '81%' },
     { stage: 'Qualified', count: 85, dropoff: '26%' },
     { stage: 'Retained', count: 42, dropoff: '50%' },
+  ],
+  organic: [
+    { stage: 'Sessions', count: 22450, dropoff: 0 },
+    { stage: 'Engaged', count: 8940, dropoff: '60%' },
+    { stage: 'Form Starts', count: 1820, dropoff: '80%' },
+    { stage: 'Leads', count: 312, dropoff: '83%' },
+    { stage: 'Qualified', count: 142, dropoff: '54%' },
+  ],
+  social: [
+    { stage: 'Impressions', count: 486000, dropoff: 0 },
+    { stage: 'Engagement', count: 24300, dropoff: '95%' },
+    { stage: 'Clicks', count: 4860, dropoff: '80%' },
+    { stage: 'Leads', count: 89, dropoff: '98%' },
+    { stage: 'Qualified', count: 28, dropoff: '69%' },
+  ],
+  referrals: [
+    { stage: 'Referred', count: 312, dropoff: 0 },
+    { stage: 'Contacted', count: 268, dropoff: '14%' },
+    { stage: 'Consulted', count: 210, dropoff: '22%' },
+    { stage: 'Qualified', count: 156, dropoff: '26%' },
+    { stage: 'Retained', count: 65, dropoff: '58%' },
+  ],
+  callrail: [
+    { stage: 'Calls Received', count: 1840, dropoff: 0 },
+    { stage: 'Connected', count: 1514, dropoff: '18%' },
+    { stage: 'Leads', count: 78, dropoff: '95%' },
+    { stage: 'Qualified', count: 38, dropoff: '51%' },
+    { stage: 'Retained', count: 15, dropoff: '61%' },
   ],
 };
 
@@ -94,7 +126,7 @@ const suggestionTone = (type: string) => {
 
 export function Insights() {
   const [activeTab, setActiveTab] = useState<'weekly' | 'funnels'>('weekly');
-  const [selectedFunnel, setSelectedFunnel] = useState<keyof typeof funnelData>('google');
+  const [selectedFunnel, setSelectedFunnel] = useState<string>('google');
   const [selectedMetric, setSelectedMetric] = useState<typeof keyMetrics[number] | null>(null);
   const [filters, setFilters] = useState<InsightFilters>(emptyFilters);
   const [columns, setColumns] = useState<ColumnVisibility>(defaultColumns);
@@ -105,6 +137,36 @@ export function Insights() {
       'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors',
       active ? 'bg-[var(--surface-hover)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)]'
     );
+
+  // Filter the weekly breakdown data
+  const filteredBreakdown = weeklyBreakdown.filter(row => {
+    if (filters.sources.length > 0 && !filters.sources.includes(row.source)) return false;
+    if (filters.minQuality && row.quality < filters.minQuality) return false;
+    if (filters.campaigns.length > 0 && row.source !== 'Google Ads') return false; // campaigns only apply to ads
+    return true;
+  });
+
+  // Compute filtered metrics - scale based on what fraction of sources are selected
+  const hasActiveFilters = filters.sources.length > 0 || filters.caseTypes.length > 0 || filters.statuses.length > 0 || filters.agents.length > 0 || filters.campaigns.length > 0 || !!filters.minQuality;
+  const sourceRatio = filters.sources.length > 0 ? filters.sources.length / 9 : 1;
+  const caseRatio = filters.caseTypes.length > 0 ? filters.caseTypes.length / 8 : 1;
+  const agentRatio = filters.agents.length > 0 ? filters.agents.length / 12 : 1;
+  const filterMultiplier = sourceRatio * caseRatio * agentRatio;
+
+  const filteredMetrics = hasActiveFilters
+    ? keyMetrics.map(m => {
+        // Scale numeric values
+        const rawVal = m.value.replace(/[,$%K]/g, '');
+        const num = parseFloat(rawVal);
+        if (isNaN(num) || m.label === 'Intake Team' || m.label === 'Contact Rate') return m;
+        const scaled = m.value.includes('K')
+          ? `${(num * filterMultiplier).toFixed(1)}K`
+          : m.value.includes('%')
+            ? m.value
+            : Math.round(num * filterMultiplier).toLocaleString();
+        return { ...m, value: scaled };
+      })
+    : keyMetrics;
 
   // Active filter chips for display
   const activeFilterChips = [
@@ -166,6 +228,7 @@ export function Insights() {
       {/* Comparison Results */}
       {compareConfig.preset !== 'none' && compareConfig.compareRange && (
         <ComparisonResultsBar
+          preset={compareConfig.preset}
           currentLabel={`${new Date(compareConfig.currentRange.from).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${new Date(compareConfig.currentRange.to).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}
           compareLabel={`${new Date(compareConfig.compareRange.from).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${new Date(compareConfig.compareRange.to).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}
         />
@@ -173,7 +236,7 @@ export function Insights() {
 
       {/* Key Metrics Grid */}
       <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
-        {keyMetrics.map((metric) => {
+        {filteredMetrics.map((metric) => {
           const MetricIcon = metric.icon;
           return (
             <Card key={metric.label} className="p-4 hover:bg-[var(--surface-hover)] transition-colors cursor-pointer hover:shadow-md" onClick={() => setSelectedMetric(metric)}>
@@ -257,7 +320,7 @@ export function Insights() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
-                {weeklyBreakdown.map((row) => {
+                {filteredBreakdown.map((row) => {
                   const vsLast = getPercentageChange(row.current, row.lastWeek);
                   const vsThree = getPercentageChange(row.current, row.threeWeeks);
                   return (
@@ -317,46 +380,50 @@ export function Insights() {
                     </tr>
                   );
                 })}
+                {filteredBreakdown.length === 0 && (
+                  <tr>
+                    <td colSpan={10} className="px-4 py-12 text-center">
+                      <div className="text-[var(--text-muted)]">
+                        <Search size={24} className="mx-auto mb-2 opacity-40" />
+                        <p className="text-sm font-medium">No data matches your filters</p>
+                        <p className="text-xs mt-1">Try adjusting your filter criteria</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
         </Card>
       ) : (
         <div className="grid gap-4 lg:grid-cols-3">
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
             <h2 className="text-sm font-semibold text-[var(--text-primary)]">Select Pipeline</h2>
-            <button type="button" onClick={() => setSelectedFunnel('google')}
-              className={cn('w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-left transition-colors hover:bg-[var(--surface-hover)]',
-                selectedFunnel === 'google' && 'border-[var(--primary)] bg-[var(--primary)]/5')}>
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', selectedFunnel === 'google' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--surface-hover)] text-[var(--text-secondary)]')}>
-                    <Target size={18} />
+            {[
+              { id: 'google', label: 'Google Ads', sub: 'High intent • PPC', Icon: Target },
+              { id: 'intaker', label: 'Intaker Chat', sub: 'Automated • High volume', Icon: Zap },
+              { id: 'organic', label: 'Organic Search', sub: 'SEO • Content', Icon: Globe },
+              { id: 'social', label: 'Social Media', sub: 'Paid + Organic social', Icon: Share2 },
+              { id: 'referrals', label: 'Referrals', sub: 'Attorney & client referrals', Icon: Link2 },
+              { id: 'callrail', label: 'CallRail', sub: 'Phone • Inbound calls', Icon: PhoneCall },
+            ].map(({ id, label, sub, Icon }) => (
+              <button key={id} type="button" onClick={() => setSelectedFunnel(id)}
+                className={cn('w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-left transition-colors hover:bg-[var(--surface-hover)]',
+                  selectedFunnel === id && 'border-[var(--primary)] bg-[var(--primary)]/5')}>
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', selectedFunnel === id ? 'bg-[var(--primary)] text-white' : 'bg-[var(--surface-hover)] text-[var(--text-secondary)]')}>
+                      <Icon size={18} />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-[var(--text-primary)]">{label}</div>
+                      <div className="text-xs text-[var(--text-secondary)]">{sub}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-semibold text-[var(--text-primary)]">Google Ads</div>
-                    <div className="text-xs text-[var(--text-secondary)]">High intent • PPC</div>
-                  </div>
+                  {selectedFunnel === id && <div className="h-2 w-2 rounded-full bg-[var(--primary)]" />}
                 </div>
-                {selectedFunnel === 'google' && <div className="h-2 w-2 rounded-full bg-[var(--primary)]" />}
-              </div>
-            </button>
-            <button type="button" onClick={() => setSelectedFunnel('intaker')}
-              className={cn('w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-left transition-colors hover:bg-[var(--surface-hover)]',
-                selectedFunnel === 'intaker' && 'border-[var(--primary)] bg-[var(--primary)]/5')}>
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', selectedFunnel === 'intaker' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--surface-hover)] text-[var(--text-secondary)]')}>
-                    <Zap size={18} />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-[var(--text-primary)]">Intaker Chat</div>
-                    <div className="text-xs text-[var(--text-secondary)]">Automated • High volume</div>
-                  </div>
-                </div>
-                {selectedFunnel === 'intaker' && <div className="h-2 w-2 rounded-full bg-[var(--primary)]" />}
-              </div>
-            </button>
+              </button>
+            ))}
           </div>
 
           <Card className="overflow-hidden lg:col-span-2">
