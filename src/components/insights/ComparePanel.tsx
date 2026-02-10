@@ -26,15 +26,49 @@ const presets: { id: ComparePreset; label: string; sub: string }[] = [
   { id: 'custom', label: 'Custom Range', sub: 'Pick any two date ranges' },
 ];
 
-// Mock comparison data
-const comparisonMetrics = [
-  { label: 'Total Leads', current: 1247, compare: 1098, unit: '' },
-  { label: 'Qualified', current: 438, compare: 405, unit: '' },
-  { label: 'Contact Rate', current: 68.4, compare: 65.2, unit: '%' },
-  { label: 'CPL', current: 29.57, compare: 32.14, unit: '$', inverse: true },
-  { label: 'ROAS', current: 3.2, compare: 2.8, unit: 'x' },
-  { label: 'Conversion', current: 24.7, compare: 22.1, unit: '%' },
-];
+// Mock comparison data — varies by preset to show different historical periods
+const comparisonByPreset: Record<string, { label: string; current: number; compare: number; unit: string; inverse?: boolean }[]> = {
+  prev_week: [
+    { label: 'Total Leads', current: 1247, compare: 1098, unit: '' },
+    { label: 'Qualified', current: 438, compare: 405, unit: '' },
+    { label: 'Contact Rate', current: 68.4, compare: 65.2, unit: '%' },
+    { label: 'CPL', current: 29.57, compare: 32.14, unit: '$', inverse: true },
+    { label: 'ROAS', current: 3.2, compare: 2.8, unit: 'x' },
+    { label: 'Conversion', current: 24.7, compare: 22.1, unit: '%' },
+  ],
+  prev_month: [
+    { label: 'Total Leads', current: 1247, compare: 1152, unit: '' },
+    { label: 'Qualified', current: 438, compare: 392, unit: '' },
+    { label: 'Contact Rate', current: 68.4, compare: 62.8, unit: '%' },
+    { label: 'CPL', current: 29.57, compare: 34.82, unit: '$', inverse: true },
+    { label: 'ROAS', current: 3.2, compare: 2.6, unit: 'x' },
+    { label: 'Conversion', current: 24.7, compare: 20.4, unit: '%' },
+  ],
+  prev_quarter: [
+    { label: 'Total Leads', current: 1247, compare: 982, unit: '' },
+    { label: 'Qualified', current: 438, compare: 318, unit: '' },
+    { label: 'Contact Rate', current: 68.4, compare: 58.1, unit: '%' },
+    { label: 'CPL', current: 29.57, compare: 38.90, unit: '$', inverse: true },
+    { label: 'ROAS', current: 3.2, compare: 2.1, unit: 'x' },
+    { label: 'Conversion', current: 24.7, compare: 17.8, unit: '%' },
+  ],
+  same_month_ly: [
+    { label: 'Total Leads', current: 1247, compare: 845, unit: '' },
+    { label: 'Qualified', current: 438, compare: 268, unit: '' },
+    { label: 'Contact Rate', current: 68.4, compare: 52.3, unit: '%' },
+    { label: 'CPL', current: 29.57, compare: 42.18, unit: '$', inverse: true },
+    { label: 'ROAS', current: 3.2, compare: 1.8, unit: 'x' },
+    { label: 'Conversion', current: 24.7, compare: 15.2, unit: '%' },
+  ],
+  custom: [
+    { label: 'Total Leads', current: 1247, compare: 1010, unit: '' },
+    { label: 'Qualified', current: 438, compare: 350, unit: '' },
+    { label: 'Contact Rate', current: 68.4, compare: 60.5, unit: '%' },
+    { label: 'CPL', current: 29.57, compare: 36.40, unit: '$', inverse: true },
+    { label: 'ROAS', current: 3.2, compare: 2.3, unit: 'x' },
+    { label: 'Conversion', current: 24.7, compare: 18.9, unit: '%' },
+  ],
+};
 
 function getDefaultCompareRange(preset: ComparePreset): { from: Date; to: Date } | null {
   const now = new Date();
