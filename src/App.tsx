@@ -33,6 +33,7 @@ function App() {
                 <Route path="system-integrity" element={<SystemIntegrity />} />
                 <Route path="admin" element={<Admin />} />
                 <Route path="styleguide" element={<DesignSystem />} />
+                <Route path="staff" element={<Staff />} />
               </Route>
             ) : (
               <Route path="*" element={<Navigate to="/login" replace />} />

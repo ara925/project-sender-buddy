@@ -79,7 +79,7 @@ export const staffMembers: StaffMember[] = [
   },
   {
     id: 's6',
-    name: 'Kevin O'Brien',
+    name: "Kevin O'Brien",
     role: 'intake_specialist',
     status: 'offline',
     currentCalls: 0,
