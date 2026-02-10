@@ -1,402 +1,155 @@
-import { useState } from 'react';
-import { Sparkles, CheckCircle2, AlertTriangle, XCircle, Activity, Clock, ArrowUpRight, ChevronDown, Globe, Headset, Shield } from 'lucide-react';
+import { Activity, Globe, CheckCircle2, AlertTriangle, XCircle, Shield, Headset, Sparkles } from 'lucide-react';
+import { StatusCard, type SystemStatus } from '@/components/dashboard/StatusCard';
+import { StaffCard } from '@/components/dashboard/StaffCard';
+import { InvestigationsCard } from '@/components/dashboard/InvestigationsCard';
 import { staffMembers } from '@/data/mock-staff';
-import { investigations, severityConfig } from '@/data/mock-investigations';
-import { Link } from 'react-router-dom';
+import { investigations } from '@/data/mock-investigations';
 
-const systemStatuses = [
-  { name: 'Intaker', status: 'operational' as const, message: 'All services running normally', uptime: '99.98%', lastChecked: '2 mins ago' },
-  { name: 'CallRail', status: 'degraded' as const, message: 'Intermittent delays in call logging (~2 min lag)', uptime: '97.4%', lastChecked: '1 min ago' },
-  { name: 'LeadDocket', status: 'operational' as const, message: 'All services running normally', uptime: '99.95%', lastChecked: '3 mins ago' },
-  { name: 'Filevine', status: 'operational' as const, message: 'All services running normally', uptime: '99.99%', lastChecked: '1 min ago' },
-  { name: 'Google Ads API', status: 'operational' as const, message: 'All services running normally', uptime: '99.97%', lastChecked: '5 mins ago' },
-  { name: 'Internal CRM Sync', status: 'down' as const, message: 'Sync halted — authentication token expired. Re-authenticate to restore data flow.', uptime: '91.2%', lastChecked: 'Just now' },
+const systemStatuses: SystemStatus[] = [
+  { name: 'Intaker', status: 'operational', message: 'All services running normally', uptime: '99.98%', lastChecked: '2 mins ago' },
+  { name: 'CallRail', status: 'degraded', message: 'Intermittent delays in call logging (~2 min lag)', uptime: '97.4%', lastChecked: '1 min ago' },
+  { name: 'LeadDocket', status: 'operational', message: 'All services running normally', uptime: '99.95%', lastChecked: '3 mins ago' },
+  { name: 'Filevine', status: 'operational', message: 'All services running normally', uptime: '99.99%', lastChecked: '1 min ago' },
+  { name: 'Google Ads API', status: 'operational', message: 'All services running normally', uptime: '99.97%', lastChecked: '5 mins ago' },
+  { name: 'Internal CRM Sync', status: 'down', message: 'Sync halted — authentication token expired.', uptime: '91.2%', lastChecked: 'Just now' },
 ];
 
-type StatusType = 'operational' | 'degraded' | 'down';
-
-const websiteStatuses: { name: string; status: StatusType; message: string; uptime: string; lastChecked: string }[] = [
+const websiteStatuses: SystemStatus[] = [
   { name: 'wilshirelawfirm.com', status: 'operational', message: 'Site responding normally', uptime: '99.99%', lastChecked: '1 min ago' },
   { name: 'wilshirelaw.com', status: 'operational', message: 'Site responding normally', uptime: '99.97%', lastChecked: '2 mins ago' },
   { name: 'employeerights.wilshirelaw.com', status: 'operational', message: 'Site responding normally', uptime: '99.95%', lastChecked: '3 mins ago' },
 ];
 
-const statusConfig = {
-  operational: { icon: CheckCircle2, label: 'Operational', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', dot: 'bg-emerald-500' },
-  degraded: { icon: AlertTriangle, label: 'Degraded', color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20', dot: 'bg-amber-500' },
-  down: { icon: XCircle, label: 'Down', color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/20', dot: 'bg-red-500' },
-};
-
 export function Dashboard() {
-  const [expanded, setExpanded] = useState(false);
-  const [websitesExpanded, setWebsitesExpanded] = useState(false);
-  const [staffExpanded, setStaffExpanded] = useState(false);
-  const [investigationsExpanded, setInvestigationsExpanded] = useState(false);
+  // Compute summary KPIs
+  const sysOk = systemStatuses.filter(s => s.status === 'operational').length;
+  const sysDegraded = systemStatuses.filter(s => s.status === 'degraded').length;
+  const sysDown = systemStatuses.filter(s => s.status === 'down').length;
+  const webOk = websiteStatuses.filter(s => s.status === 'operational').length;
+  const staffIssues = staffMembers.filter(s => s.issue).length;
+  const onFloor = staffMembers.filter(s => s.status !== 'offline').length;
+  const activeInv = investigations.filter(i => i.status === 'open' || i.status === 'reviewing' || i.status === 'confirmed').length;
 
-  const webOperationalCount = websiteStatuses.filter(s => s.status === 'operational').length;
-  const webDegradedCount = websiteStatuses.filter(s => s.status === 'degraded').length;
-  const webDownCount = websiteStatuses.filter(s => s.status === 'down').length;
-  const allWebsitesOperational = webDegradedCount === 0 && webDownCount === 0;
-  const webIssueCount = webDegradedCount + webDownCount;
-  const operationalCount = systemStatuses.filter(s => s.status === 'operational').length;
-  const degradedCount = systemStatuses.filter(s => s.status === 'degraded').length;
-  const downCount = systemStatuses.filter(s => s.status === 'down').length;
-  const allOperational = degradedCount === 0 && downCount === 0;
-
-  const issueCount = degradedCount + downCount;
+  const overallHealth = sysDown === 0 && sysDegraded === 0 && staffIssues === 0 && activeInv === 0;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      {/* Page Header */}
+      {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)]">Dashboard</h1>
           <p className="text-[var(--text-secondary)] mt-1">System health & operational status</p>
         </div>
-        <div className="px-3 py-1.5 rounded-md bg-[var(--surface)] border border-[var(--border)] flex items-center gap-2">
+        <div className="px-3 py-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)] flex items-center gap-2">
           <Sparkles size={14} className="text-[var(--primary)]" />
           <span className="text-xs font-medium text-[var(--text-secondary)]">Live Updates</span>
         </div>
       </div>
 
-      {/* Collapsible System Status */}
-      <div className={`card overflow-hidden border transition-colors ${allOperational ? 'border-emerald-500/20' : 'border-amber-500/20'}`}>
-        {/* Clickable Banner */}
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="w-full p-4 flex items-center justify-between hover:bg-[var(--surface-hover)] transition-colors cursor-pointer"
-        >
-          <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-xl ${allOperational ? 'bg-emerald-500/10' : 'bg-amber-500/10'}`}>
-              <Activity size={18} className={allOperational ? 'text-emerald-500' : 'text-amber-500'} />
+      {/* Summary KPI Strip */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className={`p-1.5 rounded-lg ${sysDown > 0 || sysDegraded > 0 ? 'bg-amber-500/10' : 'bg-emerald-500/10'}`}>
+              <Activity size={14} className={sysDown > 0 || sysDegraded > 0 ? 'text-amber-500' : 'text-emerald-500'} />
             </div>
-            <div className="text-left">
-              <h2 className="text-sm font-semibold text-[var(--text-primary)]">
-                {allOperational ? 'All Systems Operational' : `${issueCount} System${issueCount > 1 ? 's' : ''} Need${issueCount === 1 ? 's' : ''} Attention`}
-              </h2>
-              <p className="text-xs text-[var(--text-secondary)]">
-                {operationalCount}/{systemStatuses.length} operational
-                {degradedCount > 0 && <span className="text-amber-500"> · {degradedCount} degraded</span>}
-                {downCount > 0 && <span className="text-red-500"> · {downCount} down</span>}
-              </p>
-            </div>
+            <span className="text-[11px] font-medium text-[var(--text-secondary)]">Systems</span>
           </div>
-          <div className="flex items-center gap-3">
-            {/* Status dots summary */}
-            <div className="hidden sm:flex items-center gap-1">
-              {systemStatuses.map((s) => (
-                <span key={s.name} className={`h-2 w-2 rounded-full ${statusConfig[s.status].dot}`} title={s.name} />
-              ))}
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-              <Clock size={11} />
-              <span className="hidden sm:inline">Just now</span>
-            </div>
-            <ChevronDown
-              size={16}
-              className={`text-[var(--text-muted)] transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
-            />
-          </div>
-        </button>
-
-        {/* Expandable Content */}
-        <div
-          className={`transition-all duration-300 ease-in-out overflow-hidden ${expanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}
-        >
-          <div className="border-t border-[var(--border)]">
-            {/* Summary row */}
-            <div className="grid grid-cols-3 gap-px bg-[var(--border)]">
-              <div className="bg-[var(--surface)] p-4 text-center">
-                <div className="flex items-center justify-center gap-1.5 mb-1">
-                  <CheckCircle2 size={14} className="text-emerald-500" />
-                  <span className="text-xs font-medium text-[var(--text-secondary)]">Operational</span>
-                </div>
-                <span className="text-xl font-bold text-[var(--text-primary)]">{operationalCount}</span>
-              </div>
-              <div className="bg-[var(--surface)] p-4 text-center">
-                <div className="flex items-center justify-center gap-1.5 mb-1">
-                  <AlertTriangle size={14} className="text-amber-500" />
-                  <span className="text-xs font-medium text-[var(--text-secondary)]">Degraded</span>
-                </div>
-                <span className="text-xl font-bold text-[var(--text-primary)]">{degradedCount}</span>
-              </div>
-              <div className="bg-[var(--surface)] p-4 text-center">
-                <div className="flex items-center justify-center gap-1.5 mb-1">
-                  <XCircle size={14} className="text-red-500" />
-                  <span className="text-xs font-medium text-[var(--text-secondary)]">Down</span>
-                </div>
-                <span className="text-xl font-bold text-[var(--text-primary)]">{downCount}</span>
-              </div>
-            </div>
-
-            {/* System list */}
-            <div className="divide-y divide-[var(--border)]">
-              {systemStatuses.map((system) => {
-                const config = statusConfig[system.status];
-                const StatusIcon = config.icon;
-                return (
-                  <div key={system.name} className="flex items-center justify-between p-4 hover:bg-[var(--surface-hover)] transition-colors">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className={`p-2 rounded-lg ${config.bg}`}>
-                        <StatusIcon size={16} className={config.color} />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-[var(--text-primary)]">{system.name}</p>
-                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide ${config.bg} ${config.color} border ${config.border}`}>
-                            <span className={`h-1.5 w-1.5 rounded-full ${config.dot}`} />
-                            {config.label}
-                          </span>
-                        </div>
-                        <p className="text-xs text-[var(--text-secondary)] mt-0.5 truncate">{system.message}</p>
-                      </div>
-                    </div>
-                    <div className="text-right ml-4 shrink-0">
-                      <div className="flex items-center gap-1 text-xs font-medium text-[var(--text-primary)]">
-                        <ArrowUpRight size={10} className="text-emerald-500" />
-                        {system.uptime}
-                      </div>
-                      <span className="text-[10px] text-[var(--text-muted)]">{system.lastChecked}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+          <p className="text-xl font-bold text-[var(--text-primary)]">{sysOk}/{systemStatuses.length}</p>
+          <div className="flex items-center gap-1.5 mt-1">
+            {sysDown > 0 && (
+              <span className="flex items-center gap-0.5 text-[10px] font-medium text-red-500">
+                <XCircle size={9} /> {sysDown} down
+              </span>
+            )}
+            {sysDegraded > 0 && (
+              <span className="flex items-center gap-0.5 text-[10px] font-medium text-amber-500">
+                <AlertTriangle size={9} /> {sysDegraded} degraded
+              </span>
+            )}
+            {sysDown === 0 && sysDegraded === 0 && (
+              <span className="flex items-center gap-0.5 text-[10px] font-medium text-emerald-500">
+                <CheckCircle2 size={9} /> All operational
+              </span>
+            )}
           </div>
         </div>
-      </div>
-      {/* Collapsible Website Status */}
-      <div className={`card overflow-hidden border transition-colors ${allWebsitesOperational ? 'border-emerald-500/20' : 'border-amber-500/20'}`}>
-        <button
-          onClick={() => setWebsitesExpanded(!websitesExpanded)}
-          className="w-full p-4 flex items-center justify-between hover:bg-[var(--surface-hover)] transition-colors cursor-pointer"
-        >
-          <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-xl ${allWebsitesOperational ? 'bg-emerald-500/10' : 'bg-amber-500/10'}`}>
-              <Globe size={18} className={allWebsitesOperational ? 'text-emerald-500' : 'text-amber-500'} />
-            </div>
-            <div className="text-left">
-              <h2 className="text-sm font-semibold text-[var(--text-primary)]">
-                {allWebsitesOperational ? 'All Websites Online' : `${webIssueCount} Website${webIssueCount > 1 ? 's' : ''} Need${webIssueCount === 1 ? 's' : ''} Attention`}
-              </h2>
-              <p className="text-xs text-[var(--text-secondary)]">
-                {webOperationalCount}/{websiteStatuses.length} online
-                {webDegradedCount > 0 && <span className="text-amber-500"> · {webDegradedCount} degraded</span>}
-                {webDownCount > 0 && <span className="text-red-500"> · {webDownCount} down</span>}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-1">
-              {websiteStatuses.map((s) => (
-                <span key={s.name} className={`h-2 w-2 rounded-full ${statusConfig[s.status].dot}`} title={s.name} />
-              ))}
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-              <Clock size={11} />
-              <span className="hidden sm:inline">Just now</span>
-            </div>
-            <ChevronDown
-              size={16}
-              className={`text-[var(--text-muted)] transition-transform duration-200 ${websitesExpanded ? 'rotate-180' : ''}`}
-            />
-          </div>
-        </button>
 
-        <div
-          className={`transition-all duration-300 ease-in-out overflow-hidden ${websitesExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}
-        >
-          <div className="border-t border-[var(--border)]">
-            <div className="divide-y divide-[var(--border)]">
-              {websiteStatuses.map((site) => {
-                const config = statusConfig[site.status];
-                const StatusIcon = config.icon;
-                return (
-                  <div key={site.name} className="flex items-center justify-between p-4 hover:bg-[var(--surface-hover)] transition-colors">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className={`p-2 rounded-lg ${config.bg}`}>
-                        <StatusIcon size={16} className={config.color} />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-[var(--text-primary)]">{site.name}</p>
-                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide ${config.bg} ${config.color} border ${config.border}`}>
-                            <span className={`h-1.5 w-1.5 rounded-full ${config.dot}`} />
-                            {config.label}
-                          </span>
-                        </div>
-                        <p className="text-xs text-[var(--text-secondary)] mt-0.5 truncate">{site.message}</p>
-                      </div>
-                    </div>
-                    <div className="text-right ml-4 shrink-0">
-                      <div className="flex items-center gap-1 text-xs font-medium text-[var(--text-primary)]">
-                        <ArrowUpRight size={10} className="text-emerald-500" />
-                        {site.uptime}
-                      </div>
-                      <span className="text-[10px] text-[var(--text-muted)]">{site.lastChecked}</span>
-                    </div>
-                  </div>
-                );
-              })}
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="p-1.5 rounded-lg bg-emerald-500/10">
+              <Globe size={14} className="text-emerald-500" />
             </div>
+            <span className="text-[11px] font-medium text-[var(--text-secondary)]">Websites</span>
           </div>
+          <p className="text-xl font-bold text-[var(--text-primary)]">{webOk}/{websiteStatuses.length}</p>
+          <span className="flex items-center gap-0.5 text-[10px] font-medium text-emerald-500 mt-1">
+            <CheckCircle2 size={9} /> All online
+          </span>
+        </div>
+
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className={`p-1.5 rounded-lg ${staffIssues > 0 ? 'bg-red-500/10' : 'bg-emerald-500/10'}`}>
+              <Headset size={14} className={staffIssues > 0 ? 'text-red-500' : 'text-emerald-500'} />
+            </div>
+            <span className="text-[11px] font-medium text-[var(--text-secondary)]">Staff</span>
+          </div>
+          <p className="text-xl font-bold text-[var(--text-primary)]">{onFloor} on floor</p>
+          {staffIssues > 0 ? (
+            <span className="flex items-center gap-0.5 text-[10px] font-medium text-red-500 mt-1">
+              <AlertTriangle size={9} /> {staffIssues} issues
+            </span>
+          ) : (
+            <span className="flex items-center gap-0.5 text-[10px] font-medium text-emerald-500 mt-1">
+              <CheckCircle2 size={9} /> All normal
+            </span>
+          )}
+        </div>
+
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className={`p-1.5 rounded-lg ${activeInv > 0 ? 'bg-red-500/10' : 'bg-emerald-500/10'}`}>
+              <Shield size={14} className={activeInv > 0 ? 'text-red-500' : 'text-emerald-500'} />
+            </div>
+            <span className="text-[11px] font-medium text-[var(--text-secondary)]">Investigations</span>
+          </div>
+          <p className="text-xl font-bold text-[var(--text-primary)]">{activeInv}</p>
+          {activeInv > 0 ? (
+            <span className="flex items-center gap-0.5 text-[10px] font-medium text-red-500 mt-1">
+              <AlertTriangle size={9} /> Active cases
+            </span>
+          ) : (
+            <span className="flex items-center gap-0.5 text-[10px] font-medium text-emerald-500 mt-1">
+              <CheckCircle2 size={9} /> None active
+            </span>
+          )}
         </div>
       </div>
-      {/* Staff Issues */}
-      {(() => {
-        const staffIssues = staffMembers.filter(s => s.issue);
-        const onFloor = staffMembers.filter(s => s.status !== 'offline').length;
-        const hasIssues = staffIssues.length > 0;
-        return (
-          <div className={`card overflow-hidden border transition-colors ${hasIssues ? 'border-red-500/20' : 'border-emerald-500/20'}`}>
-            <button
-              onClick={() => setStaffExpanded(!staffExpanded)}
-              className="w-full p-4 flex items-center justify-between hover:bg-[var(--surface-hover)] transition-colors cursor-pointer"
-            >
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-xl ${hasIssues ? 'bg-red-500/10' : 'bg-emerald-500/10'}`}>
-                  <Headset size={18} className={hasIssues ? 'text-red-500' : 'text-emerald-500'} />
-                </div>
-                <div className="text-left">
-                  <h2 className="text-sm font-semibold text-[var(--text-primary)]">
-                    {hasIssues ? `${staffIssues.length} Staff Issue${staffIssues.length > 1 ? 's' : ''}` : 'All Staff Operating Normally'}
-                  </h2>
-                  <p className="text-xs text-[var(--text-secondary)]">
-                    {onFloor} on floor
-                    {hasIssues && <span className="text-red-500"> · {staffIssues.length} need attention</span>}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                {/* Status dots */}
-                <div className="hidden sm:flex items-center gap-1">
-                  {staffMembers.filter(s => s.status !== 'offline').map(s => (
-                    <span key={s.id} className={`h-2 w-2 rounded-full ${s.issue ? 'bg-red-500' : 'bg-emerald-500'}`} title={s.name} />
-                  ))}
-                </div>
-                <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-                  <Clock size={11} />
-                  <span className="hidden sm:inline">Live</span>
-                </div>
-                <ChevronDown
-                  size={16}
-                  className={`text-[var(--text-muted)] transition-transform duration-200 ${staffExpanded ? 'rotate-180' : ''}`}
-                />
-              </div>
-            </button>
 
-            <div
-              className={`transition-all duration-300 ease-in-out overflow-hidden ${staffExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}
-            >
-              <div className="border-t border-[var(--border)]">
-                {hasIssues && (
-                  <div className="divide-y divide-[var(--border)]">
-                    {staffIssues.map(member => (
-                      <div key={member.id} className="flex items-center gap-3 p-4 hover:bg-[var(--surface-hover)] transition-colors">
-                        <div className="h-8 w-8 rounded-full bg-red-500/10 flex items-center justify-center text-xs font-semibold text-red-500">
-                          {member.name.split(' ').map(n => n[0]).join('')}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-[var(--text-primary)]">{member.name}</p>
-                          <p className="text-xs text-red-400 truncate">{member.issue}</p>
-                        </div>
-                        <AlertTriangle size={14} className="text-red-500 shrink-0" />
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {!hasIssues && (
-                  <div className="p-4 text-center text-xs text-[var(--text-muted)]">No active issues — all staff performing normally.</div>
-                )}
-                <div className="border-t border-[var(--border)] p-3 flex justify-center">
-                  <Link to="/staff" className="text-xs font-medium text-[var(--primary)] hover:underline">
-                    View All Staff →
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
-      {/* Lead Investigations */}
-      {(() => {
-        const activeInv = investigations.filter(i => i.status === 'open' || i.status === 'reviewing');
-        const confirmedInv = investigations.filter(i => i.status === 'confirmed');
-        const hasIssues = activeInv.length > 0 || confirmedInv.length > 0;
-        const totalActive = activeInv.length + confirmedInv.length;
-        return (
-          <div className={`card overflow-hidden border transition-colors ${hasIssues ? 'border-red-500/20' : 'border-emerald-500/20'}`}>
-            <button
-              onClick={() => setInvestigationsExpanded(!investigationsExpanded)}
-              className="w-full p-4 flex items-center justify-between hover:bg-[var(--surface-hover)] transition-colors cursor-pointer"
-            >
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-xl ${hasIssues ? 'bg-red-500/10' : 'bg-emerald-500/10'}`}>
-                  <Shield size={18} className={hasIssues ? 'text-red-500' : 'text-emerald-500'} />
-                </div>
-                <div className="text-left">
-                  <h2 className="text-sm font-semibold text-[var(--text-primary)]">
-                    {hasIssues ? `${totalActive} Lead Investigation${totalActive > 1 ? 's' : ''} Active` : 'No Active Investigations'}
-                  </h2>
-                  <p className="text-xs text-[var(--text-secondary)]">
-                    {activeInv.length} open
-                    {confirmedInv.length > 0 && <span className="text-red-500"> · {confirmedInv.length} confirmed theft</span>}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="hidden sm:flex items-center gap-1">
-                  {[...activeInv, ...confirmedInv].map(inv => (
-                    <span key={inv.id} className={`h-2 w-2 rounded-full ${severityConfig[inv.severity].color.replace('text-', 'bg-')}`} title={inv.leadName} />
-                  ))}
-                </div>
-                <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-                  <Clock size={11} />
-                  <span className="hidden sm:inline">Live</span>
-                </div>
-                <ChevronDown
-                  size={16}
-                  className={`text-[var(--text-muted)] transition-transform duration-200 ${investigationsExpanded ? 'rotate-180' : ''}`}
-                />
-              </div>
-            </button>
-
-            <div className={`transition-all duration-300 ease-in-out overflow-hidden ${investigationsExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}>
-              <div className="border-t border-[var(--border)]">
-                {hasIssues ? (
-                  <div className="divide-y divide-[var(--border)]">
-                    {[...confirmedInv, ...activeInv].map(inv => {
-                      const sevConf = severityConfig[inv.severity];
-                      return (
-                        <div key={inv.id} className="flex items-center gap-3 p-4 hover:bg-[var(--surface-hover)] transition-colors">
-                          <div className={`p-1.5 rounded-lg ${sevConf.bg}`}>
-                            <AlertTriangle size={12} className={sevConf.color} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <p className="text-sm font-medium text-[var(--text-primary)]">{inv.leadName}</p>
-                              <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-semibold ${sevConf.bg} ${sevConf.color}`}>{sevConf.label}</span>
-                            </div>
-                            <p className="text-xs text-[var(--text-secondary)] truncate">{inv.flag}</p>
-                          </div>
-                          <span className="text-[10px] text-[var(--text-muted)] shrink-0">Agent: {inv.agentName}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="p-4 text-center text-xs text-[var(--text-muted)]">No active investigations.</div>
-                )}
-                <div className="border-t border-[var(--border)] p-3 flex justify-center">
-                  <Link to="/leads" className="text-xs font-medium text-[var(--primary)] hover:underline">
-                    View All Investigations →
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
+      {/* Status Cards — 2-column grid on larger screens */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <StatusCard
+          statuses={systemStatuses}
+          icon={Activity}
+          title={{
+            ok: 'All Systems Operational',
+            issue: (n) => `${n} System${n > 1 ? 's' : ''} Need${n === 1 ? 's' : ''} Attention`,
+          }}
+          countLabel={{ ok: 'operational' }}
+        />
+        <StatusCard
+          statuses={websiteStatuses}
+          icon={Globe}
+          title={{
+            ok: 'All Websites Online',
+            issue: (n) => `${n} Website${n > 1 ? 's' : ''} Need${n === 1 ? 's' : ''} Attention`,
+          }}
+          countLabel={{ ok: 'online' }}
+        />
+        <StaffCard />
+        <InvestigationsCard />
+      </div>
     </div>
   );
 }
