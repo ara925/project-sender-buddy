@@ -144,14 +144,6 @@ export function ComparePanel({ config, onChange }: Props) {
           )}
         </PopoverContent>
       </Popover>
-
-      {/* Comparison Results Bar */}
-      {isActive && config.compareRange && (
-        <ComparisonResultsBar
-          currentLabel={`${format(config.currentRange.from, 'MMM d')} – ${format(config.currentRange.to, 'MMM d')}`}
-          compareLabel={`${format(config.compareRange.from, 'MMM d')} – ${format(config.compareRange.to, 'MMM d')}`}
-        />
-      )}
     </>
   );
 }
