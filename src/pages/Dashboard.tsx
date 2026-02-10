@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Sparkles, CheckCircle2, AlertTriangle, XCircle, Activity, Clock, ArrowUpRight, ChevronDown, Globe, Headset } from 'lucide-react';
+import { Sparkles, CheckCircle2, AlertTriangle, XCircle, Activity, Clock, ArrowUpRight, ChevronDown, Globe, Headset, Shield } from 'lucide-react';
 import { staffMembers } from '@/data/mock-staff';
+import { investigations, severityConfig } from '@/data/mock-investigations';
 import { Link } from 'react-router-dom';
 
 const systemStatuses = [
