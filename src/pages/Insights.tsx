@@ -270,7 +270,11 @@ export function Insights() {
         {suggestions.map((suggestion) => {
           const tone = suggestionTone(suggestion.type);
           return (
-            <Card key={suggestion.id} className="relative overflow-hidden p-5">
+            <Card
+              key={suggestion.id}
+              className="relative overflow-hidden p-5 cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => setActionDrawer(suggestion.actionKey)}
+            >
               <div className={cn('absolute inset-x-0 top-0 h-0.5', tone.topBorder)} aria-hidden="true" />
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3 min-w-0">
@@ -286,9 +290,9 @@ export function Insights() {
                   {suggestion.metric}
                 </span>
               </div>
-              <div className="mt-4 flex items-center justify-between text-xs font-medium text-[var(--text-muted)]">
+              <div className="mt-4 flex items-center justify-between text-xs font-medium text-[var(--primary)] group">
                 <span>{suggestion.action}</span>
-                <ArrowRight size={14} className="text-[var(--text-muted)]" />
+                <ArrowRight size={14} className="text-[var(--primary)] transition-transform group-hover:translate-x-1" />
               </div>
             </Card>
           );
