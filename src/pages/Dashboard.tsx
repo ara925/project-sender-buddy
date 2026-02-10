@@ -31,6 +31,7 @@ export function Dashboard() {
   const [expanded, setExpanded] = useState(false);
   const [websitesExpanded, setWebsitesExpanded] = useState(false);
   const [staffExpanded, setStaffExpanded] = useState(false);
+  const [investigationsExpanded, setInvestigationsExpanded] = useState(false);
 
   const webOperationalCount = websiteStatuses.filter(s => s.status === 'operational').length;
   const webDegradedCount = websiteStatuses.filter(s => s.status === 'degraded').length;
