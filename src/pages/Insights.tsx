@@ -6,6 +6,7 @@ import {
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { Badge, Button, Card } from '@/components/ui';
 import { cn } from '@/lib/utils';
+import { MetricDetailDrawer } from '@/components/insights/MetricDetailDrawer';
 
 const keyMetrics = [
   { label: 'Total Leads', value: '1,247', change: '+12%', positive: true, icon: Users, description: 'All sources combined' },
@@ -91,6 +92,7 @@ const suggestionTone = (type: string) => {
 export function Insights() {
   const [activeTab, setActiveTab] = useState<'weekly' | 'funnels'>('weekly');
   const [selectedFunnel, setSelectedFunnel] = useState<keyof typeof funnelData>('google');
+  const [selectedMetric, setSelectedMetric] = useState<typeof keyMetrics[number] | null>(null);
 
   const tabClass = (active: boolean) =>
     cn(
@@ -131,7 +133,7 @@ export function Insights() {
         {keyMetrics.map((metric) => {
           const MetricIcon = metric.icon;
           return (
-            <Card key={metric.label} className="p-4 hover:bg-[var(--surface-hover)] transition-colors">
+            <Card key={metric.label} className="p-4 hover:bg-[var(--surface-hover)] transition-colors cursor-pointer hover:shadow-md" onClick={() => setSelectedMetric(metric)}>
               <div className="flex items-center justify-between mb-2">
                 <div className="p-1.5 rounded-lg bg-[var(--surface-hover)]">
                   <MetricIcon size={14} className="text-[var(--primary)]" />
@@ -344,6 +346,12 @@ export function Insights() {
           </Card>
         </div>
       )}
+
+      <MetricDetailDrawer
+        open={!!selectedMetric}
+        onOpenChange={(open) => !open && setSelectedMetric(null)}
+        metric={selectedMetric}
+      />
     </div>
   );
 }
