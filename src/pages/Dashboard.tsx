@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, CheckCircle2, AlertTriangle, XCircle, Activity, Clock, ArrowUpRight, ChevronDown } from 'lucide-react';
+import { Sparkles, CheckCircle2, AlertTriangle, XCircle, Activity, Clock, ArrowUpRight, ChevronDown, Globe } from 'lucide-react';
 
 const systemStatuses = [
   { name: 'Intaker', status: 'operational' as const, message: 'All services running normally', uptime: '99.98%', lastChecked: '2 mins ago' },
