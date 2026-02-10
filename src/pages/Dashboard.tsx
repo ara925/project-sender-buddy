@@ -239,6 +239,58 @@ export function Dashboard() {
           </div>
         </div>
       </div>
+      {/* Staff Issues */}
+      {(() => {
+        const staffIssues = staffMembers.filter(s => s.issue);
+        const onFloor = staffMembers.filter(s => s.status !== 'offline').length;
+        const hasIssues = staffIssues.length > 0;
+        return (
+          <div className={`card overflow-hidden border transition-colors ${hasIssues ? 'border-red-500/20' : 'border-emerald-500/20'}`}>
+            <Link
+              to="/staff"
+              className="w-full p-4 flex items-center justify-between hover:bg-[var(--surface-hover)] transition-colors cursor-pointer block"
+            >
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-xl ${hasIssues ? 'bg-red-500/10' : 'bg-emerald-500/10'}`}>
+                  <Headset size={18} className={hasIssues ? 'text-red-500' : 'text-emerald-500'} />
+                </div>
+                <div className="text-left">
+                  <h2 className="text-sm font-semibold text-[var(--text-primary)]">
+                    {hasIssues ? `${staffIssues.length} Staff Issue${staffIssues.length > 1 ? 's' : ''}` : 'All Staff Operating Normally'}
+                  </h2>
+                  <p className="text-xs text-[var(--text-secondary)]">
+                    {onFloor} on floor
+                    {hasIssues && <span className="text-red-500"> · {staffIssues.length} need attention</span>}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+                  <Clock size={11} />
+                  <span className="hidden sm:inline">Live</span>
+                </div>
+                <ArrowUpRight size={16} className="text-[var(--text-muted)]" />
+              </div>
+            </Link>
+            {hasIssues && (
+              <div className="border-t border-[var(--border)] divide-y divide-[var(--border)]">
+                {staffIssues.map(member => (
+                  <div key={member.id} className="flex items-center gap-3 p-4">
+                    <div className="h-8 w-8 rounded-full bg-red-500/10 flex items-center justify-center text-xs font-semibold text-red-500">
+                      {member.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-[var(--text-primary)]">{member.name}</p>
+                      <p className="text-xs text-red-400 truncate">{member.issue}</p>
+                    </div>
+                    <AlertTriangle size={14} className="text-red-500 shrink-0" />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })()}
     </div>
   );
 }
