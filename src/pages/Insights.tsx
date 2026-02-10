@@ -126,7 +126,7 @@ const suggestionTone = (type: string) => {
 };
 
 export function Insights() {
-  const [activeTab, setActiveTab] = useState<'weekly' | 'funnels'>('weekly');
+  const [activeTab, setActiveTab] = useState<'weekly' | 'funnels' | 'ai-agents'>('weekly');
   const [selectedFunnel, setSelectedFunnel] = useState<string>('google');
   const [selectedMetric, setSelectedMetric] = useState<typeof keyMetrics[number] | null>(null);
   const [filters, setFilters] = useState<InsightFilters>(emptyFilters);
