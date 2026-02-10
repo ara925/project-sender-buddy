@@ -10,10 +10,12 @@ const systemStatuses = [
   { name: 'Internal CRM Sync', status: 'down' as const, message: 'Sync halted — authentication token expired. Re-authenticate to restore data flow.', uptime: '91.2%', lastChecked: 'Just now' },
 ];
 
-const websiteStatuses = [
-  { name: 'wilshirelawfirm.com', status: 'operational' as const, message: 'Site responding normally', uptime: '99.99%', lastChecked: '1 min ago' },
-  { name: 'wilshirelaw.com', status: 'operational' as const, message: 'Site responding normally', uptime: '99.97%', lastChecked: '2 mins ago' },
-  { name: 'employeerights.wilshirelaw.com', status: 'operational' as const, message: 'Site responding normally', uptime: '99.95%', lastChecked: '3 mins ago' },
+type StatusType = 'operational' | 'degraded' | 'down';
+
+const websiteStatuses: { name: string; status: StatusType; message: string; uptime: string; lastChecked: string }[] = [
+  { name: 'wilshirelawfirm.com', status: 'operational', message: 'Site responding normally', uptime: '99.99%', lastChecked: '1 min ago' },
+  { name: 'wilshirelaw.com', status: 'operational', message: 'Site responding normally', uptime: '99.97%', lastChecked: '2 mins ago' },
+  { name: 'employeerights.wilshirelaw.com', status: 'operational', message: 'Site responding normally', uptime: '99.95%', lastChecked: '3 mins ago' },
 ];
 
 const statusConfig = {
