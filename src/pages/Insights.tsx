@@ -293,7 +293,9 @@ export function Insights() {
         })}
       </div>
 
-      {activeTab === 'weekly' ? (
+      {activeTab === 'ai-agents' ? (
+        <AIAgentPerformanceTab />
+      ) : activeTab === 'weekly' ? (
         <Card className="overflow-hidden">
           <div className="flex items-start justify-between gap-4 border-b border-[var(--border)] px-5 py-4">
             <div className="flex items-start gap-3">
