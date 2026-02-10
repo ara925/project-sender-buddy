@@ -11,6 +11,7 @@ import { InsightFilterPanel, emptyFilters, type InsightFilters } from '@/compone
 import { ColumnTogglePanel, defaultColumns, type ColumnVisibility } from '@/components/insights/ColumnTogglePanel';
 import { ComparePanel, ComparisonResultsBar, getDefaultCompareConfig, type CompareConfig } from '@/components/insights/ComparePanel';
 import { AIAgentPerformanceTab } from '@/components/insights/AIAgentPerformanceTab';
+import { InsightActionDrawer } from '@/components/insights/InsightActionDrawer';
 
 const keyMetrics = [
   { label: 'Total Leads', value: '1,247', change: '+12%', positive: true, icon: Users, description: 'All sources combined' },
@@ -88,17 +89,17 @@ const suggestions = [
   {
     id: 1, type: 'critical', title: 'Reallocate Budget to Intaker',
     description: 'Intaker CPL is $10.43 vs Google Ads $29.57. Moving 20% of budget could yield ~15 extra leads/week.',
-    metric: '+15 Leads', action: 'View Intaker Settings',
+    metric: '+15 Leads', action: 'View Intaker Settings', actionKey: 'intaker' as const,
   },
   {
     id: 2, type: 'warning', title: 'Google Ads Quality Score Drop',
     description: 'Quality score dropped from 9.1 to 8.5. Check landing page loading speed and keyword relevance.',
-    metric: '-0.6 Score', action: 'Review Campaign',
+    metric: '-0.6 Score', action: 'Review Campaign', actionKey: 'campaign' as const,
   },
   {
     id: 3, type: 'success', title: 'CallRail Conversion Spike',
     description: 'Phone leads are converting at 28% this week, significantly above the 19% average.',
-    metric: '+9% Conv.', action: 'Analyze Calls',
+    metric: '+9% Conv.', action: 'Analyze Calls', actionKey: 'calls' as const,
   },
 ];
 
@@ -132,6 +133,7 @@ export function Insights() {
   const [filters, setFilters] = useState<InsightFilters>(emptyFilters);
   const [columns, setColumns] = useState<ColumnVisibility>(defaultColumns);
   const [compareConfig, setCompareConfig] = useState<CompareConfig>(getDefaultCompareConfig());
+  const [actionDrawer, setActionDrawer] = useState<'intaker' | 'campaign' | 'calls' | null>(null);
 
   const tabClass = (active: boolean) =>
     cn(
@@ -268,7 +270,11 @@ export function Insights() {
         {suggestions.map((suggestion) => {
           const tone = suggestionTone(suggestion.type);
           return (
-            <Card key={suggestion.id} className="relative overflow-hidden p-5">
+            <Card
+              key={suggestion.id}
+              className="relative overflow-hidden p-5 cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => setActionDrawer(suggestion.actionKey)}
+            >
               <div className={cn('absolute inset-x-0 top-0 h-0.5', tone.topBorder)} aria-hidden="true" />
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3 min-w-0">
@@ -284,9 +290,9 @@ export function Insights() {
                   {suggestion.metric}
                 </span>
               </div>
-              <div className="mt-4 flex items-center justify-between text-xs font-medium text-[var(--text-muted)]">
+              <div className="mt-4 flex items-center justify-between text-xs font-medium text-[var(--primary)] group">
                 <span>{suggestion.action}</span>
-                <ArrowRight size={14} className="text-[var(--text-muted)]" />
+                <ArrowRight size={14} className="text-[var(--primary)] transition-transform group-hover:translate-x-1" />
               </div>
             </Card>
           );
@@ -483,6 +489,11 @@ export function Insights() {
         open={!!selectedMetric}
         onOpenChange={(open) => !open && setSelectedMetric(null)}
         metric={selectedMetric}
+      />
+      <InsightActionDrawer
+        open={!!actionDrawer}
+        onClose={() => setActionDrawer(null)}
+        actionType={actionDrawer}
       />
     </div>
   );
