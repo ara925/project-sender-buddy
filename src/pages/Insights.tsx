@@ -228,6 +228,7 @@ export function Insights() {
       {/* Comparison Results */}
       {compareConfig.preset !== 'none' && compareConfig.compareRange && (
         <ComparisonResultsBar
+          preset={compareConfig.preset}
           currentLabel={`${new Date(compareConfig.currentRange.from).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${new Date(compareConfig.currentRange.to).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}
           compareLabel={`${new Date(compareConfig.compareRange.from).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${new Date(compareConfig.compareRange.to).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}
         />
