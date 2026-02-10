@@ -1,7 +1,18 @@
-import { Play, Download, ExternalLink, Clock, PhoneIncoming, PhoneOutgoing, PhoneMissed, Voicemail } from 'lucide-react';
+import { Play, Download, ExternalLink, Clock, PhoneIncoming, PhoneOutgoing, PhoneMissed, Voicemail, Bot, Shield, ArrowRightLeft, ThumbsUp, ThumbsDown, Volume2 } from 'lucide-react';
 import { Badge, Button, Card } from '@/components/ui';
 import { formatDateTime, formatDuration, formatPhone, capitalize } from '@/lib/utils';
 import type { Call } from '@/types';
+
+interface AICallMeta {
+  handler: 'ai' | 'human';
+  agentName?: string;
+  contained?: boolean;
+  sentiment?: 'positive' | 'neutral' | 'frustrated' | 'negative';
+  sentimentScore?: number;
+  taskCompletion?: number;
+  escalationReason?: string;
+  qualificationResult?: 'qualified' | 'disqualified' | 'pending';
+}
 
 const mockCalls: Call[] = [
   { id: '1', lead_id: '1', direction: 'inbound', duration: 245, status: 'completed', caller_number: '5551234567', recording_url: '#', callrail_id: 'cr_123', regal_id: 'rg_456', agent_id: null, notes: 'Initial inquiry about personal injury case', created_at: '2024-02-05T14:30:00Z' },
