@@ -170,7 +170,7 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
                     </p>
                   )}
 
-                  <div className="flex items-center gap-2 mt-1.5">
+                  <div className="flex flex-wrap items-center gap-2 mt-1.5">
                     <span
                       className={`inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded border ${platformColors[activity.platform]}`}
                     >
@@ -184,6 +184,36 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
                     {activity.metadata?.duration && (
                       <span className="text-[10px] text-[var(--text-muted)]">
                         · {Math.floor(Number(activity.metadata.duration) / 60)}m {Number(activity.metadata.duration) % 60}s
+                      </span>
+                    )}
+                    {/* AI-specific metadata */}
+                    {activity.platform === 'regal_ai' && activity.metadata?.sentiment && (
+                      <span className={`text-[10px] font-semibold ${
+                        activity.metadata.sentiment === 'positive' ? 'text-emerald-600' :
+                        activity.metadata.sentiment === 'frustrated' ? 'text-amber-600' :
+                        activity.metadata.sentiment === 'negative' ? 'text-red-600' : 'text-[var(--text-muted)]'
+                      }`}>
+                        Sentiment: {Number(activity.metadata.sentimentScore).toFixed(1)}
+                      </span>
+                    )}
+                    {activity.platform === 'regal_ai' && activity.metadata?.taskCompletion !== undefined && (
+                      <span className="text-[10px] text-[var(--text-muted)]">
+                        Task: {String(activity.metadata.taskCompletion)}%
+                      </span>
+                    )}
+                    {activity.platform === 'regal_ai' && activity.metadata?.contained !== undefined && (
+                      <Badge variant={activity.metadata.contained ? 'success' : 'warning'} className="h-4 text-[9px] px-1">
+                        {activity.metadata.contained ? 'Contained' : 'Escalated'}
+                      </Badge>
+                    )}
+                    {activity.platform === 'regal_ai' && activity.metadata?.result && (
+                      <Badge variant={activity.metadata.result === 'qualified' ? 'success' : 'destructive'} className="h-4 text-[9px] px-1">
+                        {String(activity.metadata.result)}
+                      </Badge>
+                    )}
+                    {activity.platform === 'regal_ai' && activity.metadata?.speed_to_lead && (
+                      <span className="text-[10px] text-purple-500 font-semibold">
+                        ⚡ {String(activity.metadata.speed_to_lead)}s to lead
                       </span>
                     )}
                   </div>
