@@ -106,6 +106,36 @@ export function Insights() {
       active ? 'bg-[var(--surface-hover)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)]'
     );
 
+  // Filter the weekly breakdown data
+  const filteredBreakdown = weeklyBreakdown.filter(row => {
+    if (filters.sources.length > 0 && !filters.sources.includes(row.source)) return false;
+    if (filters.minQuality && row.quality < filters.minQuality) return false;
+    if (filters.campaigns.length > 0 && row.source !== 'Google Ads') return false; // campaigns only apply to ads
+    return true;
+  });
+
+  // Compute filtered metrics - scale based on what fraction of sources are selected
+  const hasActiveFilters = filters.sources.length > 0 || filters.caseTypes.length > 0 || filters.statuses.length > 0 || filters.agents.length > 0 || filters.campaigns.length > 0 || !!filters.minQuality;
+  const sourceRatio = filters.sources.length > 0 ? filters.sources.length / 9 : 1;
+  const caseRatio = filters.caseTypes.length > 0 ? filters.caseTypes.length / 8 : 1;
+  const agentRatio = filters.agents.length > 0 ? filters.agents.length / 12 : 1;
+  const filterMultiplier = sourceRatio * caseRatio * agentRatio;
+
+  const filteredMetrics = hasActiveFilters
+    ? keyMetrics.map(m => {
+        // Scale numeric values
+        const rawVal = m.value.replace(/[,$%K]/g, '');
+        const num = parseFloat(rawVal);
+        if (isNaN(num) || m.label === 'Intake Team' || m.label === 'Contact Rate') return m;
+        const scaled = m.value.includes('K')
+          ? `${(num * filterMultiplier).toFixed(1)}K`
+          : m.value.includes('%')
+            ? m.value
+            : Math.round(num * filterMultiplier).toLocaleString();
+        return { ...m, value: scaled };
+      })
+    : keyMetrics;
+
   // Active filter chips for display
   const activeFilterChips = [
     ...filters.sources.map(s => ({ group: 'Source', value: s })),
