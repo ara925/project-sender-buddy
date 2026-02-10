@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { MetricDetailDrawer } from '@/components/insights/MetricDetailDrawer';
 import { InsightFilterPanel, emptyFilters, type InsightFilters } from '@/components/insights/InsightFilterPanel';
 import { ColumnTogglePanel, defaultColumns, type ColumnVisibility } from '@/components/insights/ColumnTogglePanel';
-import { ComparePanel, getDefaultCompareConfig, type CompareConfig } from '@/components/insights/ComparePanel';
+import { ComparePanel, ComparisonResultsBar, getDefaultCompareConfig, type CompareConfig } from '@/components/insights/ComparePanel';
 
 const keyMetrics = [
   { label: 'Total Leads', value: '1,247', change: '+12%', positive: true, icon: Users, description: 'All sources combined' },
