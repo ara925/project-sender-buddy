@@ -182,7 +182,8 @@ export function ComparePanel({ config, onChange }: Props) {
   );
 }
 
-export function ComparisonResultsBar({ currentLabel, compareLabel }: { currentLabel: string; compareLabel: string }) {
+export function ComparisonResultsBar({ currentLabel, compareLabel, preset = 'prev_week' }: { currentLabel: string; compareLabel: string; preset?: string }) {
+  const comparisonMetrics = comparisonByPreset[preset] || comparisonByPreset.prev_week;
   return (
     <Card className="overflow-hidden">
       <div className="px-5 py-3 border-b border-[var(--border)] flex items-center justify-between">
