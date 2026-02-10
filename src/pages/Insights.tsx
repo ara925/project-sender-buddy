@@ -27,8 +27,12 @@ const keyMetrics = [
 const weeklyBreakdown = [
   { source: 'Google Ads', current: 142, lastWeek: 158, threeWeeks: 120, cost: 4200, cpl: 29.57, roas: 3.2, quality: 8.5 },
   { source: 'Intaker', current: 115, lastWeek: 98, threeWeeks: 95, cost: 1200, cpl: 10.43, roas: 5.8, quality: 9.2 },
-  { source: 'Forms', current: 85, lastWeek: 92, threeWeeks: 88, cost: 0, cpl: 0, roas: 0, quality: 7.4 },
+  { source: 'Organic', current: 312, lastWeek: 264, threeWeeks: 248, cost: 0, cpl: 0, roas: 0, quality: 8.8 },
+  { source: 'Referrals', current: 156, lastWeek: 150, threeWeeks: 142, cost: 0, cpl: 0, roas: 0, quality: 9.5 },
+  { source: 'Direct', current: 203, lastWeek: 207, threeWeeks: 195, cost: 0, cpl: 0, roas: 0, quality: 7.8 },
+  { source: 'Social Media', current: 89, lastWeek: 73, threeWeeks: 62, cost: 1840, cpl: 20.67, roas: 2.4, quality: 7.2 },
   { source: 'CallRail', current: 78, lastWeek: 75, threeWeeks: 82, cost: 850, cpl: 10.89, roas: 4.1, quality: 8.0 },
+  { source: 'Forms', current: 85, lastWeek: 92, threeWeeks: 88, cost: 0, cpl: 0, roas: 0, quality: 7.4 },
   { source: 'Manual', current: 32, lastWeek: 28, threeWeeks: 35, cost: 0, cpl: 0, roas: 0, quality: 10.0 },
 ];
 
