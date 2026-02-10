@@ -14,6 +14,39 @@ interface AICallMeta {
   qualificationResult?: 'qualified' | 'disqualified' | 'pending';
 }
 
+const aiCallMeta: Record<string, AICallMeta> = {
+  '1': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: true, sentiment: 'positive', sentimentScore: 8.8, taskCompletion: 100, qualificationResult: 'qualified' },
+  '2': { handler: 'human' },
+  '3': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: false, sentiment: 'frustrated', sentimentScore: 4.2, taskCompletion: 30, escalationReason: 'Customer demanded human', qualificationResult: 'pending' },
+  '4': { handler: 'human' },
+  '5': { handler: 'ai', agentName: 'Regal Agent Gamma', contained: true, sentiment: 'neutral', sentimentScore: 6.5, taskCompletion: 85, qualificationResult: 'pending' },
+  '6': { handler: 'human' },
+  '7': { handler: 'ai', agentName: 'Regal Agent Beta', contained: true, sentiment: 'positive', sentimentScore: 8.1, taskCompletion: 100, qualificationResult: 'qualified' },
+  '8': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: true, sentiment: 'positive', sentimentScore: 9.0, taskCompletion: 100, qualificationResult: 'qualified' },
+  '9': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: false, sentiment: 'negative', sentimentScore: 2.8, taskCompletion: 15, escalationReason: 'Language barrier', qualificationResult: 'pending' },
+  '10': { handler: 'human' },
+  '11': { handler: 'ai', agentName: 'Regal Agent Beta', contained: true, sentiment: 'neutral', sentimentScore: 7.0, taskCompletion: 92, qualificationResult: 'disqualified' },
+  '12': { handler: 'human' },
+  '13': { handler: 'ai', agentName: 'Regal Agent Gamma', contained: true, sentiment: 'positive', sentimentScore: 8.5, taskCompletion: 100, qualificationResult: 'qualified' },
+  '14': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: false, sentiment: 'frustrated', sentimentScore: 3.5, taskCompletion: 0, escalationReason: 'Missed — no answer' },
+  '15': { handler: 'human' },
+  '16': { handler: 'ai', agentName: 'Regal Agent Delta', contained: true, sentiment: 'positive', sentimentScore: 7.8, taskCompletion: 88, qualificationResult: 'qualified' },
+  '17': { handler: 'human' },
+  '18': { handler: 'ai', agentName: 'Regal Agent Beta', contained: true, sentiment: 'neutral', sentimentScore: 6.2, taskCompletion: 75 },
+  '19': { handler: 'human' },
+  '20': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: true, sentiment: 'positive', sentimentScore: 8.9, taskCompletion: 100, qualificationResult: 'qualified' },
+  '21': { handler: 'ai', agentName: 'Regal Agent Gamma', contained: false, sentiment: 'negative', sentimentScore: 2.0, taskCompletion: 0, escalationReason: 'Missed — after hours overflow' },
+  '22': { handler: 'human' },
+  '23': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: true, sentiment: 'positive', sentimentScore: 8.3, taskCompletion: 95, qualificationResult: 'qualified' },
+  '24': { handler: 'human' },
+  '25': { handler: 'ai', agentName: 'Regal Agent Echo', contained: true, sentiment: 'neutral', sentimentScore: 7.2, taskCompletion: 90, qualificationResult: 'qualified' },
+  '26': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: false, sentiment: 'frustrated', sentimentScore: 4.0, taskCompletion: 0, escalationReason: 'Missed — no answer' },
+  '27': { handler: 'human' },
+  '28': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: true, sentiment: 'positive', sentimentScore: 9.1, taskCompletion: 100, qualificationResult: 'qualified' },
+  '29': { handler: 'human' },
+  '30': { handler: 'ai', agentName: 'Regal Agent Gamma', contained: true, sentiment: 'neutral', sentimentScore: 6.8, taskCompletion: 80 },
+};
+
 const mockCalls: Call[] = [
   { id: '1', lead_id: '1', direction: 'inbound', duration: 245, status: 'completed', caller_number: '5551234567', recording_url: '#', callrail_id: 'cr_123', regal_id: 'rg_456', agent_id: null, notes: 'Initial inquiry about personal injury case', created_at: '2024-02-05T14:30:00Z' },
   { id: '2', lead_id: '2', direction: 'outbound', duration: 180, status: 'completed', caller_number: '5559876543', recording_url: '#', callrail_id: 'cr_124', regal_id: 'rg_457', agent_id: null, notes: 'Follow-up call to discuss case details', created_at: '2024-02-05T13:15:00Z' },
