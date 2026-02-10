@@ -1,7 +1,51 @@
-import { Play, Download, ExternalLink, Clock, PhoneIncoming, PhoneOutgoing, PhoneMissed, Voicemail } from 'lucide-react';
+import { Play, Download, ExternalLink, Clock, PhoneIncoming, PhoneOutgoing, PhoneMissed, Voicemail, Bot, Shield, ArrowRightLeft, ThumbsUp, ThumbsDown, Volume2 } from 'lucide-react';
 import { Badge, Button, Card } from '@/components/ui';
 import { formatDateTime, formatDuration, formatPhone, capitalize } from '@/lib/utils';
 import type { Call } from '@/types';
+
+interface AICallMeta {
+  handler: 'ai' | 'human';
+  agentName?: string;
+  contained?: boolean;
+  sentiment?: 'positive' | 'neutral' | 'frustrated' | 'negative';
+  sentimentScore?: number;
+  taskCompletion?: number;
+  escalationReason?: string;
+  qualificationResult?: 'qualified' | 'disqualified' | 'pending';
+}
+
+const aiCallMeta: Record<string, AICallMeta> = {
+  '1': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: true, sentiment: 'positive', sentimentScore: 8.8, taskCompletion: 100, qualificationResult: 'qualified' },
+  '2': { handler: 'human' },
+  '3': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: false, sentiment: 'frustrated', sentimentScore: 4.2, taskCompletion: 30, escalationReason: 'Customer demanded human', qualificationResult: 'pending' },
+  '4': { handler: 'human' },
+  '5': { handler: 'ai', agentName: 'Regal Agent Gamma', contained: true, sentiment: 'neutral', sentimentScore: 6.5, taskCompletion: 85, qualificationResult: 'pending' },
+  '6': { handler: 'human' },
+  '7': { handler: 'ai', agentName: 'Regal Agent Beta', contained: true, sentiment: 'positive', sentimentScore: 8.1, taskCompletion: 100, qualificationResult: 'qualified' },
+  '8': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: true, sentiment: 'positive', sentimentScore: 9.0, taskCompletion: 100, qualificationResult: 'qualified' },
+  '9': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: false, sentiment: 'negative', sentimentScore: 2.8, taskCompletion: 15, escalationReason: 'Language barrier', qualificationResult: 'pending' },
+  '10': { handler: 'human' },
+  '11': { handler: 'ai', agentName: 'Regal Agent Beta', contained: true, sentiment: 'neutral', sentimentScore: 7.0, taskCompletion: 92, qualificationResult: 'disqualified' },
+  '12': { handler: 'human' },
+  '13': { handler: 'ai', agentName: 'Regal Agent Gamma', contained: true, sentiment: 'positive', sentimentScore: 8.5, taskCompletion: 100, qualificationResult: 'qualified' },
+  '14': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: false, sentiment: 'frustrated', sentimentScore: 3.5, taskCompletion: 0, escalationReason: 'Missed — no answer' },
+  '15': { handler: 'human' },
+  '16': { handler: 'ai', agentName: 'Regal Agent Delta', contained: true, sentiment: 'positive', sentimentScore: 7.8, taskCompletion: 88, qualificationResult: 'qualified' },
+  '17': { handler: 'human' },
+  '18': { handler: 'ai', agentName: 'Regal Agent Beta', contained: true, sentiment: 'neutral', sentimentScore: 6.2, taskCompletion: 75 },
+  '19': { handler: 'human' },
+  '20': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: true, sentiment: 'positive', sentimentScore: 8.9, taskCompletion: 100, qualificationResult: 'qualified' },
+  '21': { handler: 'ai', agentName: 'Regal Agent Gamma', contained: false, sentiment: 'negative', sentimentScore: 2.0, taskCompletion: 0, escalationReason: 'Missed — after hours overflow' },
+  '22': { handler: 'human' },
+  '23': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: true, sentiment: 'positive', sentimentScore: 8.3, taskCompletion: 95, qualificationResult: 'qualified' },
+  '24': { handler: 'human' },
+  '25': { handler: 'ai', agentName: 'Regal Agent Echo', contained: true, sentiment: 'neutral', sentimentScore: 7.2, taskCompletion: 90, qualificationResult: 'qualified' },
+  '26': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: false, sentiment: 'frustrated', sentimentScore: 4.0, taskCompletion: 0, escalationReason: 'Missed — no answer' },
+  '27': { handler: 'human' },
+  '28': { handler: 'ai', agentName: 'Regal Agent Alpha', contained: true, sentiment: 'positive', sentimentScore: 9.1, taskCompletion: 100, qualificationResult: 'qualified' },
+  '29': { handler: 'human' },
+  '30': { handler: 'ai', agentName: 'Regal Agent Gamma', contained: true, sentiment: 'neutral', sentimentScore: 6.8, taskCompletion: 80 },
+};
 
 const mockCalls: Call[] = [
   { id: '1', lead_id: '1', direction: 'inbound', duration: 245, status: 'completed', caller_number: '5551234567', recording_url: '#', callrail_id: 'cr_123', regal_id: 'rg_456', agent_id: null, notes: 'Initial inquiry about personal injury case', created_at: '2024-02-05T14:30:00Z' },
@@ -65,7 +109,7 @@ export function Calls() {
         </Button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <Card className="p-5">
           <div className="flex items-center justify-between">
             <div>
@@ -110,6 +154,18 @@ export function Calls() {
             </div>
           </div>
         </Card>
+        <Card className="p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-sm font-medium text-purple-500">AI Handled</div>
+              <div className="mt-2 text-3xl font-bold text-[var(--text-primary)]">187</div>
+            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-500">
+              <Bot size={18} />
+            </div>
+          </div>
+          <div className="mt-2 text-xs text-[var(--text-muted)]">78% contained · 22% escalated</div>
+        </Card>
       </div>
 
       <Card className="overflow-hidden">
@@ -118,7 +174,11 @@ export function Calls() {
           <span className="text-xs text-[var(--text-muted)]">Last 30 days</span>
         </div>
         <div className="divide-y divide-[var(--border)]">
-          {mockCalls.map((call) => (
+          {mockCalls.map((call) => {
+            const meta = aiCallMeta[call.id];
+            const isAI = meta?.handler === 'ai';
+            const sentimentColor = meta?.sentiment === 'positive' ? 'text-emerald-600' : meta?.sentiment === 'frustrated' ? 'text-amber-600' : meta?.sentiment === 'negative' ? 'text-red-600' : 'text-[var(--text-muted)]';
+            return (
             <div key={call.id} className="flex items-center justify-between gap-4 p-4 hover:bg-[var(--surface-hover)] transition-colors group">
               <div className="flex items-center gap-4 min-w-0">
                 <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
@@ -137,17 +197,57 @@ export function Calls() {
                     <Badge variant="outline" className="h-5 text-[10px] px-1.5 uppercase tracking-wider">
                       {capitalize(call.direction)}
                     </Badge>
+                    {/* AI / Human handler badge */}
+                    {isAI ? (
+                      <Badge className="h-5 text-[10px] px-1.5 uppercase tracking-wider bg-purple-500/15 text-purple-600 border-purple-500/30 border">
+                        <Bot size={10} className="mr-0.5" /> AI
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="h-5 text-[10px] px-1.5 uppercase tracking-wider">
+                        👤 Human
+                      </Badge>
+                    )}
+                    {/* Containment badge */}
+                    {isAI && meta?.contained !== undefined && (
+                      <Badge className={`h-5 text-[10px] px-1.5 border ${meta.contained ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 'bg-amber-500/10 text-amber-600 border-amber-500/20'}`}>
+                        {meta.contained ? <Shield size={10} className="mr-0.5" /> : <ArrowRightLeft size={10} className="mr-0.5" />}
+                        {meta.contained ? 'Contained' : 'Escalated'}
+                      </Badge>
+                    )}
                     {(call.duration ?? 0) > 0 && (
                       <span className="text-xs text-[var(--text-muted)]">
                         {formatDuration(call.duration ?? 0)}
                       </span>
                     )}
                   </div>
-                  {call.notes && (
-                    <p className="mt-1 text-xs text-[var(--text-secondary)] truncate">
-                      {call.notes}
-                    </p>
-                  )}
+                  {/* Notes + AI metadata row */}
+                  <div className="flex flex-wrap items-center gap-3 mt-1">
+                    {call.notes && (
+                      <p className="text-xs text-[var(--text-secondary)] truncate max-w-[280px]">
+                        {call.notes}
+                      </p>
+                    )}
+                    {isAI && meta?.agentName && (
+                      <span className="text-[10px] text-purple-500 font-medium">{meta.agentName}</span>
+                    )}
+                    {isAI && meta?.sentiment && (
+                      <span className={`text-[10px] font-semibold ${sentimentColor} flex items-center gap-0.5`}>
+                        {meta.sentiment === 'positive' ? <ThumbsUp size={10} /> : meta.sentiment === 'negative' || meta.sentiment === 'frustrated' ? <ThumbsDown size={10} /> : <Volume2 size={10} />}
+                        {meta.sentimentScore?.toFixed(1)}
+                      </span>
+                    )}
+                    {isAI && meta?.taskCompletion !== undefined && meta.taskCompletion > 0 && (
+                      <span className="text-[10px] text-[var(--text-muted)]">Task: {meta.taskCompletion}%</span>
+                    )}
+                    {isAI && meta?.escalationReason && (
+                      <span className="text-[10px] text-amber-600">{meta.escalationReason}</span>
+                    )}
+                    {isAI && meta?.qualificationResult && (
+                      <Badge variant={meta.qualificationResult === 'qualified' ? 'success' : meta.qualificationResult === 'disqualified' ? 'destructive' : 'secondary'} className="h-4 text-[9px] px-1">
+                        {meta.qualificationResult}
+                      </Badge>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -167,7 +267,8 @@ export function Calls() {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </Card>
     </div>

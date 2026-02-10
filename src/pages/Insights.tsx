@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   TrendingUp, TrendingDown, Lightbulb, Target, BarChart3, ArrowRight,
-  Zap, AlertTriangle, Users, PhoneCall, Search, Globe, Share2, Link2, UserCheck,
+  Zap, AlertTriangle, Users, PhoneCall, Search, Globe, Share2, Link2, UserCheck, Bot,
 } from 'lucide-react';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { Badge, Button, Card } from '@/components/ui';
@@ -10,6 +10,7 @@ import { MetricDetailDrawer } from '@/components/insights/MetricDetailDrawer';
 import { InsightFilterPanel, emptyFilters, type InsightFilters } from '@/components/insights/InsightFilterPanel';
 import { ColumnTogglePanel, defaultColumns, type ColumnVisibility } from '@/components/insights/ColumnTogglePanel';
 import { ComparePanel, ComparisonResultsBar, getDefaultCompareConfig, type CompareConfig } from '@/components/insights/ComparePanel';
+import { AIAgentPerformanceTab } from '@/components/insights/AIAgentPerformanceTab';
 
 const keyMetrics = [
   { label: 'Total Leads', value: '1,247', change: '+12%', positive: true, icon: Users, description: 'All sources combined' },
@@ -125,7 +126,7 @@ const suggestionTone = (type: string) => {
 };
 
 export function Insights() {
-  const [activeTab, setActiveTab] = useState<'weekly' | 'funnels'>('weekly');
+  const [activeTab, setActiveTab] = useState<'weekly' | 'funnels' | 'ai-agents'>('weekly');
   const [selectedFunnel, setSelectedFunnel] = useState<string>('google');
   const [selectedMetric, setSelectedMetric] = useState<typeof keyMetrics[number] | null>(null);
   const [filters, setFilters] = useState<InsightFilters>(emptyFilters);
@@ -197,6 +198,9 @@ export function Insights() {
             </button>
             <button onClick={() => setActiveTab('funnels')} className={tabClass(activeTab === 'funnels')}>
               <Target size={16} /> Funnels
+            </button>
+            <button onClick={() => setActiveTab('ai-agents')} className={tabClass(activeTab === 'ai-agents')}>
+              <Bot size={16} /> AI Agents
             </button>
           </div>
           <div className="flex gap-2">
@@ -289,7 +293,9 @@ export function Insights() {
         })}
       </div>
 
-      {activeTab === 'weekly' ? (
+      {activeTab === 'ai-agents' ? (
+        <AIAgentPerformanceTab />
+      ) : activeTab === 'weekly' ? (
         <Card className="overflow-hidden">
           <div className="flex items-start justify-between gap-4 border-b border-[var(--border)] px-5 py-4">
             <div className="flex items-start gap-3">
