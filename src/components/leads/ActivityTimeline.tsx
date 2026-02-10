@@ -22,6 +22,7 @@ const platformColors: Record<LeadActivityPlatform, string> = {
 const platformLabels: Record<LeadActivityPlatform, string> = {
   callrail: 'CallRail',
   regal: 'Regal',
+  regal_ai: 'Regal AI',
   intaker: 'Intaker',
   litify: 'Litify',
   google_ads: 'Google Ads',
