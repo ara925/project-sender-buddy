@@ -396,40 +396,33 @@ export function Insights() {
         </Card>
       ) : (
         <div className="grid gap-4 lg:grid-cols-3">
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
             <h2 className="text-sm font-semibold text-[var(--text-primary)]">Select Pipeline</h2>
-            <button type="button" onClick={() => setSelectedFunnel('google')}
-              className={cn('w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-left transition-colors hover:bg-[var(--surface-hover)]',
-                selectedFunnel === 'google' && 'border-[var(--primary)] bg-[var(--primary)]/5')}>
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', selectedFunnel === 'google' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--surface-hover)] text-[var(--text-secondary)]')}>
-                    <Target size={18} />
+            {[
+              { id: 'google', label: 'Google Ads', sub: 'High intent • PPC', Icon: Target },
+              { id: 'intaker', label: 'Intaker Chat', sub: 'Automated • High volume', Icon: Zap },
+              { id: 'organic', label: 'Organic Search', sub: 'SEO • Content', Icon: Globe },
+              { id: 'social', label: 'Social Media', sub: 'Paid + Organic social', Icon: Share2 },
+              { id: 'referrals', label: 'Referrals', sub: 'Attorney & client referrals', Icon: Link2 },
+              { id: 'callrail', label: 'CallRail', sub: 'Phone • Inbound calls', Icon: PhoneCall },
+            ].map(({ id, label, sub, Icon }) => (
+              <button key={id} type="button" onClick={() => setSelectedFunnel(id)}
+                className={cn('w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-left transition-colors hover:bg-[var(--surface-hover)]',
+                  selectedFunnel === id && 'border-[var(--primary)] bg-[var(--primary)]/5')}>
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', selectedFunnel === id ? 'bg-[var(--primary)] text-white' : 'bg-[var(--surface-hover)] text-[var(--text-secondary)]')}>
+                      <Icon size={18} />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-[var(--text-primary)]">{label}</div>
+                      <div className="text-xs text-[var(--text-secondary)]">{sub}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-semibold text-[var(--text-primary)]">Google Ads</div>
-                    <div className="text-xs text-[var(--text-secondary)]">High intent • PPC</div>
-                  </div>
+                  {selectedFunnel === id && <div className="h-2 w-2 rounded-full bg-[var(--primary)]" />}
                 </div>
-                {selectedFunnel === 'google' && <div className="h-2 w-2 rounded-full bg-[var(--primary)]" />}
-              </div>
-            </button>
-            <button type="button" onClick={() => setSelectedFunnel('intaker')}
-              className={cn('w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-left transition-colors hover:bg-[var(--surface-hover)]',
-                selectedFunnel === 'intaker' && 'border-[var(--primary)] bg-[var(--primary)]/5')}>
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', selectedFunnel === 'intaker' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--surface-hover)] text-[var(--text-secondary)]')}>
-                    <Zap size={18} />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-[var(--text-primary)]">Intaker Chat</div>
-                    <div className="text-xs text-[var(--text-secondary)]">Automated • High volume</div>
-                  </div>
-                </div>
-                {selectedFunnel === 'intaker' && <div className="h-2 w-2 rounded-full bg-[var(--primary)]" />}
-              </div>
-            </button>
+              </button>
+            ))}
           </div>
 
           <Card className="overflow-hidden lg:col-span-2">
