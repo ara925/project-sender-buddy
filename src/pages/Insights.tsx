@@ -490,6 +490,11 @@ export function Insights() {
         onOpenChange={(open) => !open && setSelectedMetric(null)}
         metric={selectedMetric}
       />
+      <InsightActionDrawer
+        open={!!actionDrawer}
+        onClose={() => setActionDrawer(null)}
+        actionType={actionDrawer}
+      />
     </div>
   );
 }
