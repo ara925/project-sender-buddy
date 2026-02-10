@@ -1,40 +1,20 @@
-import { Users, Phone, TrendingUp, Clock, ArrowUpRight, ArrowDownRight, Sparkles } from 'lucide-react';
+import { Users, Sparkles, CheckCircle2, AlertTriangle, XCircle, Activity } from 'lucide-react';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 
-const leadsByDay = [
-  { day: 'Mon', leads: 45 },
-  { day: 'Tue', leads: 52 },
-  { day: 'Wed', leads: 49 },
-  { day: 'Thu', leads: 63 },
-  { day: 'Fri', leads: 58 },
-  { day: 'Sat', leads: 24 },
-  { day: 'Sun', leads: 21 },
-];
+const systemStatuses = [
+  { name: 'Intaker', status: 'operational', message: 'All services running normally', uptime: '99.98%' },
+  { name: 'CallRail', status: 'degraded', message: 'Intermittent delays in call logging (~2 min lag)', uptime: '97.4%' },
+  { name: 'LeadDocket', status: 'operational', message: 'All services running normally', uptime: '99.95%' },
+  { name: 'Filevine', status: 'operational', message: 'All services running normally', uptime: '99.99%' },
+  { name: 'Google Ads API', status: 'operational', message: 'All services running normally', uptime: '99.97%' },
+  { name: 'Internal CRM Sync', status: 'down', message: 'Sync halted — authentication token expired', uptime: '91.2%' },
+] as const;
 
-const leadsBySource = [
-  { name: 'Google Ads', value: 450 },
-  { name: 'Organic Search', value: 320 },
-  { name: 'Referrals', value: 210 },
-  { name: 'Social Media', value: 180 },
-  { name: 'Direct', value: 124 },
-];
-
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
-
-const recentActivity = [
-  { id: 1, action: 'New Lead Created', name: 'James Wilson', role: 'Viewer', time: '2 mins ago', source: 'Google Ads', badge: 'blue' },
-  { id: 2, action: 'Call Completed', name: 'Sarah Parker', role: 'Agent', time: '15 mins ago', source: 'Outbound', badge: 'success' },
-  { id: 3, action: 'Lead Converted', name: 'Mike Johnson', role: 'Manager', time: '1 hour ago', source: 'Referral', badge: 'purple' },
-  { id: 4, action: 'Missed Call', name: 'System', role: 'System', time: '2 hours ago', source: 'Inbound', badge: 'destructive' },
-  { id: 5, action: 'New Lead Created', name: 'Emily Davis', role: 'Viewer', time: '3 hours ago', source: 'Facebook', badge: 'blue' },
-];
-
-const statsCards = [
-  { title: 'Total Leads', value: '1,284', change: '+12%', up: true, icon: Users, color: 'text-blue-500' },
-  { title: 'New Today', value: '47', change: '+8%', up: true, icon: Clock, color: 'text-purple-500' },
-  { title: 'Qualified', value: '312', change: '+23%', up: true, icon: TrendingUp, color: 'text-emerald-500' },
-  { title: 'Calls Today', value: '89', change: '-5%', up: false, icon: Phone, color: 'text-amber-500' },
-];
+const statusConfig = {
+  operational: { icon: CheckCircle2, label: 'Operational', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+  degraded: { icon: AlertTriangle, label: 'Degraded', color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
+  down: { icon: XCircle, label: 'Down', color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/20' },
+};
 
 export function Dashboard() {
   return (
