@@ -73,6 +73,29 @@ export const mockLeadActivities: LeadActivity[] = [
   { id: 'a53', lead_id: '9', platform: 'internal', type: 'note_added', title: 'Note added', description: 'Medical records needed — requesting from Providence Medical', agent_name: 'Sarah Lee', metadata: null, created_at: '2024-02-04T09:00:00Z' },
   { id: 'a54', lead_id: '9', platform: 'litify', type: 'litify_synced', title: 'Synced to Litify', description: 'Lead record created in Litify CRM', agent_name: 'System', metadata: { litify_id: 'LIT-2024-0895' }, created_at: '2024-02-04T10:00:00Z' },
   { id: 'a55', lead_id: '9', platform: 'internal', type: 'status_change', title: 'Status → Qualified', description: null, agent_name: 'Sarah Lee', metadata: { from: 'contacted', to: 'qualified' }, created_at: '2024-02-04T11:30:00Z' },
+
+  // AI Agent interactions
+  // Lead 1 — AI-handled inbound
+  { id: 'ai_a1', lead_id: '1', platform: 'regal_ai', type: 'ai_call_inbound', title: 'AI Agent handled inbound call', description: 'Regal Agent Alpha answered within 3.8s — completed full qualification flow', agent_name: 'Regal Agent Alpha', metadata: { duration: 185, sentiment: 'positive', sentimentScore: 8.8, taskCompletion: 100, contained: true }, created_at: '2024-02-05T10:32:00Z' },
+  { id: 'ai_a2', lead_id: '1', platform: 'regal_ai', type: 'ai_qualification', title: 'AI qualification: Qualified', description: 'Agent completed all 5 qualification steps. Verified state, confirmed title, assessed coverage needs.', agent_name: 'Regal Agent Alpha', metadata: { result: 'qualified', accuracy: 95.2, steps_completed: 5, steps_total: 5 }, created_at: '2024-02-05T10:35:00Z' },
+
+  // Lead 2 — AI follow-up then escalation
+  { id: 'ai_a3', lead_id: '2', platform: 'regal_ai', type: 'ai_call_outbound', title: 'AI Agent outbound follow-up', description: 'Regal Agent Beta attempted follow-up — customer asked for human agent', agent_name: 'Regal Agent Beta', metadata: { duration: 62, sentiment: 'frustrated', sentimentScore: 4.5, taskCompletion: 30, contained: false }, created_at: '2024-02-05T09:28:00Z' },
+  { id: 'ai_a4', lead_id: '2', platform: 'regal_ai', type: 'ai_escalation', title: 'AI escalated to human agent', description: 'Customer requested human — transferred to Maria Garcia with full context summary', agent_name: 'Regal Agent Beta', metadata: { escalation_reason: 'Customer demanded human', transferred_to: 'Maria Garcia', context_passed: true }, created_at: '2024-02-05T09:29:00Z' },
+
+  // Lead 4 — AI first contact
+  { id: 'ai_a5', lead_id: '4', platform: 'regal_ai', type: 'ai_call_inbound', title: 'AI Agent handled inbound call', description: 'Regal Agent Alpha answered immediately — initial qualification for auto accident', agent_name: 'Regal Agent Alpha', metadata: { duration: 142, sentiment: 'positive', sentimentScore: 9.0, taskCompletion: 100, contained: true }, created_at: '2024-02-03T10:01:00Z' },
+  { id: 'ai_a6', lead_id: '4', platform: 'regal_ai', type: 'ai_qualification', title: 'AI qualification: Qualified', description: 'Strong case indicators — documented injuries, clear liability. Scheduled consultation.', agent_name: 'Regal Agent Alpha', metadata: { result: 'qualified', accuracy: 96.0, steps_completed: 5, steps_total: 5 }, created_at: '2024-02-03T10:04:00Z' },
+
+  // Lead 5 — AI tried, couldn't retain
+  { id: 'ai_a7', lead_id: '5', platform: 'regal_ai', type: 'ai_call_outbound', title: 'AI Agent outbound call', description: 'Regal Agent Gamma attempted follow-up — client already retained other counsel', agent_name: 'Regal Agent Gamma', metadata: { duration: 45, sentiment: 'neutral', sentimentScore: 5.0, taskCompletion: 60, contained: true }, created_at: '2024-02-04T13:55:00Z' },
+  { id: 'ai_a8', lead_id: '5', platform: 'regal_ai', type: 'ai_qualification', title: 'AI qualification: Disqualified', description: 'Client confirmed they have existing representation. Marked as lost.', agent_name: 'Regal Agent Gamma', metadata: { result: 'disqualified', accuracy: 100, reason: 'Already retained counsel' }, created_at: '2024-02-04T13:56:00Z' },
+
+  // Lead 7 — AI-assisted intake
+  { id: 'ai_a9', lead_id: '7', platform: 'regal_ai', type: 'ai_call_outbound', title: 'AI Agent initial outreach', description: 'Regal Agent Delta called within 8s of form submission — conducted preliminary intake', agent_name: 'Regal Agent Delta', metadata: { duration: 210, sentiment: 'positive', sentimentScore: 7.8, taskCompletion: 88, contained: true, speed_to_lead: 8 }, created_at: '2024-02-03T13:21:30Z' },
+
+  // Lead 9 — AI after-hours handling
+  { id: 'ai_a10', lead_id: '9', platform: 'regal_ai', type: 'ai_call_inbound', title: 'AI Agent after-hours call', description: 'Regal Agent Gamma handled after-hours inquiry — completed intake and scheduled next-day callback', agent_name: 'Regal Agent Gamma', metadata: { duration: 320, sentiment: 'positive', sentimentScore: 8.5, taskCompletion: 95, contained: true, after_hours: true }, created_at: '2024-02-02T20:15:00Z' },
 ];
 
 export function getActivitiesForLead(leadId: string): LeadActivity[] {
