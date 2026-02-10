@@ -203,7 +203,9 @@ export function Leads() {
                           <div className="flex items-center gap-2">
                             <p className="font-medium text-[var(--text-primary)]">{lead.first_name} {lead.last_name}</p>
                             {leadInvestigation && (
-                              <Shield size={12} className="text-red-500" title="Under investigation" />
+                              <span title="Under investigation">
+                                <Shield size={12} className="text-red-500" />
+                              </span>
                             )}
                           </div>
                         </td>
