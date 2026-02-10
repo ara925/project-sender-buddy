@@ -90,6 +90,13 @@ function getIconBg(type: LeadActivityType): string {
       return 'bg-green-500/15 text-green-600';
     case 'document_uploaded':
       return 'bg-slate-500/15 text-slate-500';
+    case 'ai_call_inbound':
+    case 'ai_call_outbound':
+      return 'bg-purple-600/15 text-purple-600';
+    case 'ai_qualification':
+      return 'bg-purple-500/15 text-purple-500';
+    case 'ai_escalation':
+      return 'bg-amber-600/15 text-amber-600';
     default:
       return 'bg-[var(--surface-active)] text-[var(--text-secondary)]';
   }
