@@ -109,7 +109,7 @@ export function Calls() {
         </Button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <Card className="p-5">
           <div className="flex items-center justify-between">
             <div>
@@ -153,6 +153,18 @@ export function Calls() {
               <PhoneOutgoing size={18} />
             </div>
           </div>
+        </Card>
+        <Card className="p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-sm font-medium text-purple-500">AI Handled</div>
+              <div className="mt-2 text-3xl font-bold text-[var(--text-primary)]">187</div>
+            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-500">
+              <Bot size={18} />
+            </div>
+          </div>
+          <div className="mt-2 text-xs text-[var(--text-muted)]">78% contained · 22% escalated</div>
         </Card>
       </div>
 
