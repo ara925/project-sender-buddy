@@ -126,6 +126,31 @@ export function Insights() {
         </div>
       </div>
 
+      {/* Key Metrics Grid */}
+      <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+        {keyMetrics.map((metric) => {
+          const MetricIcon = metric.icon;
+          return (
+            <Card key={metric.label} className="p-4 hover:bg-[var(--surface-hover)] transition-colors">
+              <div className="flex items-center justify-between mb-2">
+                <div className="p-1.5 rounded-lg bg-[var(--surface-hover)]">
+                  <MetricIcon size={14} className="text-[var(--primary)]" />
+                </div>
+                <span className={cn(
+                  'text-xs font-semibold px-2 py-0.5 rounded-full',
+                  metric.positive ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600'
+                )}>
+                  {metric.change}
+                </span>
+              </div>
+              <div className="text-xl font-bold text-[var(--text-primary)]">{metric.value}</div>
+              <div className="text-xs font-medium text-[var(--text-secondary)] mt-0.5">{metric.label}</div>
+              <div className="text-[10px] text-[var(--text-muted)] mt-1">{metric.description}</div>
+            </Card>
+          );
+        })}
+      </div>
+
       {/* Key Suggestions */}
       <div className="grid gap-4 md:grid-cols-3">
         {suggestions.map((suggestion) => {
