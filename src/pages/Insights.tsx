@@ -346,6 +346,12 @@ export function Insights() {
           </Card>
         </div>
       )}
+
+      <MetricDetailDrawer
+        open={!!selectedMetric}
+        onOpenChange={(open) => !open && setSelectedMetric(null)}
+        metric={selectedMetric}
+      />
     </div>
   );
 }
