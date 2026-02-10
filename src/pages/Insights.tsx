@@ -287,7 +287,7 @@ export function Insights() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
-                {weeklyBreakdown.map((row) => {
+                {filteredBreakdown.map((row) => {
                   const vsLast = getPercentageChange(row.current, row.lastWeek);
                   const vsThree = getPercentageChange(row.current, row.threeWeeks);
                   return (
