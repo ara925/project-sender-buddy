@@ -174,7 +174,11 @@ export function Calls() {
           <span className="text-xs text-[var(--text-muted)]">Last 30 days</span>
         </div>
         <div className="divide-y divide-[var(--border)]">
-          {mockCalls.map((call) => (
+          {mockCalls.map((call) => {
+            const meta = aiCallMeta[call.id];
+            const isAI = meta?.handler === 'ai';
+            const sentimentColor = meta?.sentiment === 'positive' ? 'text-emerald-600' : meta?.sentiment === 'frustrated' ? 'text-amber-600' : meta?.sentiment === 'negative' ? 'text-red-600' : 'text-[var(--text-muted)]';
+            return (
             <div key={call.id} className="flex items-center justify-between gap-4 p-4 hover:bg-[var(--surface-hover)] transition-colors group">
               <div className="flex items-center gap-4 min-w-0">
                 <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
@@ -193,17 +197,57 @@ export function Calls() {
                     <Badge variant="outline" className="h-5 text-[10px] px-1.5 uppercase tracking-wider">
                       {capitalize(call.direction)}
                     </Badge>
+                    {/* AI / Human handler badge */}
+                    {isAI ? (
+                      <Badge className="h-5 text-[10px] px-1.5 uppercase tracking-wider bg-purple-500/15 text-purple-600 border-purple-500/30 border">
+                        <Bot size={10} className="mr-0.5" /> AI
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="h-5 text-[10px] px-1.5 uppercase tracking-wider">
+                        👤 Human
+                      </Badge>
+                    )}
+                    {/* Containment badge */}
+                    {isAI && meta?.contained !== undefined && (
+                      <Badge className={`h-5 text-[10px] px-1.5 border ${meta.contained ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 'bg-amber-500/10 text-amber-600 border-amber-500/20'}`}>
+                        {meta.contained ? <Shield size={10} className="mr-0.5" /> : <ArrowRightLeft size={10} className="mr-0.5" />}
+                        {meta.contained ? 'Contained' : 'Escalated'}
+                      </Badge>
+                    )}
                     {(call.duration ?? 0) > 0 && (
                       <span className="text-xs text-[var(--text-muted)]">
                         {formatDuration(call.duration ?? 0)}
                       </span>
                     )}
                   </div>
-                  {call.notes && (
-                    <p className="mt-1 text-xs text-[var(--text-secondary)] truncate">
-                      {call.notes}
-                    </p>
-                  )}
+                  {/* Notes + AI metadata row */}
+                  <div className="flex flex-wrap items-center gap-3 mt-1">
+                    {call.notes && (
+                      <p className="text-xs text-[var(--text-secondary)] truncate max-w-[280px]">
+                        {call.notes}
+                      </p>
+                    )}
+                    {isAI && meta?.agentName && (
+                      <span className="text-[10px] text-purple-500 font-medium">{meta.agentName}</span>
+                    )}
+                    {isAI && meta?.sentiment && (
+                      <span className={`text-[10px] font-semibold ${sentimentColor} flex items-center gap-0.5`}>
+                        {meta.sentiment === 'positive' ? <ThumbsUp size={10} /> : meta.sentiment === 'negative' || meta.sentiment === 'frustrated' ? <ThumbsDown size={10} /> : <Volume2 size={10} />}
+                        {meta.sentimentScore?.toFixed(1)}
+                      </span>
+                    )}
+                    {isAI && meta?.taskCompletion !== undefined && meta.taskCompletion > 0 && (
+                      <span className="text-[10px] text-[var(--text-muted)]">Task: {meta.taskCompletion}%</span>
+                    )}
+                    {isAI && meta?.escalationReason && (
+                      <span className="text-[10px] text-amber-600">{meta.escalationReason}</span>
+                    )}
+                    {isAI && meta?.qualificationResult && (
+                      <Badge variant={meta.qualificationResult === 'qualified' ? 'success' : meta.qualificationResult === 'disqualified' ? 'destructive' : 'secondary'} className="h-4 text-[9px] px-1">
+                        {meta.qualificationResult}
+                      </Badge>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -220,6 +264,16 @@ export function Calls() {
                   <Button variant="ghost" size="icon" className="hover:bg-[var(--surface-hover)]" aria-label="Open call details">
                     <ExternalLink size={16} />
                   </Button>
+                </div>
+              </div>
+            </div>
+            );
+          })}
+        </div>
+      </Card>
+    </div>
+  );
+}
                 </div>
               </div>
             </div>
