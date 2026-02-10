@@ -68,7 +68,11 @@ export type LeadActivityType =
   | 'litify_matter_created'
   | 'ad_click'
   | 'retainer_signed'
-  | 'document_uploaded';
+  | 'document_uploaded'
+  | 'ai_call_inbound'
+  | 'ai_call_outbound'
+  | 'ai_qualification'
+  | 'ai_escalation';
 
 export interface LeadActivity {
   id: string;
