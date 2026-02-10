@@ -199,6 +199,9 @@ export function Insights() {
             <button onClick={() => setActiveTab('funnels')} className={tabClass(activeTab === 'funnels')}>
               <Target size={16} /> Funnels
             </button>
+            <button onClick={() => setActiveTab('ai-agents')} className={tabClass(activeTab === 'ai-agents')}>
+              <Bot size={16} /> AI Agents
+            </button>
           </div>
           <div className="flex gap-2">
             <InsightFilterPanel filters={filters} onChange={setFilters} />
