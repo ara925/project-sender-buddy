@@ -96,12 +96,25 @@ export function Insights() {
   const [activeTab, setActiveTab] = useState<'weekly' | 'funnels'>('weekly');
   const [selectedFunnel, setSelectedFunnel] = useState<keyof typeof funnelData>('google');
   const [selectedMetric, setSelectedMetric] = useState<typeof keyMetrics[number] | null>(null);
+  const [filters, setFilters] = useState<InsightFilters>(emptyFilters);
+  const [columns, setColumns] = useState<ColumnVisibility>(defaultColumns);
+  const [compareConfig, setCompareConfig] = useState<CompareConfig>(getDefaultCompareConfig());
 
   const tabClass = (active: boolean) =>
     cn(
       'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors',
       active ? 'bg-[var(--surface-hover)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)]'
     );
+
+  // Active filter chips for display
+  const activeFilterChips = [
+    ...filters.sources.map(s => ({ group: 'Source', value: s })),
+    ...filters.caseTypes.map(s => ({ group: 'Case', value: s })),
+    ...filters.statuses.map(s => ({ group: 'Status', value: s })),
+    ...filters.agents.map(s => ({ group: 'Agent', value: s })),
+    ...filters.campaigns.map(s => ({ group: 'Campaign', value: s })),
+    ...(filters.minQuality ? [{ group: 'Quality', value: `≥ ${filters.minQuality}` }] : []),
+  ];
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
