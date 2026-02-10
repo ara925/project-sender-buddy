@@ -160,6 +160,83 @@ export function Dashboard() {
           </div>
         </div>
       </div>
+      {/* Collapsible Website Status */}
+      <div className={`card overflow-hidden border transition-colors ${allWebsitesOperational ? 'border-emerald-500/20' : 'border-amber-500/20'}`}>
+        <button
+          onClick={() => setWebsitesExpanded(!websitesExpanded)}
+          className="w-full p-4 flex items-center justify-between hover:bg-[var(--surface-hover)] transition-colors cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-xl ${allWebsitesOperational ? 'bg-emerald-500/10' : 'bg-amber-500/10'}`}>
+              <Globe size={18} className={allWebsitesOperational ? 'text-emerald-500' : 'text-amber-500'} />
+            </div>
+            <div className="text-left">
+              <h2 className="text-sm font-semibold text-[var(--text-primary)]">
+                {allWebsitesOperational ? 'All Websites Online' : `${webIssueCount} Website${webIssueCount > 1 ? 's' : ''} Need${webIssueCount === 1 ? 's' : ''} Attention`}
+              </h2>
+              <p className="text-xs text-[var(--text-secondary)]">
+                {webOperationalCount}/{websiteStatuses.length} online
+                {webDegradedCount > 0 && <span className="text-amber-500"> · {webDegradedCount} degraded</span>}
+                {webDownCount > 0 && <span className="text-red-500"> · {webDownCount} down</span>}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-1">
+              {websiteStatuses.map((s) => (
+                <span key={s.name} className={`h-2 w-2 rounded-full ${statusConfig[s.status].dot}`} title={s.name} />
+              ))}
+            </div>
+            <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+              <Clock size={11} />
+              <span className="hidden sm:inline">Just now</span>
+            </div>
+            <ChevronDown
+              size={16}
+              className={`text-[var(--text-muted)] transition-transform duration-200 ${websitesExpanded ? 'rotate-180' : ''}`}
+            />
+          </div>
+        </button>
+
+        <div
+          className={`transition-all duration-300 ease-in-out overflow-hidden ${websitesExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}
+        >
+          <div className="border-t border-[var(--border)]">
+            <div className="divide-y divide-[var(--border)]">
+              {websiteStatuses.map((site) => {
+                const config = statusConfig[site.status];
+                const StatusIcon = config.icon;
+                return (
+                  <div key={site.name} className="flex items-center justify-between p-4 hover:bg-[var(--surface-hover)] transition-colors">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className={`p-2 rounded-lg ${config.bg}`}>
+                        <StatusIcon size={16} className={config.color} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-semibold text-[var(--text-primary)]">{site.name}</p>
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide ${config.bg} ${config.color} border ${config.border}`}>
+                            <span className={`h-1.5 w-1.5 rounded-full ${config.dot}`} />
+                            {config.label}
+                          </span>
+                        </div>
+                        <p className="text-xs text-[var(--text-secondary)] mt-0.5 truncate">{site.message}</p>
+                      </div>
+                    </div>
+                    <div className="text-right ml-4 shrink-0">
+                      <div className="flex items-center gap-1 text-xs font-medium text-[var(--text-primary)]">
+                        <ArrowUpRight size={10} className="text-emerald-500" />
+                        {site.uptime}
+                      </div>
+                      <span className="text-[10px] text-[var(--text-muted)]">{site.lastChecked}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
