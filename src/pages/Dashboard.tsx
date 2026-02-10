@@ -10,6 +10,12 @@ const systemStatuses = [
   { name: 'Internal CRM Sync', status: 'down' as const, message: 'Sync halted — authentication token expired. Re-authenticate to restore data flow.', uptime: '91.2%', lastChecked: 'Just now' },
 ];
 
+const websiteStatuses = [
+  { name: 'wilshirelawfirm.com', status: 'operational' as const, message: 'Site responding normally', uptime: '99.99%', lastChecked: '1 min ago' },
+  { name: 'wilshirelaw.com', status: 'operational' as const, message: 'Site responding normally', uptime: '99.97%', lastChecked: '2 mins ago' },
+  { name: 'employeerights.wilshirelaw.com', status: 'operational' as const, message: 'Site responding normally', uptime: '99.95%', lastChecked: '3 mins ago' },
+];
+
 const statusConfig = {
   operational: { icon: CheckCircle2, label: 'Operational', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', dot: 'bg-emerald-500' },
   degraded: { icon: AlertTriangle, label: 'Degraded', color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20', dot: 'bg-amber-500' },
