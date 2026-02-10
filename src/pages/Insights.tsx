@@ -138,11 +138,35 @@ export function Insights() {
             </button>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm"><Filter size={16} /> Filter</Button>
-            <Button variant="outline" size="sm" className="hidden sm:inline-flex"><DollarSign size={16} /> Columns</Button>
+            <InsightFilterPanel filters={filters} onChange={setFilters} />
+            <ColumnTogglePanel columns={columns} onChange={setColumns} />
+            <ComparePanel config={compareConfig} onChange={setCompareConfig} />
           </div>
         </div>
       </div>
+
+      {/* Active filter chips */}
+      {activeFilterChips.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium text-[var(--text-muted)]">Filtered by:</span>
+          {activeFilterChips.map((chip, i) => (
+            <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[var(--primary)]/10 text-[var(--primary)] border border-[var(--primary)]/20">
+              <span className="text-[10px] opacity-60">{chip.group}:</span> {chip.value}
+            </span>
+          ))}
+          <button
+            onClick={() => setFilters(emptyFilters)}
+            className="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] underline"
+          >
+            Clear all
+          </button>
+        </div>
+      )}
+
+      {/* Comparison Results (rendered by ComparePanel) */}
+      {compareConfig.preset !== 'none' && compareConfig.compareRange && (
+        <ComparePanel config={compareConfig} onChange={setCompareConfig} />
+      )}
 
       {/* Key Metrics Grid */}
       <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
