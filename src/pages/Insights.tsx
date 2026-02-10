@@ -242,17 +242,18 @@ export function Insights() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full">
+             <table className="w-full">
               <thead>
                 <tr>
                   <th className="bg-[var(--surface-hover)] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Source</th>
-                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Volume</th>
-                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Trend</th>
-                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Velocity</th>
-                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Spend</th>
-                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">CPL</th>
-                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">ROAS</th>
-                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Quality</th>
+                  {columns.volume && <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Volume</th>}
+                  {columns.comparison && <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Prior</th>}
+                  {columns.trend && <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Trend</th>}
+                  {columns.velocity && <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Velocity</th>}
+                  {columns.spend && <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Spend</th>}
+                  {columns.cpl && <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">CPL</th>}
+                  {columns.roas && <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">ROAS</th>}
+                  {columns.quality && <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Quality</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
@@ -262,42 +263,57 @@ export function Insights() {
                   return (
                     <tr key={row.source} className="hover:bg-[var(--surface-hover)] transition-colors">
                       <td className="px-4 py-3 font-medium text-[var(--text-primary)]">{row.source}</td>
-                      <td className="px-4 py-3 text-right font-semibold text-[var(--text-primary)]">{row.current}</td>
-                      <td className="px-4 py-3 text-right">
-                        <Badge variant="outline" className={cn('border-0', vsLast.isPositive ? 'bg-emerald-500/10 text-emerald-700' : 'bg-red-500/10 text-red-700')}>
-                          {vsLast.isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                          {vsLast.text}
-                        </Badge>
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <div className="inline-flex items-end justify-end gap-1 opacity-80" aria-label="Velocity indicator">
-                          <span className="w-1.5 rounded-full bg-[var(--border)]" style={{ height: '35%' }} />
-                          <span className="w-1.5 rounded-full bg-[var(--border)]" style={{ height: '60%' }} />
-                          <span className={cn('w-1.5 rounded-full', vsThree.isPositive ? 'bg-emerald-500' : 'bg-red-500')} style={{ height: '85%' }} />
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-secondary)]">
-                        {row.cost > 0 ? `$${row.cost.toLocaleString()}` : '-'}
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-primary)]">
-                        {row.cpl > 0 ? <span className={row.cpl < 20 ? 'text-emerald-700 font-semibold' : ''}>${row.cpl}</span> : '-'}
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-primary)]">
-                        {row.roas > 0 ? <span className={row.roas > 4 ? 'text-emerald-700 font-semibold' : ''}>{row.roas}x</span> : '-'}
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        {row.quality > 0 && (
-                          <div className="flex items-center justify-end gap-3">
-                            <div className="h-2 w-24 overflow-hidden rounded-full bg-[var(--surface-active)]">
-                              <div
-                                className={cn('h-full rounded-full', row.quality >= 9 ? 'bg-emerald-500' : row.quality >= 8 ? 'bg-[var(--primary)]' : 'bg-amber-500')}
-                                style={{ width: `${row.quality * 10}%` }}
-                              />
-                            </div>
-                            <span className="w-6 text-right text-xs font-semibold text-[var(--text-primary)]">{row.quality}</span>
+                      {columns.volume && <td className="px-4 py-3 text-right font-semibold text-[var(--text-primary)]">{row.current}</td>}
+                      {columns.comparison && (
+                        <td className="px-4 py-3 text-right text-sm text-[var(--text-muted)]">{row.lastWeek}</td>
+                      )}
+                      {columns.trend && (
+                        <td className="px-4 py-3 text-right">
+                          <Badge variant="outline" className={cn('border-0', vsLast.isPositive ? 'bg-emerald-500/10 text-emerald-700' : 'bg-red-500/10 text-red-700')}>
+                            {vsLast.isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                            {vsLast.text}
+                          </Badge>
+                        </td>
+                      )}
+                      {columns.velocity && (
+                        <td className="px-4 py-3 text-right">
+                          <div className="inline-flex items-end justify-end gap-1 opacity-80" aria-label="Velocity indicator">
+                            <span className="w-1.5 rounded-full bg-[var(--border)]" style={{ height: '35%' }} />
+                            <span className="w-1.5 rounded-full bg-[var(--border)]" style={{ height: '60%' }} />
+                            <span className={cn('w-1.5 rounded-full', vsThree.isPositive ? 'bg-emerald-500' : 'bg-red-500')} style={{ height: '85%' }} />
                           </div>
-                        )}
-                      </td>
+                        </td>
+                      )}
+                      {columns.spend && (
+                        <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-secondary)]">
+                          {row.cost > 0 ? `$${row.cost.toLocaleString()}` : '-'}
+                        </td>
+                      )}
+                      {columns.cpl && (
+                        <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-primary)]">
+                          {row.cpl > 0 ? <span className={row.cpl < 20 ? 'text-emerald-700 font-semibold' : ''}>${row.cpl}</span> : '-'}
+                        </td>
+                      )}
+                      {columns.roas && (
+                        <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-primary)]">
+                          {row.roas > 0 ? <span className={row.roas > 4 ? 'text-emerald-700 font-semibold' : ''}>{row.roas}x</span> : '-'}
+                        </td>
+                      )}
+                      {columns.quality && (
+                        <td className="px-4 py-3 text-right">
+                          {row.quality > 0 && (
+                            <div className="flex items-center justify-end gap-3">
+                              <div className="h-2 w-24 overflow-hidden rounded-full bg-[var(--surface-active)]">
+                                <div
+                                  className={cn('h-full rounded-full', row.quality >= 9 ? 'bg-emerald-500' : row.quality >= 8 ? 'bg-[var(--primary)]' : 'bg-amber-500')}
+                                  style={{ width: `${row.quality * 10}%` }}
+                                />
+                              </div>
+                              <span className="w-6 text-right text-xs font-semibold text-[var(--text-primary)]">{row.quality}</span>
+                            </div>
+                          )}
+                        </td>
+                      )}
                     </tr>
                   );
                 })}
