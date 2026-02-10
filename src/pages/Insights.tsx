@@ -11,6 +11,7 @@ import { InsightFilterPanel, emptyFilters, type InsightFilters } from '@/compone
 import { ColumnTogglePanel, defaultColumns, type ColumnVisibility } from '@/components/insights/ColumnTogglePanel';
 import { ComparePanel, ComparisonResultsBar, getDefaultCompareConfig, type CompareConfig } from '@/components/insights/ComparePanel';
 import { AIAgentPerformanceTab } from '@/components/insights/AIAgentPerformanceTab';
+import { InsightActionDrawer } from '@/components/insights/InsightActionDrawer';
 
 const keyMetrics = [
   { label: 'Total Leads', value: '1,247', change: '+12%', positive: true, icon: Users, description: 'All sources combined' },
