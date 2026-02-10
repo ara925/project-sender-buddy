@@ -6,6 +6,7 @@ import {
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { Badge, Button, Card } from '@/components/ui';
 import { cn } from '@/lib/utils';
+import { MetricDetailDrawer } from '@/components/insights/MetricDetailDrawer';
 
 const keyMetrics = [
   { label: 'Total Leads', value: '1,247', change: '+12%', positive: true, icon: Users, description: 'All sources combined' },
