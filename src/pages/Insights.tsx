@@ -88,17 +88,17 @@ const suggestions = [
   {
     id: 1, type: 'critical', title: 'Reallocate Budget to Intaker',
     description: 'Intaker CPL is $10.43 vs Google Ads $29.57. Moving 20% of budget could yield ~15 extra leads/week.',
-    metric: '+15 Leads', action: 'View Intaker Settings',
+    metric: '+15 Leads', action: 'View Intaker Settings', actionKey: 'intaker' as const,
   },
   {
     id: 2, type: 'warning', title: 'Google Ads Quality Score Drop',
     description: 'Quality score dropped from 9.1 to 8.5. Check landing page loading speed and keyword relevance.',
-    metric: '-0.6 Score', action: 'Review Campaign',
+    metric: '-0.6 Score', action: 'Review Campaign', actionKey: 'campaign' as const,
   },
   {
     id: 3, type: 'success', title: 'CallRail Conversion Spike',
     description: 'Phone leads are converting at 28% this week, significantly above the 19% average.',
-    metric: '+9% Conv.', action: 'Analyze Calls',
+    metric: '+9% Conv.', action: 'Analyze Calls', actionKey: 'calls' as const,
   },
 ];
 
