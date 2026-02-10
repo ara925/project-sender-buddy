@@ -247,9 +247,9 @@ export function Dashboard() {
         const hasIssues = staffIssues.length > 0;
         return (
           <div className={`card overflow-hidden border transition-colors ${hasIssues ? 'border-red-500/20' : 'border-emerald-500/20'}`}>
-            <Link
-              to="/staff"
-              className="w-full p-4 flex items-center justify-between hover:bg-[var(--surface-hover)] transition-colors cursor-pointer block"
+            <button
+              onClick={() => setStaffExpanded(!staffExpanded)}
+              className="w-full p-4 flex items-center justify-between hover:bg-[var(--surface-hover)] transition-colors cursor-pointer"
             >
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-xl ${hasIssues ? 'bg-red-500/10' : 'bg-emerald-500/10'}`}>
@@ -266,29 +266,53 @@ export function Dashboard() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
+                {/* Status dots */}
+                <div className="hidden sm:flex items-center gap-1">
+                  {staffMembers.filter(s => s.status !== 'offline').map(s => (
+                    <span key={s.id} className={`h-2 w-2 rounded-full ${s.issue ? 'bg-red-500' : 'bg-emerald-500'}`} title={s.name} />
+                  ))}
+                </div>
                 <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
                   <Clock size={11} />
                   <span className="hidden sm:inline">Live</span>
                 </div>
-                <ArrowUpRight size={16} className="text-[var(--text-muted)]" />
+                <ChevronDown
+                  size={16}
+                  className={`text-[var(--text-muted)] transition-transform duration-200 ${staffExpanded ? 'rotate-180' : ''}`}
+                />
               </div>
-            </Link>
-            {hasIssues && (
-              <div className="border-t border-[var(--border)] divide-y divide-[var(--border)]">
-                {staffIssues.map(member => (
-                  <div key={member.id} className="flex items-center gap-3 p-4">
-                    <div className="h-8 w-8 rounded-full bg-red-500/10 flex items-center justify-center text-xs font-semibold text-red-500">
-                      {member.name.split(' ').map(n => n[0]).join('')}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-[var(--text-primary)]">{member.name}</p>
-                      <p className="text-xs text-red-400 truncate">{member.issue}</p>
-                    </div>
-                    <AlertTriangle size={14} className="text-red-500 shrink-0" />
+            </button>
+
+            <div
+              className={`transition-all duration-300 ease-in-out overflow-hidden ${staffExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}
+            >
+              <div className="border-t border-[var(--border)]">
+                {hasIssues && (
+                  <div className="divide-y divide-[var(--border)]">
+                    {staffIssues.map(member => (
+                      <div key={member.id} className="flex items-center gap-3 p-4 hover:bg-[var(--surface-hover)] transition-colors">
+                        <div className="h-8 w-8 rounded-full bg-red-500/10 flex items-center justify-center text-xs font-semibold text-red-500">
+                          {member.name.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-[var(--text-primary)]">{member.name}</p>
+                          <p className="text-xs text-red-400 truncate">{member.issue}</p>
+                        </div>
+                        <AlertTriangle size={14} className="text-red-500 shrink-0" />
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
+                {!hasIssues && (
+                  <div className="p-4 text-center text-xs text-[var(--text-muted)]">No active issues — all staff performing normally.</div>
+                )}
+                <div className="border-t border-[var(--border)] p-3 flex justify-center">
+                  <Link to="/staff" className="text-xs font-medium text-[var(--primary)] hover:underline">
+                    View All Staff →
+                  </Link>
+                </div>
               </div>
-            )}
+            </div>
           </div>
         );
       })()}
