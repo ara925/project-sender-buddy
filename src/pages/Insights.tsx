@@ -133,6 +133,7 @@ export function Insights() {
   const [filters, setFilters] = useState<InsightFilters>(emptyFilters);
   const [columns, setColumns] = useState<ColumnVisibility>(defaultColumns);
   const [compareConfig, setCompareConfig] = useState<CompareConfig>(getDefaultCompareConfig());
+  const [actionDrawer, setActionDrawer] = useState<'intaker' | 'campaign' | 'calls' | null>(null);
 
   const tabClass = (active: boolean) =>
     cn(
