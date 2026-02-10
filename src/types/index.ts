@@ -49,7 +49,7 @@ export interface Activity {
   created_at: string;
 }
 
-export type LeadActivityPlatform = 'callrail' | 'regal' | 'intaker' | 'litify' | 'google_ads' | 'forms' | 'internal';
+export type LeadActivityPlatform = 'callrail' | 'regal' | 'regal_ai' | 'intaker' | 'litify' | 'google_ads' | 'forms' | 'internal';
 
 export type LeadActivityType =
   | 'call_inbound'
