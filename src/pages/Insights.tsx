@@ -379,6 +379,17 @@ export function Insights() {
                     </tr>
                   );
                 })}
+                {filteredBreakdown.length === 0 && (
+                  <tr>
+                    <td colSpan={10} className="px-4 py-12 text-center">
+                      <div className="text-[var(--text-muted)]">
+                        <Search size={24} className="mx-auto mb-2 opacity-40" />
+                        <p className="text-sm font-medium">No data matches your filters</p>
+                        <p className="text-xs mt-1">Try adjusting your filter criteria</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
