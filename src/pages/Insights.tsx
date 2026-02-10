@@ -203,7 +203,7 @@ export function Insights() {
 
       {/* Key Metrics Grid */}
       <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
-        {keyMetrics.map((metric) => {
+        {filteredMetrics.map((metric) => {
           const MetricIcon = metric.icon;
           return (
             <Card key={metric.label} className="p-4 hover:bg-[var(--surface-hover)] transition-colors cursor-pointer hover:shadow-md" onClick={() => setSelectedMetric(metric)}>
