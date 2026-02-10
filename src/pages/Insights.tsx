@@ -133,7 +133,7 @@ export function Insights() {
         {keyMetrics.map((metric) => {
           const MetricIcon = metric.icon;
           return (
-            <Card key={metric.label} className="p-4 hover:bg-[var(--surface-hover)] transition-colors">
+            <Card key={metric.label} className="p-4 hover:bg-[var(--surface-hover)] transition-colors cursor-pointer hover:shadow-md" onClick={() => setSelectedMetric(metric)}>
               <div className="flex items-center justify-between mb-2">
                 <div className="p-1.5 rounded-lg bg-[var(--surface-hover)]">
                   <MetricIcon size={14} className="text-[var(--primary)]" />
