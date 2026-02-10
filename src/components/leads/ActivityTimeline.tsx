@@ -2,7 +2,7 @@ import {
   Phone, PhoneIncoming, PhoneOutgoing, PhoneMissed, Voicemail,
   FileText, Mail, MailOpen, MessageSquare, MessageCircle,
   ArrowRightLeft, StickyNote, UserCheck, RefreshCw, Database,
-  MousePointerClick, PenTool, Upload
+  MousePointerClick, PenTool, Upload, Bot, Shield, Target, AlertTriangle,
 } from 'lucide-react';
 import { Badge } from '@/components/ui';
 import { formatDateTime } from '@/lib/utils';
