@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import {
   TrendingUp, TrendingDown, Lightbulb, Target, BarChart3, ArrowRight,
-  Filter, DollarSign, Zap, AlertTriangle, Users, PhoneCall, Search, Globe, Share2, Link2, UserCheck,
+  Zap, AlertTriangle, Users, PhoneCall, Search, Globe, Share2, Link2, UserCheck,
 } from 'lucide-react';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { Badge, Button, Card } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { MetricDetailDrawer } from '@/components/insights/MetricDetailDrawer';
+import { InsightFilterPanel, emptyFilters, type InsightFilters } from '@/components/insights/InsightFilterPanel';
+import { ColumnTogglePanel, defaultColumns, type ColumnVisibility } from '@/components/insights/ColumnTogglePanel';
+import { ComparePanel, ComparisonResultsBar, getDefaultCompareConfig, type CompareConfig } from '@/components/insights/ComparePanel';
 
 const keyMetrics = [
   { label: 'Total Leads', value: '1,247', change: '+12%', positive: true, icon: Users, description: 'All sources combined' },
@@ -93,12 +96,25 @@ export function Insights() {
   const [activeTab, setActiveTab] = useState<'weekly' | 'funnels'>('weekly');
   const [selectedFunnel, setSelectedFunnel] = useState<keyof typeof funnelData>('google');
   const [selectedMetric, setSelectedMetric] = useState<typeof keyMetrics[number] | null>(null);
+  const [filters, setFilters] = useState<InsightFilters>(emptyFilters);
+  const [columns, setColumns] = useState<ColumnVisibility>(defaultColumns);
+  const [compareConfig, setCompareConfig] = useState<CompareConfig>(getDefaultCompareConfig());
 
   const tabClass = (active: boolean) =>
     cn(
       'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors',
       active ? 'bg-[var(--surface-hover)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)]'
     );
+
+  // Active filter chips for display
+  const activeFilterChips = [
+    ...filters.sources.map(s => ({ group: 'Source', value: s })),
+    ...filters.caseTypes.map(s => ({ group: 'Case', value: s })),
+    ...filters.statuses.map(s => ({ group: 'Status', value: s })),
+    ...filters.agents.map(s => ({ group: 'Agent', value: s })),
+    ...filters.campaigns.map(s => ({ group: 'Campaign', value: s })),
+    ...(filters.minQuality ? [{ group: 'Quality', value: `≥ ${filters.minQuality}` }] : []),
+  ];
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -122,11 +138,38 @@ export function Insights() {
             </button>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm"><Filter size={16} /> Filter</Button>
-            <Button variant="outline" size="sm" className="hidden sm:inline-flex"><DollarSign size={16} /> Columns</Button>
+            <InsightFilterPanel filters={filters} onChange={setFilters} />
+            <ColumnTogglePanel columns={columns} onChange={setColumns} />
+            <ComparePanel config={compareConfig} onChange={setCompareConfig} />
           </div>
         </div>
       </div>
+
+      {/* Active filter chips */}
+      {activeFilterChips.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium text-[var(--text-muted)]">Filtered by:</span>
+          {activeFilterChips.map((chip, i) => (
+            <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[var(--primary)]/10 text-[var(--primary)] border border-[var(--primary)]/20">
+              <span className="text-[10px] opacity-60">{chip.group}:</span> {chip.value}
+            </span>
+          ))}
+          <button
+            onClick={() => setFilters(emptyFilters)}
+            className="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] underline"
+          >
+            Clear all
+          </button>
+        </div>
+      )}
+
+      {/* Comparison Results */}
+      {compareConfig.preset !== 'none' && compareConfig.compareRange && (
+        <ComparisonResultsBar
+          currentLabel={`${new Date(compareConfig.currentRange.from).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${new Date(compareConfig.currentRange.to).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}
+          compareLabel={`${new Date(compareConfig.compareRange.from).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${new Date(compareConfig.compareRange.to).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}
+        />
+      )}
 
       {/* Key Metrics Grid */}
       <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
@@ -199,17 +242,18 @@ export function Insights() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full">
+             <table className="w-full">
               <thead>
                 <tr>
                   <th className="bg-[var(--surface-hover)] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Source</th>
-                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Volume</th>
-                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Trend</th>
-                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Velocity</th>
-                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Spend</th>
-                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">CPL</th>
-                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">ROAS</th>
-                  <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Quality</th>
+                  {columns.volume && <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Volume</th>}
+                  {columns.comparison && <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Prior</th>}
+                  {columns.trend && <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Trend</th>}
+                  {columns.velocity && <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Velocity</th>}
+                  {columns.spend && <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Spend</th>}
+                  {columns.cpl && <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">CPL</th>}
+                  {columns.roas && <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">ROAS</th>}
+                  {columns.quality && <th className="bg-[var(--surface-hover)] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Quality</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
@@ -219,42 +263,57 @@ export function Insights() {
                   return (
                     <tr key={row.source} className="hover:bg-[var(--surface-hover)] transition-colors">
                       <td className="px-4 py-3 font-medium text-[var(--text-primary)]">{row.source}</td>
-                      <td className="px-4 py-3 text-right font-semibold text-[var(--text-primary)]">{row.current}</td>
-                      <td className="px-4 py-3 text-right">
-                        <Badge variant="outline" className={cn('border-0', vsLast.isPositive ? 'bg-emerald-500/10 text-emerald-700' : 'bg-red-500/10 text-red-700')}>
-                          {vsLast.isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                          {vsLast.text}
-                        </Badge>
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <div className="inline-flex items-end justify-end gap-1 opacity-80" aria-label="Velocity indicator">
-                          <span className="w-1.5 rounded-full bg-[var(--border)]" style={{ height: '35%' }} />
-                          <span className="w-1.5 rounded-full bg-[var(--border)]" style={{ height: '60%' }} />
-                          <span className={cn('w-1.5 rounded-full', vsThree.isPositive ? 'bg-emerald-500' : 'bg-red-500')} style={{ height: '85%' }} />
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-secondary)]">
-                        {row.cost > 0 ? `$${row.cost.toLocaleString()}` : '-'}
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-primary)]">
-                        {row.cpl > 0 ? <span className={row.cpl < 20 ? 'text-emerald-700 font-semibold' : ''}>${row.cpl}</span> : '-'}
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-primary)]">
-                        {row.roas > 0 ? <span className={row.roas > 4 ? 'text-emerald-700 font-semibold' : ''}>{row.roas}x</span> : '-'}
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        {row.quality > 0 && (
-                          <div className="flex items-center justify-end gap-3">
-                            <div className="h-2 w-24 overflow-hidden rounded-full bg-[var(--surface-active)]">
-                              <div
-                                className={cn('h-full rounded-full', row.quality >= 9 ? 'bg-emerald-500' : row.quality >= 8 ? 'bg-[var(--primary)]' : 'bg-amber-500')}
-                                style={{ width: `${row.quality * 10}%` }}
-                              />
-                            </div>
-                            <span className="w-6 text-right text-xs font-semibold text-[var(--text-primary)]">{row.quality}</span>
+                      {columns.volume && <td className="px-4 py-3 text-right font-semibold text-[var(--text-primary)]">{row.current}</td>}
+                      {columns.comparison && (
+                        <td className="px-4 py-3 text-right text-sm text-[var(--text-muted)]">{row.lastWeek}</td>
+                      )}
+                      {columns.trend && (
+                        <td className="px-4 py-3 text-right">
+                          <Badge variant="outline" className={cn('border-0', vsLast.isPositive ? 'bg-emerald-500/10 text-emerald-700' : 'bg-red-500/10 text-red-700')}>
+                            {vsLast.isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                            {vsLast.text}
+                          </Badge>
+                        </td>
+                      )}
+                      {columns.velocity && (
+                        <td className="px-4 py-3 text-right">
+                          <div className="inline-flex items-end justify-end gap-1 opacity-80" aria-label="Velocity indicator">
+                            <span className="w-1.5 rounded-full bg-[var(--border)]" style={{ height: '35%' }} />
+                            <span className="w-1.5 rounded-full bg-[var(--border)]" style={{ height: '60%' }} />
+                            <span className={cn('w-1.5 rounded-full', vsThree.isPositive ? 'bg-emerald-500' : 'bg-red-500')} style={{ height: '85%' }} />
                           </div>
-                        )}
-                      </td>
+                        </td>
+                      )}
+                      {columns.spend && (
+                        <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-secondary)]">
+                          {row.cost > 0 ? `$${row.cost.toLocaleString()}` : '-'}
+                        </td>
+                      )}
+                      {columns.cpl && (
+                        <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-primary)]">
+                          {row.cpl > 0 ? <span className={row.cpl < 20 ? 'text-emerald-700 font-semibold' : ''}>${row.cpl}</span> : '-'}
+                        </td>
+                      )}
+                      {columns.roas && (
+                        <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-primary)]">
+                          {row.roas > 0 ? <span className={row.roas > 4 ? 'text-emerald-700 font-semibold' : ''}>{row.roas}x</span> : '-'}
+                        </td>
+                      )}
+                      {columns.quality && (
+                        <td className="px-4 py-3 text-right">
+                          {row.quality > 0 && (
+                            <div className="flex items-center justify-end gap-3">
+                              <div className="h-2 w-24 overflow-hidden rounded-full bg-[var(--surface-active)]">
+                                <div
+                                  className={cn('h-full rounded-full', row.quality >= 9 ? 'bg-emerald-500' : row.quality >= 8 ? 'bg-[var(--primary)]' : 'bg-amber-500')}
+                                  style={{ width: `${row.quality * 10}%` }}
+                                />
+                              </div>
+                              <span className="w-6 text-right text-xs font-semibold text-[var(--text-primary)]">{row.quality}</span>
+                            </div>
+                          )}
+                        </td>
+                      )}
                     </tr>
                   );
                 })}
