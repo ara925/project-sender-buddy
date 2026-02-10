@@ -50,6 +50,10 @@ function getActivityIcon(type: LeadActivityType) {
     case 'ad_click': return <MousePointerClick size={size} />;
     case 'retainer_signed': return <PenTool size={size} />;
     case 'document_uploaded': return <Upload size={size} />;
+    case 'ai_call_inbound': return <Bot size={size} />;
+    case 'ai_call_outbound': return <Bot size={size} />;
+    case 'ai_qualification': return <Target size={size} />;
+    case 'ai_escalation': return <AlertTriangle size={size} />;
     default: return <Phone size={size} />;
   }
 }
