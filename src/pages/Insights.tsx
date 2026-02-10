@@ -38,7 +38,7 @@ const weeklyBreakdown = [
 
 type FunnelStep = { stage: string; count: number; dropoff: string | number };
 
-const funnelData: Record<'google' | 'intaker', FunnelStep[]> = {
+const funnelData: Record<string, FunnelStep[]> = {
   google: [
     { stage: 'Impressions', count: 15400, dropoff: 0 },
     { stage: 'Clicks', count: 3200, dropoff: '79%' },
@@ -52,6 +52,34 @@ const funnelData: Record<'google' | 'intaker', FunnelStep[]> = {
     { stage: 'Leads', count: 115, dropoff: '81%' },
     { stage: 'Qualified', count: 85, dropoff: '26%' },
     { stage: 'Retained', count: 42, dropoff: '50%' },
+  ],
+  organic: [
+    { stage: 'Sessions', count: 22450, dropoff: 0 },
+    { stage: 'Engaged', count: 8940, dropoff: '60%' },
+    { stage: 'Form Starts', count: 1820, dropoff: '80%' },
+    { stage: 'Leads', count: 312, dropoff: '83%' },
+    { stage: 'Qualified', count: 142, dropoff: '54%' },
+  ],
+  social: [
+    { stage: 'Impressions', count: 486000, dropoff: 0 },
+    { stage: 'Engagement', count: 24300, dropoff: '95%' },
+    { stage: 'Clicks', count: 4860, dropoff: '80%' },
+    { stage: 'Leads', count: 89, dropoff: '98%' },
+    { stage: 'Qualified', count: 28, dropoff: '69%' },
+  ],
+  referrals: [
+    { stage: 'Referred', count: 312, dropoff: 0 },
+    { stage: 'Contacted', count: 268, dropoff: '14%' },
+    { stage: 'Consulted', count: 210, dropoff: '22%' },
+    { stage: 'Qualified', count: 156, dropoff: '26%' },
+    { stage: 'Retained', count: 65, dropoff: '58%' },
+  ],
+  callrail: [
+    { stage: 'Calls Received', count: 1840, dropoff: 0 },
+    { stage: 'Connected', count: 1514, dropoff: '18%' },
+    { stage: 'Leads', count: 78, dropoff: '95%' },
+    { stage: 'Qualified', count: 38, dropoff: '51%' },
+    { stage: 'Retained', count: 15, dropoff: '61%' },
   ],
 };
 
