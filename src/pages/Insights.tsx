@@ -1,11 +1,24 @@
 import { useState } from 'react';
 import {
   TrendingUp, TrendingDown, Lightbulb, Target, BarChart3, ArrowRight,
-  Filter, DollarSign, Zap, AlertTriangle,
+  Filter, DollarSign, Zap, AlertTriangle, Users, PhoneCall, Search, Globe, Share2, Link2, UserCheck,
 } from 'lucide-react';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { Badge, Button, Card } from '@/components/ui';
 import { cn } from '@/lib/utils';
+
+const keyMetrics = [
+  { label: 'Total Leads', value: '1,247', change: '+12%', positive: true, icon: Users, description: 'All sources combined' },
+  { label: 'Qualified Leads', value: '438', change: '+8%', positive: true, icon: UserCheck, description: '35.1% qualification rate' },
+  { label: 'Intake Team', value: '12/12', change: 'All Present', positive: true, icon: Users, description: 'Full staff today' },
+  { label: 'Contact Rate', value: '68.4%', change: '+3.2%', positive: true, icon: PhoneCall, description: 'Avg across all channels' },
+  { label: 'Search Volume', value: '24.8K', change: '+5%', positive: true, icon: Search, description: 'Branded + non-branded' },
+  { label: 'Organic Search', value: '312', change: '+18%', positive: true, icon: Globe, description: '25.0% of total leads' },
+  { label: 'Google Ads', value: '142', change: '-10%', positive: false, icon: Target, description: '11.4% of total leads' },
+  { label: 'Social Media', value: '89', change: '+22%', positive: true, icon: Share2, description: '7.1% of total leads' },
+  { label: 'Referrals', value: '156', change: '+4%', positive: true, icon: Link2, description: '12.5% of total leads' },
+  { label: 'Direct', value: '203', change: '-2%', positive: false, icon: Zap, description: '16.3% of total leads' },
+];
 
 const weeklyBreakdown = [
   { source: 'Google Ads', current: 142, lastWeek: 158, threeWeeks: 120, cost: 4200, cpl: 29.57, roas: 3.2, quality: 8.5 },
