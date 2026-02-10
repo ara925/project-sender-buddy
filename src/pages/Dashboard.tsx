@@ -28,6 +28,7 @@ const statusConfig = {
 
 export function Dashboard() {
   const [expanded, setExpanded] = useState(false);
+  const [websitesExpanded, setWebsitesExpanded] = useState(false);
   const [staffExpanded, setStaffExpanded] = useState(false);
 
   const webOperationalCount = websiteStatuses.filter(s => s.status === 'operational').length;
