@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Zap,
   Lightbulb,
+  Headset,
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -25,6 +26,7 @@ const navItems = [
   { icon: Lightbulb, label: 'Insights', href: '/insights' },
   { icon: Users, label: 'Leads', href: '/leads' },
   { icon: Phone, label: 'Calls', href: '/calls' },
+  { icon: Headset, label: 'Staff', href: '/staff' },
   { icon: FileText, label: 'Reports', href: '/reports' },
   { icon: Activity, label: 'System Health', href: '/system-integrity', adminOnly: true },
   { icon: Shield, label: 'Admin', href: '/admin', adminOnly: true },

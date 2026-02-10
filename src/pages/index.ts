@@ -7,3 +7,4 @@ export { SystemIntegrity } from './SystemIntegrity';
 export { Insights } from './Insights';
 export { Admin } from './Admin';
 export { DesignSystem } from './DesignSystem';
+export { Staff } from './Staff';
