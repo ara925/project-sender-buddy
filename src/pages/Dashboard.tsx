@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Sparkles, CheckCircle2, AlertTriangle, XCircle, Activity, Clock, ArrowUpRight, ChevronDown, Globe, Headset } from 'lucide-react';
+import { Sparkles, CheckCircle2, AlertTriangle, XCircle, Activity, Clock, ArrowUpRight, ChevronDown, Globe, Headset, Shield } from 'lucide-react';
 import { staffMembers } from '@/data/mock-staff';
+import { investigations, severityConfig } from '@/data/mock-investigations';
 import { Link } from 'react-router-dom';
 
 const systemStatuses = [
@@ -30,6 +31,7 @@ export function Dashboard() {
   const [expanded, setExpanded] = useState(false);
   const [websitesExpanded, setWebsitesExpanded] = useState(false);
   const [staffExpanded, setStaffExpanded] = useState(false);
+  const [investigationsExpanded, setInvestigationsExpanded] = useState(false);
 
   const webOperationalCount = websiteStatuses.filter(s => s.status === 'operational').length;
   const webDegradedCount = websiteStatuses.filter(s => s.status === 'degraded').length;
@@ -309,6 +311,85 @@ export function Dashboard() {
                 <div className="border-t border-[var(--border)] p-3 flex justify-center">
                   <Link to="/staff" className="text-xs font-medium text-[var(--primary)] hover:underline">
                     View All Staff →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+      {/* Lead Investigations */}
+      {(() => {
+        const activeInv = investigations.filter(i => i.status === 'open' || i.status === 'reviewing');
+        const confirmedInv = investigations.filter(i => i.status === 'confirmed');
+        const hasIssues = activeInv.length > 0 || confirmedInv.length > 0;
+        const totalActive = activeInv.length + confirmedInv.length;
+        return (
+          <div className={`card overflow-hidden border transition-colors ${hasIssues ? 'border-red-500/20' : 'border-emerald-500/20'}`}>
+            <button
+              onClick={() => setInvestigationsExpanded(!investigationsExpanded)}
+              className="w-full p-4 flex items-center justify-between hover:bg-[var(--surface-hover)] transition-colors cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-xl ${hasIssues ? 'bg-red-500/10' : 'bg-emerald-500/10'}`}>
+                  <Shield size={18} className={hasIssues ? 'text-red-500' : 'text-emerald-500'} />
+                </div>
+                <div className="text-left">
+                  <h2 className="text-sm font-semibold text-[var(--text-primary)]">
+                    {hasIssues ? `${totalActive} Lead Investigation${totalActive > 1 ? 's' : ''} Active` : 'No Active Investigations'}
+                  </h2>
+                  <p className="text-xs text-[var(--text-secondary)]">
+                    {activeInv.length} open
+                    {confirmedInv.length > 0 && <span className="text-red-500"> · {confirmedInv.length} confirmed theft</span>}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="hidden sm:flex items-center gap-1">
+                  {[...activeInv, ...confirmedInv].map(inv => (
+                    <span key={inv.id} className={`h-2 w-2 rounded-full ${severityConfig[inv.severity].color.replace('text-', 'bg-')}`} title={inv.leadName} />
+                  ))}
+                </div>
+                <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+                  <Clock size={11} />
+                  <span className="hidden sm:inline">Live</span>
+                </div>
+                <ChevronDown
+                  size={16}
+                  className={`text-[var(--text-muted)] transition-transform duration-200 ${investigationsExpanded ? 'rotate-180' : ''}`}
+                />
+              </div>
+            </button>
+
+            <div className={`transition-all duration-300 ease-in-out overflow-hidden ${investigationsExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}>
+              <div className="border-t border-[var(--border)]">
+                {hasIssues ? (
+                  <div className="divide-y divide-[var(--border)]">
+                    {[...confirmedInv, ...activeInv].map(inv => {
+                      const sevConf = severityConfig[inv.severity];
+                      return (
+                        <div key={inv.id} className="flex items-center gap-3 p-4 hover:bg-[var(--surface-hover)] transition-colors">
+                          <div className={`p-1.5 rounded-lg ${sevConf.bg}`}>
+                            <AlertTriangle size={12} className={sevConf.color} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-medium text-[var(--text-primary)]">{inv.leadName}</p>
+                              <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-semibold ${sevConf.bg} ${sevConf.color}`}>{sevConf.label}</span>
+                            </div>
+                            <p className="text-xs text-[var(--text-secondary)] truncate">{inv.flag}</p>
+                          </div>
+                          <span className="text-[10px] text-[var(--text-muted)] shrink-0">Agent: {inv.agentName}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="p-4 text-center text-xs text-[var(--text-muted)]">No active investigations.</div>
+                )}
+                <div className="border-t border-[var(--border)] p-3 flex justify-center">
+                  <Link to="/leads" className="text-xs font-medium text-[var(--primary)] hover:underline">
+                    View All Investigations →
                   </Link>
                 </div>
               </div>
