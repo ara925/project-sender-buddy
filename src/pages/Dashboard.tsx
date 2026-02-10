@@ -24,7 +24,13 @@ const statusConfig = {
 
 export function Dashboard() {
   const [expanded, setExpanded] = useState(false);
+  const [websitesExpanded, setWebsitesExpanded] = useState(false);
 
+  const webOperationalCount = websiteStatuses.filter(s => s.status === 'operational').length;
+  const webDegradedCount = websiteStatuses.filter(s => s.status === 'degraded').length;
+  const webDownCount = websiteStatuses.filter(s => s.status === 'down').length;
+  const allWebsitesOperational = webDegradedCount === 0 && webDownCount === 0;
+  const webIssueCount = webDegradedCount + webDownCount;
   const operationalCount = systemStatuses.filter(s => s.status === 'operational').length;
   const degradedCount = systemStatuses.filter(s => s.status === 'degraded').length;
   const downCount = systemStatuses.filter(s => s.status === 'down').length;
