@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 
-export type Theme = 'dark' | 'light' | 'purple' | 'midnight' | 'system';
+export type Theme = 'dark' | 'light' | 'purple' | 'midnight' | 'system' | 'executive' | 'slate-dark';
 
 interface ThemeContextType {
   theme: Theme;

@@ -21,10 +21,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const root = document.documentElement;
-    const actualTheme: 'dark' | 'light' | 'purple' | 'midnight' =
+    const actualTheme: Theme =
       theme === 'system' ? (systemDark ? 'dark' : 'light') : theme;
 
-    root.classList.remove('theme-dark', 'theme-light', 'theme-purple', 'theme-midnight');
+    root.classList.remove('theme-dark', 'theme-light', 'theme-purple', 'theme-midnight', 'theme-executive', 'theme-slate-dark');
     root.classList.add(`theme-${actualTheme}`);
     localStorage.setItem('theme', theme);
   }, [theme, systemDark]);
@@ -43,7 +43,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setThemeState(newTheme);
   };
 
-  const resolvedTheme: 'dark' | 'light' | 'purple' | 'midnight' =
+  const resolvedTheme: Theme =
     theme === 'system' ? (systemDark ? 'dark' : 'light') : theme;
 
   return (

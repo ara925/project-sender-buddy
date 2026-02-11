@@ -1,4 +1,4 @@
-import { Activity, Globe, CheckCircle2, AlertTriangle, XCircle, Shield, Headset, Sparkles, Phone, PhoneMissed, Users, TrendingUp, TrendingDown, Bot, Clock } from 'lucide-react';
+import { Activity, Globe, AlertTriangle, Shield, Headset, Sparkles, Phone, PhoneMissed, Users, TrendingUp, TrendingDown, Bot, Clock, ArrowUpRight } from 'lucide-react';
 import { StatusCard, type SystemStatus } from '@/components/dashboard/StatusCard';
 import { StaffCard } from '@/components/dashboard/StaffCard';
 import { InvestigationsCard } from '@/components/dashboard/InvestigationsCard';
@@ -10,7 +10,7 @@ const systemStatuses: SystemStatus[] = [
   { name: 'Intaker', status: 'operational', message: 'All services running normally', uptime: '99.98%', lastChecked: '2 mins ago' },
   { name: 'CallRail', status: 'degraded', message: 'Intermittent delays in call logging (~2 min lag)', uptime: '97.4%', lastChecked: '1 min ago' },
   { name: 'LeadDocket', status: 'operational', message: 'All services running normally', uptime: '99.95%', lastChecked: '3 mins ago' },
-  { name: 'Filevine', status: 'operational', message: 'All services running normally', uptime: '99.99%', lastChecked: '1 min ago' },
+  { name: 'Loadify', status: 'operational', message: 'All services running normally', uptime: '99.99%', lastChecked: '1 min ago' },
   { name: 'Google Ads API', status: 'operational', message: 'All services running normally', uptime: '99.97%', lastChecked: '5 mins ago' },
   { name: 'Internal CRM Sync', status: 'down', message: 'Sync halted — authentication token expired.', uptime: '91.2%', lastChecked: 'Just now' },
 ];
@@ -46,205 +46,214 @@ export function Dashboard() {
   const activeInv = investigations.filter(i => i.status === 'open' || i.status === 'reviewing' || i.status === 'confirmed').length;
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Dashboard</h1>
-          <p className="text-[var(--text-secondary)] mt-1">System health & operational status</p>
-        </div>
-        <div className="px-3 py-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)] flex items-center gap-2">
-          <Sparkles size={14} className="text-[var(--primary)]" />
-          <span className="text-xs font-medium text-[var(--text-secondary)]">Live Updates</span>
-        </div>
-      </div>
+    <div className="space-y-8 animate-in fade-in duration-500 pb-10">
 
-      {/* Top KPI Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+      {/* 1. TOP KPI ROW */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Systems', value: `${sysOk}/${systemStatuses.length}`, icon: Activity, ok: sysDown === 0 && sysDegraded === 0, sub: sysDown > 0 ? `${sysDown} down` : sysDegraded > 0 ? `${sysDegraded} degraded` : 'All good' },
-          { label: 'Websites', value: `${webOk}/${websiteStatuses.length}`, icon: Globe, ok: true, sub: 'All online' },
-          { label: 'Staff', value: `${onFloor}`, icon: Headset, ok: staffIssuesCount === 0, sub: staffIssuesCount > 0 ? `${staffIssuesCount} issues` : 'On floor' },
-          { label: 'Investigations', value: `${activeInv}`, icon: Shield, ok: activeInv === 0, sub: activeInv > 0 ? 'Active' : 'None' },
-          { label: 'Calls Today', value: '47', icon: Phone, ok: true, sub: '↑ 12% vs yesterday' },
-          { label: 'Missed Calls', value: '3', icon: PhoneMissed, ok: false, sub: 'Unclaimed' },
-        ].map(kpi => (
-          <div key={kpi.label} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3.5">
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <kpi.icon size={12} className={kpi.ok ? 'text-emerald-500' : 'text-amber-500'} />
-              <span className="text-[10px] font-medium text-[var(--text-muted)] uppercase tracking-wide">{kpi.label}</span>
+          { label: 'Pipeline Value', value: '$842k', sub: '+12% vs last week', color: 'text-blue-500', border: 'border-blue-500' },
+          { label: 'Active Staff', value: `${onFloor}`, sub: `${staffIssuesCount} alerting`, color: staffIssuesCount > 0 ? 'text-red-500' : 'text-emerald-500', border: staffIssuesCount > 0 ? 'border-red-500' : 'border-emerald-500' },
+          { label: 'Investigations', value: `${activeInv}`, sub: 'Action Required', color: activeInv > 0 ? 'text-amber-500' : 'text-[var(--text-secondary)]', border: activeInv > 0 ? 'border-amber-500' : 'border-[var(--primary)]' },
+          { label: 'System Health', value: '98.2%', sub: 'All Systems Go', color: 'text-emerald-500', border: 'border-emerald-500' },
+        ].map((stat, i) => (
+          <div key={i} className={`bg-[var(--surface)] p-5 border-l-4 ${stat.border} hover:bg-[var(--surface-hover)] transition-colors group relative overflow-hidden`}>
+            <div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity ${stat.color}`}>
+              <Sparkles size={40} strokeWidth={1} />
             </div>
-            <p className="text-lg font-bold text-[var(--text-primary)] leading-none">{kpi.value}</p>
-            <span className={`text-[10px] font-medium mt-1 block ${kpi.ok ? 'text-emerald-500' : 'text-red-500'}`}>{kpi.sub}</span>
+            <p className="text-[10px] uppercase tracking-widest text-[var(--text-secondary)] font-bold mb-1">{stat.label}</p>
+            <p className="text-3xl font-bold text-[var(--text-primary)]">{stat.value}</p>
+            <p className={`text-xs font-mono mt-1 ${stat.color} font-medium`}>{stat.sub}</p>
           </div>
         ))}
       </div>
 
-      {/* Action Items — things that need fixing */}
-      <div className="rounded-xl border border-amber-500/20 bg-[var(--surface)] overflow-hidden">
-        <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <AlertTriangle size={14} className="text-amber-500" />
-            <h2 className="text-sm font-semibold text-[var(--text-primary)]">Action Required</h2>
-            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500">{actionItems.length}</span>
+      {/* 2. MAIN OPERATIONS GRID */}
+      <h2 className="text-lg font-bold text-[var(--text-primary)] uppercase tracking-wide px-1 pt-2">Operational Intelligence</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Lead Pacing / Search Volume */}
+        <div className="bg-[var(--surface)] p-6 border-t-4 border-blue-500 flex flex-col">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="font-bold text-[var(--text-primary)] flex items-center gap-2">
+              <TrendingUp size={16} className="text-blue-500" />
+              Lead Pacing / Search Volume
+            </h3>
+            <Link to="/leads" className="text-xs text-blue-500 hover:text-blue-400 font-bold uppercase tracking-wider">View All</Link>
           </div>
-          <span className="text-[10px] text-[var(--text-muted)]">Prioritized by severity</span>
-        </div>
-        <div className="divide-y divide-[var(--border)]">
-          {actionItems.map(item => {
-            const config = actionTypeConfig[item.type];
-            return (
-              <div key={item.id} className="flex items-center gap-3 px-4 py-3 hover:bg-[var(--surface-hover)] transition-colors">
-                <span className={`h-2 w-2 rounded-full shrink-0 ${config.dot}`} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-[var(--text-primary)]">{item.title}</p>
-                  <p className="text-[10px] text-[var(--text-secondary)] truncate">{item.desc}</p>
-                </div>
-                <Link
-                  to={item.link}
-                  className={`text-[10px] font-semibold px-2.5 py-1 rounded-md ${config.bg} ${config.color} border ${config.border} hover:opacity-80 transition-opacity shrink-0`}
-                >
-                  {item.linkLabel}
-                </Link>
-              </div>
-            );
-          })}
-        </div>
-      </div>
 
-      {/* Main Grid — 2 columns, items-start so cards don't stretch */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
-        <StatusCard
-          statuses={systemStatuses}
-          icon={Activity}
-          title={{
-            ok: 'All Systems Operational',
-            issue: (n) => `${n} System${n > 1 ? 's' : ''} Need${n === 1 ? 's' : ''} Attention`,
-          }}
-          countLabel={{ ok: 'operational' }}
-        />
-        <StatusCard
-          statuses={websiteStatuses}
-          icon={Globe}
-          title={{
-            ok: 'All Websites Online',
-            issue: (n) => `${n} Website${n > 1 ? 's' : ''} Need${n === 1 ? 's' : ''} Attention`,
-          }}
-          countLabel={{ ok: 'online' }}
-        />
-        <StaffCard />
-        <InvestigationsCard />
-      </div>
+          <div className="relative flex gap-1 items-end h-32 mb-6 px-2">
+            {/* Target Line */}
+            <div className="absolute top-8 left-0 right-0 border-t border-dashed border-blue-500/30 w-full" />
+            <div className="absolute top-5 right-0 text-[9px] font-mono text-blue-500/50 uppercase">Daily Target</div>
 
-      {/* Bottom Row — Leads Pipeline + AI Agent + Calls snapshot */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
-        {/* Leads Pipeline */}
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Users size={14} className="text-[var(--primary)]" />
-              <h3 className="text-sm font-semibold text-[var(--text-primary)]">Lead Pipeline</h3>
-            </div>
-            <Link to="/leads" className="text-[10px] font-medium text-[var(--primary)] hover:underline">View →</Link>
-          </div>
-          <div className="space-y-3">
-            {[
-              { stage: 'New', count: 3, pct: 33, color: 'bg-blue-500' },
-              { stage: 'Contacted', count: 2, pct: 22, color: 'bg-amber-500' },
-              { stage: 'Qualified', count: 2, pct: 22, color: 'bg-emerald-500' },
-              { stage: 'Retained', count: 1, pct: 11, color: 'bg-[var(--primary)]' },
-              { stage: 'Lost', count: 1, pct: 11, color: 'bg-red-500' },
-            ].map(s => (
-              <div key={s.stage}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[11px] font-medium text-[var(--text-secondary)]">{s.stage}</span>
-                  <span className="text-[11px] font-bold text-[var(--text-primary)]">{s.count}</span>
-                </div>
-                <div className="h-1.5 rounded-full bg-[var(--surface-hover)] overflow-hidden">
-                  <div className={`h-full rounded-full ${s.color} transition-all`} style={{ width: `${s.pct}%` }} />
+            {[40, 65, 45, 80, 55, 90, 70, 85, 60, 95].map((h, i) => (
+              <div key={i} className="flex-1 bg-blue-500/20 hover:bg-blue-500 transition-colors rounded-t-sm relative group" style={{ height: `${h}%` }}>
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[var(--surface-active)] text-[9px] px-1.5 py-1 rounded border border-[var(--border)] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10 font-mono">
+                  {h} Searches
                 </div>
               </div>
             ))}
           </div>
-        </div>
 
-        {/* AI Agent Summary */}
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Bot size={14} className="text-[var(--primary)]" />
-              <h3 className="text-sm font-semibold text-[var(--text-primary)]">Regal AI Agents</h3>
-            </div>
-            <Link to="/insights" className="text-[10px] font-medium text-[var(--primary)] hover:underline">Details →</Link>
-          </div>
-          <div className="space-y-3">
+          <div className="space-y-4 pt-4 border-t border-[var(--border)] mt-auto">
             {[
-              { label: 'Calls Handled', value: '16', trend: '+23%', up: true },
-              { label: 'Containment Rate', value: '68%', trend: '+5%', up: true },
-              { label: 'Avg Sentiment', value: '7.2', trend: '-0.3', up: false },
-              { label: 'Escalations', value: '5', trend: '+2', up: false },
+              { label: 'Vol. Today', val: '842', delta: '+12%' },
+              { label: 'Pacing', val: '104%', delta: 'On Track' },
+              { label: 'Projected', val: '1,250', delta: 'High' }
             ].map(m => (
-              <div key={m.label} className="flex items-center justify-between">
-                <span className="text-[11px] text-[var(--text-secondary)]">{m.label}</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-[var(--text-primary)]">{m.value}</span>
-                  <span className={`flex items-center gap-0.5 text-[9px] font-medium ${m.up ? 'text-emerald-500' : 'text-red-500'}`}>
-                    {m.up ? <TrendingUp size={8} /> : <TrendingDown size={8} />}
-                    {m.trend}
-                  </span>
+              <div key={m.label} className="flex justify-between items-center">
+                <span className="text-sm font-medium text-[var(--text-secondary)]">{m.label}</span>
+                <div className="text-right flex items-center gap-3">
+                  <span className="block font-bold text-[var(--text-primary)]">{m.val}</span>
+                  <span className={`text-xs font-mono px-1.5 py-0.5 rounded ${m.label === 'Pacing' ? 'bg-emerald-500/10 text-emerald-500' : 'text-[var(--text-muted)]'}`}>{m.delta}</span>
                 </div>
               </div>
             ))}
           </div>
-          <div className="mt-3 pt-3 border-t border-[var(--border)]">
-            <div className="flex items-center gap-2 p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
-              <AlertTriangle size={10} className="text-amber-500 shrink-0" />
-              <p className="text-[10px] text-amber-500">2 AI calls escalated due to language barriers today</p>
+        </div>
+
+        {/* AI Agent Performance */}
+        <div className="bg-[var(--surface)] p-6 border-t-4 border-emerald-500 flex flex-col">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="font-bold text-[var(--text-primary)] flex items-center gap-2">
+              <Bot size={16} className="text-emerald-500" />
+              Agent Performance
+            </h3>
+            <Link to="/insights" className="text-xs text-emerald-500 hover:text-emerald-400 font-bold uppercase tracking-wider">Analytics</Link>
+          </div>
+
+          <div className="space-y-6 flex-1">
+            {/* Top Stats Row */}
+            <div className="flex justify-between items-end border-b border-[var(--border)] pb-4">
+              <div>
+                <p className="text-xs text-[var(--text-secondary)] uppercase font-semibold">Containment Rate</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-4xl font-bold text-[var(--text-primary)] mt-1 tracking-tight">68.4%</p>
+                  <span className="text-xs text-emerald-500 font-mono">+2.4%</span>
+                </div>
+              </div>
+              <div className="h-12 w-24 flex gap-1 items-end">
+                {[30, 45, 35, 60, 75].map((h, i) => (
+                  <div key={i} className="flex-1 bg-emerald-500 rounded-t-sm opacity-80" style={{ height: `${h}%` }} />
+                ))}
+              </div>
+            </div>
+
+            {/* Metrics Grid */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 bg-[var(--surface-active)]/30 border border-[var(--border)] rounded">
+                <p className="text-[10px] text-[var(--text-muted)] uppercase font-bold">Avg Sentiment</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-lg font-bold text-[var(--text-primary)]">7.2</span>
+                  <div className="flex gap-0.5">
+                    {[1, 2, 3, 4, 5].map(s => (
+                      <div key={s} className={`h-1.5 w-1.5 rounded-full ${s <= 4 ? 'bg-emerald-500' : 'bg-[var(--border)]'}`} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="p-3 bg-[var(--surface-active)]/30 border border-[var(--border)] rounded">
+                <p className="text-[10px] text-[var(--text-muted)] uppercase font-bold">Escalations</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-lg font-bold text-[var(--text-primary)]">5</span>
+                  <span className="text-[10px] text-[var(--text-secondary)]">/ 142 calls</span>
+                </div>
+              </div>
+              <div className="p-3 bg-[var(--surface-active)]/30 border border-[var(--border)] rounded col-span-2">
+                <p className="text-[10px] text-[var(--text-muted)] uppercase font-bold mb-2">Top User Intents</p>
+                <div className="space-y-2">
+                  {[
+                    { label: 'Case Status', val: '42%', color: 'bg-blue-500' },
+                    { label: 'New Intake', val: '28%', color: 'bg-emerald-500' },
+                    { label: 'Billing', val: '15%', color: 'bg-amber-500' }
+                  ].map(intent => (
+                    <div key={intent.label} className="flex items-center gap-2 text-xs">
+                      <div className={`w-1.5 h-1.5 rounded-full ${intent.color}`} />
+                      <span className="text-[var(--text-secondary)] flex-1">{intent.label}</span>
+                      <span className="font-mono font-bold text-[var(--text-primary)]">{intent.val}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-auto pt-4 border-t border-[var(--border)] flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <div className="absolute inset-0 h-2 w-2 rounded-full bg-emerald-500 animate-ping opacity-75" />
+                </div>
+                <p className="text-xs text-[var(--text-secondary)]">
+                  <strong className="text-[var(--text-primary)]">4 Active</strong> / 12 Cap
+                </p>
+              </div>
+              <div className="text-[10px] font-mono text-[var(--text-muted)]">
+                Avg Resp: <span className="text-[var(--text-primary)]">1.2s</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Calls Snapshot */}
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Phone size={14} className="text-[var(--primary)]" />
-              <h3 className="text-sm font-semibold text-[var(--text-primary)]">Calls Today</h3>
+        {/* Action Feed (Right Col) */}
+        <div className="space-y-6">
+          <div className="bg-[var(--surface)] border-t-4 border-amber-500">
+            <div className="p-4 border-b border-[var(--border)] flex justify-between items-center bg-[var(--surface-active)]/20">
+              <h3 className="font-bold text-[var(--text-primary)] text-sm flex items-center gap-2">
+                <AlertTriangle size={16} className="text-amber-500" />
+                Action Items
+              </h3>
+              <span className="bg-amber-500/20 text-amber-500 ring-1 ring-amber-500/40 text-[10px] font-bold px-2 py-0.5 rounded-full">{actionItems.length} Pending</span>
             </div>
-            <Link to="/calls" className="text-[10px] font-medium text-[var(--primary)] hover:underline">View →</Link>
-          </div>
-          <div className="grid grid-cols-2 gap-2 mb-3">
-            {[
-              { label: 'Completed', value: 38, color: 'text-emerald-500' },
-              { label: 'Missed', value: 3, color: 'text-red-500' },
-              { label: 'Voicemail', value: 4, color: 'text-amber-500' },
-              { label: 'In Progress', value: 2, color: 'text-blue-500' },
-            ].map(c => (
-              <div key={c.label} className="text-center p-2 rounded-lg bg-[var(--surface-hover)]">
-                <p className={`text-sm font-bold ${c.color}`}>{c.value}</p>
-                <p className="text-[9px] text-[var(--text-muted)]">{c.label}</p>
-              </div>
-            ))}
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-[11px] text-[var(--text-secondary)]">
-              <Clock size={10} className="text-[var(--text-muted)]" />
-              Avg handle time: <span className="font-bold text-[var(--text-primary)]">4:32</span>
-            </div>
-            <div className="flex items-center gap-2 text-[11px] text-[var(--text-secondary)]">
-              <TrendingUp size={10} className="text-emerald-500" />
-              Call volume: <span className="font-bold text-[var(--text-primary)]">↑ 12%</span> vs yesterday
+            <div className="divide-y divide-[var(--border)]">
+              {actionItems.slice(0, 5).map(item => (
+                <div key={item.id} className="p-4 hover:bg-[var(--surface-hover)] transition-colors group cursor-pointer">
+                  <div className="flex justify-between items-start mb-1.5">
+                    <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm ${item.type === 'urgent' ? 'bg-red-500/20 text-red-500' : 'bg-blue-500/20 text-blue-500'}`}>
+                      {item.type}
+                    </span>
+                    <ArrowUpRight size={12} className="text-[var(--text-primary)] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                  <p className="text-sm font-bold text-[var(--text-primary)] leading-snug">{item.title}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1 line-clamp-1">{item.desc}</p>
+                </div>
+              ))}
             </div>
           </div>
-          {/* Missed call alert */}
-          <div className="mt-3 pt-3 border-t border-[var(--border)]">
-            <div className="flex items-center gap-2 p-2 rounded-lg bg-red-500/10 border border-red-500/20">
-              <PhoneMissed size={10} className="text-red-500 shrink-0" />
-              <p className="text-[10px] text-red-500">3 missed calls with no callback scheduled</p>
-            </div>
-          </div>
+
+          <InvestigationsCard />
         </div>
       </div>
+
+      {/* 3. SYSTEM INFRASTRUCTURE (Bottom) */}
+      <div className="pt-6 border-t border-[var(--border)] space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--text-muted)] flex items-center gap-2">
+            <Shield size={14} />
+            System Infrastructure
+          </h3>
+          <div className="flex gap-2">
+            <span className="text-[10px] font-mono text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded">Systems: {sysOk}/{systemStatuses.length}</span>
+            <span className="text-[10px] font-mono text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded">Web: {webOk}/{websiteStatuses.length}</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <StatusCard
+            statuses={systemStatuses.slice(0, 5)}
+            icon={Activity}
+            title={{ ok: 'Core Services', issue: (n) => `${n} Degraded` }}
+            countLabel={{ ok: 'operational' }}
+          />
+          <StatusCard
+            statuses={websiteStatuses}
+            icon={Globe}
+            title={{ ok: 'Public Portals', issue: (n) => `${n} Down` }}
+            countLabel={{ ok: 'online' }}
+          />
+          <StaffCard />
+        </div>
+      </div>
+
     </div>
   );
 }

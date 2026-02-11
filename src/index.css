@@ -187,6 +187,92 @@
   --chart-4: #94a3b8;
 }
 
+/* EXECUTIVE THEME - High Contrast Dark (Reference Style) */
+:root.theme-executive {
+  --background: #0f1115;
+  --surface: #161b22;
+  --surface-hover: #1f252e;
+  --surface-active: #2a323c;
+
+  --border: #252b36;
+  --border-strong: #364050;
+
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+
+  /* Neon Accents */
+  --primary: #3b82f6;
+  /* Bright Blue */
+  --primary-hover: #2563eb;
+  --primary-foreground: #ffffff;
+
+  --success: #22c55e;
+  /* Vivid Green */
+  --warning: #eab308;
+  --error: #ef4444;
+  /* Bright Red */
+  --info: #0ea5e9;
+
+  --foreground: #ffffff;
+  --muted-foreground: #9ca3af;
+  --input: #161b22;
+  --ring: var(--primary);
+  --destructive: #ef4444;
+
+  /* Chart Colors - Neon */
+  --chart-1: #3b82f6;
+  --chart-2: #22c55e;
+  --chart-3: #eab308;
+  --chart-4: #60a5fa;
+
+  --background-secondary: #0a0c10;
+}
+
+/* SLATE DARK - Industry Standard Neutral Dark */
+:root.theme-slate-dark {
+  --background: #020617;
+  /* Slate 950 */
+  --surface: #0f172a;
+  /* Slate 900 */
+  --surface-hover: #1e293b;
+  /* Slate 800 */
+  --surface-active: #334155;
+  /* Slate 700 */
+
+  --border: #1e293b;
+  --border-strong: #334155;
+
+  --text-primary: #f8fafc;
+  /* Slate 50 */
+  --text-secondary: #94a3b8;
+  /* Slate 400 */
+  --text-muted: #64748b;
+  /* Slate 500 */
+
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --primary-foreground: #ffffff;
+
+  --success: #22c55e;
+  --warning: #eab308;
+  --error: #ef4444;
+  --info: #0ea5e9;
+
+  --foreground: #f8fafc;
+  --muted-foreground: #94a3b8;
+  --input: #0f172a;
+  --ring: var(--primary);
+  --destructive: #ef4444;
+
+  --chart-1: #3b82f6;
+  --chart-2: #22c55e;
+  --chart-3: #eab308;
+  --chart-4: #64748b;
+
+  --background-secondary: #020617;
+}
+
 /* ========================================
     RESET & GLOBAL STYLES
     ======================================== */
@@ -209,15 +295,35 @@ body {
 /* ========================================
     TYPOGRAPHY
     ======================================== */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--text-primary);
   letter-spacing: -0.01em;
 }
 
-h1 { font-size: 1.875rem; font-weight: 700; }
-h2 { font-size: 1.5rem; font-weight: 600; }
-h3 { font-size: 1.25rem; font-weight: 600; }
-h4 { font-size: 1rem; font-weight: 600; }
+h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+h4 {
+  font-size: 1rem;
+  font-weight: 600;
+}
 
 a {
   color: inherit;
@@ -355,9 +461,17 @@ tr:hover td {
 }
 
 @keyframes pulseAnim {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.08); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .pulse {
@@ -365,7 +479,7 @@ tr:hover td {
 }
 
 .bg-dots {
-  background-image: radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 1px);
   background-size: 20px 20px;
 }
 
@@ -373,13 +487,16 @@ tr:hover td {
   width: 8px;
   height: 8px;
 }
+
 .custom-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .custom-scroll::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 4px;
 }
+
 .custom-scroll::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary);
 }
@@ -440,18 +557,34 @@ tr:hover td {
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
     animation-fill-mode: forwards;
   }
+
   .fade-in {
     animation-name: fadeIn;
   }
+
   .slide-in-from-top-2 {
     animation-name: slideInFromTop;
   }
+
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
   }
+
   @keyframes slideInFromTop {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }

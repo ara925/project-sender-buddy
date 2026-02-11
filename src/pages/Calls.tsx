@@ -109,168 +109,102 @@ export function Calls() {
         </Button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <Card className="p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm font-medium text-[var(--text-secondary)]">Today</div>
-              <div className="mt-2 text-3xl font-bold text-[var(--text-primary)]">89</div>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        {[
+          { label: 'Today', value: '89', icon: Clock, accent: 'border-blue-500', text: 'text-blue-500', sub: 'Total Calls' },
+          { label: 'Completed', value: '72', icon: PhoneIncoming, accent: 'border-emerald-500', text: 'text-emerald-500', sub: '81% Rate' },
+          { label: 'Missed', value: '12', icon: PhoneMissed, accent: 'border-red-500', text: 'text-red-500', sub: 'Action Required' },
+          { label: 'Avg Duration', value: '4:32', icon: PhoneOutgoing, accent: 'border-indigo-500', text: 'text-indigo-500', sub: '+12s vs avg' },
+          { label: 'AI Handled', value: '187', icon: Bot, accent: 'border-purple-500', text: 'text-purple-500', sub: '78% Contained' },
+        ].map(stat => (
+          <div key={stat.label} className={`bg-[var(--surface)] p-5 border-l-4 ${stat.accent} hover:bg-[var(--surface-hover)] transition-colors`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] uppercase tracking-widest text-[var(--text-secondary)] font-semibold">{stat.label}</span>
+              <stat.icon size={14} className={stat.text} />
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--surface-hover)] text-[var(--text-secondary)]">
-              <Clock size={18} />
-            </div>
+            <p className="text-3xl font-bold text-[var(--text-primary)]">{stat.value}</p>
+            <p className="text-[10px] text-[var(--text-muted)] mt-1">{stat.sub}</p>
           </div>
-        </Card>
-        <Card className="p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm font-medium text-[var(--text-secondary)]">Completed</div>
-              <div className="mt-2 text-3xl font-bold text-[var(--text-primary)]">72</div>
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600">
-              <PhoneIncoming size={18} />
-            </div>
-          </div>
-        </Card>
-        <Card className="p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm font-medium text-[var(--text-secondary)]">Missed</div>
-              <div className="mt-2 text-3xl font-bold text-[var(--text-primary)]">12</div>
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-600">
-              <PhoneMissed size={18} />
-            </div>
-          </div>
-        </Card>
-        <Card className="p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm font-medium text-[var(--text-secondary)]">Avg Duration</div>
-              <div className="mt-2 text-3xl font-bold text-[var(--text-primary)]">4:32</div>
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600">
-              <PhoneOutgoing size={18} />
-            </div>
-          </div>
-        </Card>
-        <Card className="p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm font-medium text-purple-500">AI Handled</div>
-              <div className="mt-2 text-3xl font-bold text-[var(--text-primary)]">187</div>
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-500">
-              <Bot size={18} />
-            </div>
-          </div>
-          <div className="mt-2 text-xs text-[var(--text-muted)]">78% contained · 22% escalated</div>
-        </Card>
+        ))}
       </div>
 
-      <Card className="overflow-hidden">
-        <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
-          <h2 className="text-base font-semibold text-[var(--text-primary)]">Recent Calls</h2>
-          <span className="text-xs text-[var(--text-muted)]">Last 30 days</span>
+      <div className="bg-[var(--surface)] border-t-[4px] border-emerald-500">
+        <div className="px-6 py-4 border-b border-[var(--border)] flex justify-between items-center bg-[var(--surface-active)]/20">
+          <h2 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-wide">Call Log</h2>
+          <span className="text-[10px] font-mono text-[var(--text-muted)]">Last 30 days</span>
         </div>
         <div className="divide-y divide-[var(--border)]">
           {mockCalls.map((call) => {
             const meta = aiCallMeta[call.id];
             const isAI = meta?.handler === 'ai';
-            const sentimentColor = meta?.sentiment === 'positive' ? 'text-emerald-600' : meta?.sentiment === 'frustrated' ? 'text-amber-600' : meta?.sentiment === 'negative' ? 'text-red-600' : 'text-[var(--text-muted)]';
+            const sentimentColor = meta?.sentiment === 'positive' ? 'text-emerald-500' : meta?.sentiment === 'frustrated' ? 'text-amber-500' : meta?.sentiment === 'negative' ? 'text-red-500' : 'text-[var(--text-muted)]';
             return (
-            <div key={call.id} className="flex items-center justify-between gap-4 p-4 hover:bg-[var(--surface-hover)] transition-colors group">
-              <div className="flex items-center gap-4 min-w-0">
-                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-                  call.status === 'missed' ? 'bg-red-500/10 text-red-600' :
-                  call.status === 'voicemail' ? 'bg-amber-500/10 text-amber-600' :
-                  call.direction === 'inbound' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-500/10 text-blue-600'
-                }`}>
-                  {getCallIcon(call.direction, call.status)}
-                </div>
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-medium text-[var(--text-primary)]">{formatPhone(call.caller_number)}</p>
-                    <Badge variant={getStatusBadgeVariant(call.status)} className="h-5 text-[10px] px-1.5 uppercase tracking-wider">
-                      {capitalize(call.status)}
-                    </Badge>
-                    <Badge variant="outline" className="h-5 text-[10px] px-1.5 uppercase tracking-wider">
-                      {capitalize(call.direction)}
-                    </Badge>
-                    {/* AI / Human handler badge */}
-                    {isAI ? (
-                      <Badge className="h-5 text-[10px] px-1.5 uppercase tracking-wider bg-purple-500/15 text-purple-600 border-purple-500/30 border">
-                        <Bot size={10} className="mr-0.5" /> AI
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="h-5 text-[10px] px-1.5 uppercase tracking-wider">
-                        👤 Human
-                      </Badge>
-                    )}
-                    {/* Containment badge */}
-                    {isAI && meta?.contained !== undefined && (
-                      <Badge className={`h-5 text-[10px] px-1.5 border ${meta.contained ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 'bg-amber-500/10 text-amber-600 border-amber-500/20'}`}>
-                        {meta.contained ? <Shield size={10} className="mr-0.5" /> : <ArrowRightLeft size={10} className="mr-0.5" />}
-                        {meta.contained ? 'Contained' : 'Escalated'}
-                      </Badge>
-                    )}
-                    {(call.duration ?? 0) > 0 && (
-                      <span className="text-xs text-[var(--text-muted)]">
-                        {formatDuration(call.duration ?? 0)}
-                      </span>
-                    )}
+              <div key={call.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 hover:bg-[var(--surface-hover)] transition-colors group">
+                <div className="flex items-start gap-4 min-w-0">
+                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--background)] ${call.status === 'missed' ? 'text-red-500' :
+                      call.status === 'voicemail' ? 'text-amber-500' :
+                        call.direction === 'inbound' ? 'text-emerald-500' : 'text-blue-500'
+                    }`}>
+                    {getCallIcon(call.direction, call.status)}
                   </div>
-                  {/* Notes + AI metadata row */}
-                  <div className="flex flex-wrap items-center gap-3 mt-1">
-                    {call.notes && (
-                      <p className="text-xs text-[var(--text-secondary)] truncate max-w-[280px]">
-                        {call.notes}
-                      </p>
-                    )}
-                    {isAI && meta?.agentName && (
-                      <span className="text-[10px] text-purple-500 font-medium">{meta.agentName}</span>
-                    )}
-                    {isAI && meta?.sentiment && (
-                      <span className={`text-[10px] font-semibold ${sentimentColor} flex items-center gap-0.5`}>
-                        {meta.sentiment === 'positive' ? <ThumbsUp size={10} /> : meta.sentiment === 'negative' || meta.sentiment === 'frustrated' ? <ThumbsDown size={10} /> : <Volume2 size={10} />}
-                        {meta.sentimentScore?.toFixed(1)}
-                      </span>
-                    )}
-                    {isAI && meta?.taskCompletion !== undefined && meta.taskCompletion > 0 && (
-                      <span className="text-[10px] text-[var(--text-muted)]">Task: {meta.taskCompletion}%</span>
-                    )}
-                    {isAI && meta?.escalationReason && (
-                      <span className="text-[10px] text-amber-600">{meta.escalationReason}</span>
-                    )}
-                    {isAI && meta?.qualificationResult && (
-                      <Badge variant={meta.qualificationResult === 'qualified' ? 'success' : meta.qualificationResult === 'disqualified' ? 'destructive' : 'secondary'} className="h-4 text-[9px] px-1">
-                        {meta.qualificationResult}
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-bold text-[var(--text-primary)] font-mono text-sm">{formatPhone(call.caller_number)}</p>
+                      <Badge variant={getStatusBadgeVariant(call.status)} className="h-5 text-[9px] px-1.5 uppercase tracking-widest font-bold">
+                        {capitalize(call.status)}
                       </Badge>
-                    )}
-                  </div>
-                </div>
-              </div>
 
-              <div className="flex items-center gap-6">
-                <div className="text-right hidden sm:block">
-                  <p className="text-sm text-[var(--text-secondary)]">{formatDateTime(call.created_at)}</p>
+                      {/* Simplified Handler Badge */}
+                      {isAI ? (
+                        <span className="text-[9px] font-bold text-purple-400 border border-purple-500/30 bg-purple-500/10 px-1.5 py-0.5 rounded flex items-center gap-1">
+                          <Bot size={10} /> AI
+                        </span>
+                      ) : (
+                        <span className="text-[9px] font-bold text-[var(--text-muted)] border border-[var(--border)] bg-[var(--surface-active)] px-1.5 py-0.5 rounded">
+                          HUMAN
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Detailed Metadata Row */}
+                    <div className="flex flex-wrap items-center gap-3 mt-1.5">
+                      {call.notes && (
+                        <p className="text-xs text-[var(--text-secondary)] truncate max-w-[280px]">
+                          {call.notes}
+                        </p>
+                      )}
+
+                      {isAI && meta?.sentiment && (
+                        <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-[var(--background)] border border-[var(--border)]">
+                          {meta.sentiment === 'positive' ? <ThumbsUp size={10} className={sentimentColor} /> : <ThumbsDown size={10} className={sentimentColor} />}
+                          <span className={`text-[10px] font-bold ${sentimentColor}`}>{meta.sentimentScore?.toFixed(1)}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-                  {call.recording_url && (
-                    <Button variant="ghost" size="icon" className="hover:bg-[var(--surface-hover)]" aria-label="Play recording">
-                      <Play size={16} />
+
+                <div className="flex items-center justify-between sm:justify-end gap-6 sm:min-w-[150px]">
+                  <div className="text-right">
+                    <p className="text-xs font-mono text-[var(--text-primary)]">{formatDuration(call.duration ?? 0)}</p>
+                    <p className="text-[10px] text-[var(--text-muted)] mt-0.5">{formatDateTime(call.created_at)}</p>
+                  </div>
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {call.recording_url && (
+                      <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-[var(--surface-active)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]" aria-label="Play recording">
+                        <Play size={14} />
+                      </Button>
+                    )}
+                    <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-[var(--surface-active)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]" aria-label="Open call details">
+                      <ExternalLink size={14} />
                     </Button>
-                  )}
-                  <Button variant="ghost" size="icon" className="hover:bg-[var(--surface-hover)]" aria-label="Open call details">
-                    <ExternalLink size={16} />
-                  </Button>
+                  </div>
                 </div>
               </div>
-            </div>
             );
           })}
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

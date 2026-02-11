@@ -58,19 +58,19 @@ export function Staff() {
       </div>
 
       {/* KPI Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'On Floor', value: onFloor, icon: Users, accent: 'text-[var(--primary)]' },
-          { label: 'On Calls', value: onCall, icon: PhoneCall, accent: 'text-blue-500' },
-          { label: 'Available', value: available, icon: Wifi, accent: 'text-emerald-500' },
-          { label: 'Issues', value: issues, icon: AlertTriangle, accent: issues > 0 ? 'text-red-500' : 'text-emerald-500' },
+          { label: 'On Floor', value: onFloor, icon: Users, accent: 'border-blue-500', text: 'text-blue-500' },
+          { label: 'On Calls', value: onCall, icon: PhoneCall, accent: 'border-emerald-500', text: 'text-emerald-500' },
+          { label: 'Available', value: available, icon: Wifi, accent: 'border-[var(--primary)]', text: 'text-[var(--primary)]' },
+          { label: 'Issues', value: issues, icon: AlertTriangle, accent: issues > 0 ? 'border-red-500' : 'border-emerald-500', text: issues > 0 ? 'text-red-500' : 'text-emerald-500' },
         ].map(kpi => (
-          <div key={kpi.label} className="card p-4 border border-[var(--border)]">
+          <div key={kpi.label} className={`relative overflow-hidden pl-4 pr-4 py-4 bg-[var(--surface)] border-l-4 ${kpi.accent} hover:bg-[var(--surface-hover)] transition-colors`}>
             <div className="flex items-center gap-2 mb-2">
-              <kpi.icon size={14} className={kpi.accent} />
-              <span className="text-xs font-medium text-[var(--text-secondary)]">{kpi.label}</span>
+              <kpi.icon size={16} className={kpi.text} />
+              <span className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">{kpi.label}</span>
             </div>
-            <span className="text-2xl font-bold text-[var(--text-primary)]">{kpi.value}</span>
+            <span className="text-3xl font-bold text-[var(--text-primary)]">{kpi.value}</span>
           </div>
         ))}
       </div>
@@ -92,11 +92,10 @@ export function Staff() {
             <button
               key={sf.key}
               onClick={() => setFilter(sf.key)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
-                filter === sf.key
-                  ? 'bg-[var(--primary)] text-white border-[var(--primary)]'
-                  : 'bg-[var(--surface)] text-[var(--text-secondary)] border-[var(--border)] hover:bg-[var(--surface-hover)]'
-              }`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${filter === sf.key
+                ? 'bg-[var(--primary)] text-white border-[var(--primary)]'
+                : 'bg-[var(--surface)] text-[var(--text-secondary)] border-[var(--border)] hover:bg-[var(--surface-hover)]'
+                }`}
             >
               {sf.label} ({sf.count})
             </button>
@@ -112,63 +111,67 @@ export function Staff() {
           return (
             <div
               key={member.id}
-              className={`card p-4 border transition-colors ${member.issue ? 'border-red-500/30' : 'border-[var(--border)]'}`}
+              className={`group bg-[var(--surface)] p-5 border-t-4 hover:bg-[var(--surface-hover)] transition-all ${member.issue ? 'border-red-500' : 'border-transparent hover:border-[var(--primary)]'}`}
             >
-              <div className="flex items-start justify-between mb-3">
+              <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <div className="h-10 w-10 rounded-full bg-[var(--surface-hover)] flex items-center justify-center text-sm font-semibold text-[var(--text-primary)]">
+                    <div className="h-10 w-10 rounded-full bg-[var(--surface-active)] flex items-center justify-center text-sm font-bold text-[var(--text-primary)] border border-[var(--border)]">
                       {member.name.split(' ').map(n => n[0]).join('')}
                     </div>
                     <span className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[var(--surface)] ${config.dot}`} />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-[var(--text-primary)]">{member.name}</p>
-                    <p className="text-xs text-[var(--text-secondary)]">{roleLabels[member.role]}</p>
+                    <p className="text-base font-bold text-[var(--text-primary)] group-hover:text-[var(--primary)] transition-colors">{member.name}</p>
+                    <p className="text-xs text-[var(--text-secondary)] uppercase tracking-wide">{roleLabels[member.role]}</p>
                   </div>
                 </div>
-                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${config.bg} ${config.color}`}>
-                  <StatusIcon size={10} />
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${config.bg} ${config.color}`}>
+                  <StatusIcon size={12} />
                   {config.label}
                 </span>
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-2 mb-3">
-                <div className="text-center p-2 rounded-lg bg-[var(--surface-hover)]">
-                  <p className="text-xs text-[var(--text-muted)]">Calls</p>
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                <div className="text-center p-2 rounded bg-[var(--surface-active)]/30">
+                  <p className="text-[10px] font-semibold text-[var(--text-muted)] uppercase">Calls</p>
                   <p className="text-sm font-bold text-[var(--text-primary)]">{member.callsToday}</p>
                 </div>
-                <div className="text-center p-2 rounded-lg bg-[var(--surface-hover)]">
-                  <p className="text-xs text-[var(--text-muted)]">Avg Time</p>
+                <div className="text-center p-2 rounded bg-[var(--surface-active)]/30">
+                  <p className="text-[10px] font-semibold text-[var(--text-muted)] uppercase">Avg</p>
                   <p className="text-sm font-bold text-[var(--text-primary)]">{member.avgHandleTime}</p>
                 </div>
-                <div className="text-center p-2 rounded-lg bg-[var(--surface-hover)]">
-                  <p className="text-xs text-[var(--text-muted)]">Conv %</p>
+                <div className="text-center p-2 rounded bg-[var(--surface-active)]/30">
+                  <p className="text-[10px] font-semibold text-[var(--text-muted)] uppercase">Conv</p>
                   <p className="text-sm font-bold text-[var(--text-primary)]">{member.conversionRate > 0 ? `${member.conversionRate}%` : '—'}</p>
                 </div>
               </div>
 
-              {/* Skills */}
-              <div className="flex flex-wrap gap-1 mb-3">
-                {member.skills.map(skill => (
-                  <Badge key={skill} variant="secondary" className="text-[10px] px-1.5 py-0">
-                    {skill}
-                  </Badge>
-                ))}
-              </div>
+              {/* Skills & Shift */}
+              <div className="flex items-center justify-between mt-auto">
+                <div className="flex flex-wrap gap-1">
+                  {member.skills.slice(0, 2).map(skill => (
+                    <Badge key={skill} variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-[var(--border)] text-[var(--text-secondary)]">
+                      {skill}
+                    </Badge>
+                  ))}
+                  {member.skills.length > 2 && (
+                    <span className="text-[10px] text-[var(--text-muted)] self-center">+{member.skills.length - 2}</span>
+                  )}
+                </div>
 
-              {/* Shift */}
-              <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-                <Clock size={11} />
-                <span>{member.shift}</span>
+                <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] font-mono">
+                  <Clock size={12} />
+                  <span>{member.shift}</span>
+                </div>
               </div>
 
               {/* Issue Alert */}
               {member.issue && (
-                <div className="mt-3 p-2 rounded-lg bg-red-500/10 border border-red-500/20 flex items-start gap-2">
+                <div className="mt-3 p-2 rounded bg-red-500/10 border-l-2 border-red-500 flex items-start gap-2">
                   <AlertTriangle size={12} className="text-red-500 mt-0.5 shrink-0" />
-                  <p className="text-xs text-red-400">{member.issue}</p>
+                  <p className="text-xs font-medium text-red-500">{member.issue}</p>
                 </div>
               )}
             </div>

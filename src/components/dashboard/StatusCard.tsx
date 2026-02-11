@@ -73,27 +73,25 @@ export function StatusCard({ statuses, icon: Icon, title, countLabel }: Props) {
 
       <div className={`transition-all duration-300 ease-in-out overflow-hidden ${expanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="border-t border-[var(--border)]">
-          <div className="divide-y divide-[var(--border)]">
+          <div className="flex flex-col gap-1 p-2">
             {statuses.map((system) => {
               const config = statusConfig[system.status];
               const StatusIcon = config.icon;
               return (
-                <div key={system.name} className="flex items-center justify-between px-4 py-3 hover:bg-[var(--surface-hover)] transition-colors">
-                  <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                    <StatusIcon size={14} className={config.color} />
+                <div key={system.name} className="flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-[var(--surface-hover)] transition-colors group">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <StatusIcon size={14} className={`${config.color} opacity-80`} />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <p className="text-xs font-semibold text-[var(--text-primary)]">{system.name}</p>
-                        <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-semibold ${config.bg} ${config.color}`}>
-                          {config.label}
-                        </span>
+                        <p className="text-xs font-medium text-[var(--text-primary)]">{system.name}</p>
+                        <span className={`h-1.5 w-1.5 rounded-full ${config.dot}`} />
                       </div>
-                      <p className="text-[10px] text-[var(--text-secondary)] mt-0.5 truncate">{system.message}</p>
+                      <p className="text-[10px] text-[var(--text-secondary)] mt-0.5 truncate opacity-80 group-hover:opacity-100 transition-opacity">{system.message}</p>
                     </div>
                   </div>
                   <div className="text-right ml-3 shrink-0">
-                    <div className="flex items-center gap-1 text-[10px] font-medium text-[var(--text-primary)]">
-                      <ArrowUpRight size={8} className="text-emerald-500" />
+                    <div className="flex items-center gap-1 text-[10px] font-medium text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors">
+                      <ArrowUpRight size={10} className="text-emerald-500" />
                       {system.uptime}
                     </div>
                   </div>

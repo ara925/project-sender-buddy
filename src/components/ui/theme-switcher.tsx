@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
-import { Moon, Sun, Monitor, Sparkles } from 'lucide-react';
+import { Moon, Sun, Monitor, Sparkles, Palette } from 'lucide-react';
 import { useTheme, type Theme } from '@/lib/theme-context';
 import { cn } from '@/lib/utils';
 
 const themes: { value: Theme; label: string; icon: typeof Moon; color?: string }[] = [
-  { value: 'dark', label: 'Dark', icon: Moon },
+  { value: 'dark', label: 'Navy', icon: Palette, color: '#f47920' },
+  { value: 'slate-dark', label: 'Dark (Standard)', icon: Moon },
+  { value: 'executive', label: 'Executive', icon: Monitor, color: '#3b82f6' },
   { value: 'light', label: 'Light', icon: Sun },
   { value: 'purple', label: 'Contrast', icon: Sparkles, color: '#f47920' },
   { value: 'midnight', label: 'Midnight', icon: Moon, color: '#0c1a2e' },

@@ -50,17 +50,17 @@ export function StaffCard() {
       <div className={`transition-all duration-300 ease-in-out overflow-hidden ${expanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="border-t border-[var(--border)]">
           {hasIssues ? (
-            <div className="divide-y divide-[var(--border)]">
+            <div className="flex flex-col gap-1 p-2">
               {staffIssues.map(member => (
-                <div key={member.id} className="flex items-center gap-2.5 px-4 py-3 hover:bg-[var(--surface-hover)] transition-colors">
-                  <div className="h-7 w-7 rounded-full bg-red-500/10 flex items-center justify-center text-[10px] font-semibold text-red-500">
+                <div key={member.id} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-[var(--surface-hover)] transition-colors group">
+                  <div className="h-8 w-8 rounded-full bg-red-500/10 flex items-center justify-center text-[10px] font-bold text-red-500 ring-2 ring-[var(--surface)] group-hover:ring-[var(--surface-hover)] transition-all">
                     {member.name.split(' ').map(n => n[0]).join('')}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-[var(--text-primary)]">{member.name}</p>
-                    <p className="text-[10px] text-red-400 truncate">{member.issue}</p>
+                    <p className="text-xs font-semibold text-[var(--text-primary)]">{member.name}</p>
+                    <p className="text-[10px] text-red-500/80 truncate font-medium">{member.issue}</p>
                   </div>
-                  <AlertTriangle size={12} className="text-red-500 shrink-0" />
+                  <AlertTriangle size={14} className="text-red-500 opacity-80 group-hover:opacity-100 transition-opacity" />
                 </div>
               ))}
             </div>

@@ -79,251 +79,247 @@ export function Reports() {
 
       {/* KPI Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-purple)] to-[var(--accent-pink)]" />
-          <CardContent className="p-5">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl">
-                <img src={conversionFunnelIcon} alt="Conversion Rate" className="h-12 w-12 object-contain" />
-              </div>
-              <div>
-                <p className="text-sm text-[var(--text-secondary)]">Conversion Rate</p>
-                <p className="text-2xl font-bold text-[var(--success)]">24.3%</p>
-              </div>
+        {[
+          { label: 'Conversion Rate', value: '24.3%', icon: conversionFunnelIcon, accent: 'border-purple-500', text: 'text-purple-500', type: 'img' },
+          { label: 'Avg. Time to Convert', value: '4.2 days', icon: TrendingUp, accent: 'border-blue-500', text: 'text-blue-500', type: 'icon' },
+          { label: 'Top Agent', value: 'Sarah M.', icon: Award, accent: 'border-emerald-500', text: 'text-emerald-500', type: 'icon' },
+          { label: 'Active Agents', value: '12', icon: Users, accent: 'border-amber-500', text: 'text-amber-500', type: 'icon' },
+        ].map(stat => (
+          <div key={stat.label} className={`bg-[var(--surface)] p-5 border-l-4 ${stat.accent} hover:bg-[var(--surface-hover)] transition-colors`}>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-[10px] uppercase tracking-widest text-[var(--text-secondary)] font-semibold">{stat.label}</p>
+              {stat.type === 'icon' ? (
+                <stat.icon size={16} className={stat.text} />
+              ) : (
+                <img src={stat.icon as string} alt="" className="h-4 w-4 object-contain opacity-80" />
+              )}
             </div>
-          </CardContent>
-        </Card>
-        <Card className="relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-blue)] to-[var(--accent-purple)]" />
-          <CardContent className="p-5">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-blue)] to-[var(--accent-purple)]">
-                <TrendingUp size={20} className="text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-[var(--text-secondary)]">Avg. Time to Convert</p>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">4.2 days</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-emerald)] to-[var(--accent-cyan)]" />
-          <CardContent className="p-5">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-emerald)] to-[var(--accent-cyan)]">
-                <Award size={20} className="text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-[var(--text-secondary)]">Top Agent</p>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">Sarah M.</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-amber)] to-[var(--accent-rose)]" />
-          <CardContent className="p-5">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-amber)] to-[var(--accent-rose)]">
-                <Users size={20} className="text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-[var(--text-secondary)]">Active Agents</p>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">12</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            <p className="text-3xl font-bold text-[var(--text-primary)]">{stat.value}</p>
+          </div>
+        ))}
       </div>
 
-      {/* Agent Leaderboard */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <div className="flex items-center gap-3">
-            <Trophy size={24} className="text-[var(--accent-amber)]" />
-            <CardTitle>Agent Performance Leaderboard</CardTitle>
+      {/* Lead Pacing Strip */}
+      <div className="bg-[var(--surface)] border-l-4 border-blue-500 px-6 py-4 flex flex-wrap items-center gap-6">
+        <div className="flex items-center gap-2 shrink-0">
+          <TrendingUp size={14} className="text-blue-500" />
+          <span className="text-sm font-bold text-[var(--text-primary)]">Lead Pacing</span>
+        </div>
+        {[
+          { label: 'Today', val: '842', color: 'text-blue-500' },
+          { label: 'Pacing', val: '104%', color: 'text-emerald-500' },
+          { label: 'Projected', val: '1,250', color: 'text-[var(--text-primary)]' },
+          { label: 'Target', val: '810', color: 'text-[var(--text-muted)]' },
+          { label: 'Search Vol.', val: '24.8K', color: 'text-blue-500' },
+        ].map(m => (
+          <div key={m.label} className="flex items-center gap-2">
+            <span className="text-[10px] uppercase text-[var(--text-muted)] font-bold">{m.label}</span>
+            <span className={`text-sm font-bold font-mono ${m.color}`}>{m.val}</span>
           </div>
-          <Badge variant="purple">Live Rankings</Badge>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-[var(--border)]">
-                  <th className="px-4 py-3 text-left text-sm font-medium text-[var(--text-muted)]">Rank</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-[var(--text-muted)]">Agent</th>
-                  <th className="px-4 py-3 text-right text-sm font-medium text-[var(--text-muted)]">Leads</th>
-                  <th className="px-4 py-3 text-right text-sm font-medium text-[var(--text-muted)]">Converted</th>
-                  <th className="px-4 py-3 text-right text-sm font-medium text-[var(--text-muted)]">Conv. Rate</th>
-                  <th className="px-4 py-3 text-right text-sm font-medium text-[var(--text-muted)]">Avg Response</th>
-                  <th className="px-4 py-3 text-right text-sm font-medium text-[var(--text-muted)]">Satisfaction</th>
-                </tr>
-              </thead>
-              <tbody>
-                {agentPerformance.map((agent) => {
-                  const rankBadge = getRankBadge(agent.rank);
-                  return (
-                    <tr key={agent.id} className="border-b border-[var(--border)] hover:bg-[var(--surface-hover)] transition-colors">
-                      <td className="px-4 py-3">
-                        <span className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold ${rankBadge.bg} text-white`}>
-                          {rankBadge.text}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-purple)] to-[var(--accent-pink)]">
-                            <span className="text-xs font-bold text-white">{agent.avatar}</span>
-                          </div>
-                          <span className="font-medium text-[var(--text-primary)]">{agent.name}</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-right font-medium text-[var(--text-primary)]">{agent.leadsHandled}</td>
-                      <td className="px-4 py-3 text-right text-[var(--success)] font-medium">{agent.converted}</td>
-                      <td className="px-4 py-3 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <div className="w-16 h-2 rounded-full bg-[var(--surface-hover)] overflow-hidden">
-                            <div className="h-full rounded-full bg-gradient-to-r from-[var(--accent-purple)] to-[var(--accent-pink)]" style={{ width: `${agent.conversionRate}%` }} />
-                          </div>
-                          <span className="font-medium text-[var(--text-primary)]">{agent.conversionRate}%</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-right text-[var(--text-secondary)]">{agent.avgResponseTime}</td>
-                      <td className="px-4 py-3 text-right">
-                        <span className="text-[var(--accent-amber)]">★</span>
-                        <span className="ml-1 font-medium text-[var(--text-primary)]">{agent.satisfaction}</span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+        ))}
+        <div className="flex-1 min-w-[100px]">
+          <div className="w-full h-1.5 rounded-full bg-[var(--surface-active)] overflow-hidden">
+            <div className="h-full rounded-full bg-gradient-to-r from-blue-500 to-emerald-500" style={{ width: '100%' }} />
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Pipeline Performance */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <div className="flex items-center gap-3">
-            <TrendingUp size={24} className="text-[var(--accent-cyan)]" />
-            <CardTitle>Pipeline Performance by Case Type</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-[var(--border)]">
-                  <th className="px-4 py-3 text-left text-sm font-medium text-[var(--text-muted)]">Case Type</th>
-                  <th className="px-4 py-3 text-right text-sm font-medium text-[var(--text-muted)]">Total Leads</th>
-                  <th className="px-4 py-3 text-right text-sm font-medium text-[var(--text-muted)]">Converted</th>
-                  <th className="px-4 py-3 text-right text-sm font-medium text-[var(--text-muted)]">Conv. Rate</th>
-                  <th className="px-4 py-3 text-right text-sm font-medium text-[var(--text-muted)]">Avg. Value</th>
-                  <th className="px-4 py-3 text-right text-sm font-medium text-[var(--text-muted)]">Trend</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pipelinePerformance.map((pipeline, index) => (
-                  <tr key={pipeline.name} className="border-b border-[var(--border)] hover:bg-[var(--surface-hover)] transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="h-3 w-3 rounded-full" style={{ backgroundColor: COLORS[index], boxShadow: `0 0 10px ${COLORS[index]}60` }} />
-                        <span className="font-medium text-[var(--text-primary)]">{pipeline.name}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-right font-medium text-[var(--text-primary)]">{pipeline.leads}</td>
-                    <td className="px-4 py-3 text-right text-[var(--success)] font-medium">{pipeline.converted}</td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <div className="w-16 h-2 rounded-full bg-[var(--surface-hover)] overflow-hidden">
-                          <div className="h-full rounded-full" style={{ width: `${pipeline.rate}%`, backgroundColor: COLORS[index] }} />
-                        </div>
-                        <span className="font-medium text-[var(--text-primary)]">{pipeline.rate}%</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-right text-[var(--text-secondary)]">{pipeline.avgValue}</td>
-                    <td className="px-4 py-3 text-right">
-                      <span className={pipeline.up ? 'text-[var(--success)]' : 'text-[var(--error)]'}>{pipeline.trend}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Charts Row */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader><CardTitle>Conversion Funnel</CardTitle></CardHeader>
-          <CardContent>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={conversionFunnel} layout="vertical">
-                  <defs>
-                    <linearGradient id="funnelGradientReports" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#8b5cf6" />
-                      <stop offset="100%" stopColor="#ec4899" />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                  <XAxis type="number" stroke="var(--text-muted)" />
-                  <YAxis dataKey="stage" type="category" stroke="var(--text-muted)" width={80} />
-                  <Tooltip contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px' }} />
-                  <Bar dataKey="count" fill="url(#funnelGradientReports)" radius={[0, 4, 4, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader><CardTitle>Monthly Trend</CardTitle></CardHeader>
-          <CardContent>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monthlyTrend}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                  <XAxis dataKey="month" stroke="var(--text-muted)" />
-                  <YAxis stroke="var(--text-muted)" />
-                  <Tooltip contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px' }} />
-                  <Line type="monotone" dataKey="leads" stroke="var(--accent-purple)" strokeWidth={3} dot={{ fill: 'var(--accent-purple)' }} />
-                  <Line type="monotone" dataKey="retained" stroke="var(--success)" strokeWidth={3} dot={{ fill: 'var(--success)' }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
+        </div>
       </div>
-
-      {/* Source Performance Table */}
-      <Card>
-        <CardHeader><CardTitle>Source Performance</CardTitle></CardHeader>
-        <CardContent className="p-0">
+      {/* Agent Leaderboard - Executive Style */}
+      <div className="bg-[var(--surface)] border-t-[4px] border-amber-500">
+        <div className="px-6 py-4 border-b border-[var(--border)] flex justify-between items-center bg-[var(--surface-active)]/20">
+          <div className="flex items-center gap-3">
+            <Trophy size={16} className="text-amber-500" />
+            <h3 className="font-bold text-[var(--text-primary)]">Agent Performance</h3>
+          </div>
+          <Badge variant="outline" className="text-[10px] border-amber-500/50 text-amber-500">LIVE RANKING</Badge>
+        </div>
+        <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[var(--border)]">
-                <th className="px-6 py-3 text-left text-sm font-medium text-[var(--text-muted)]">Source</th>
-                <th className="px-6 py-3 text-right text-sm font-medium text-[var(--text-muted)]">Leads</th>
-                <th className="px-6 py-3 text-right text-sm font-medium text-[var(--text-muted)]">Converted</th>
-                <th className="px-6 py-3 text-right text-sm font-medium text-[var(--text-muted)]">Rate</th>
+              <tr className="border-b border-[var(--border)] bg-[var(--surface-active)]/10">
+                <th className="px-4 py-2 text-left text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Rank</th>
+                <th className="px-4 py-2 text-left text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Agent</th>
+                <th className="px-4 py-2 text-right text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Leads</th>
+                <th className="px-4 py-2 text-right text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Conv.</th>
+                <th className="px-4 py-2 text-right text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Rate</th>
+                <th className="px-4 py-2 text-right text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Avg Resp</th>
+                <th className="px-4 py-2 text-right text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Sat.</th>
               </tr>
             </thead>
             <tbody>
-              {sourcePerformance.map((row) => (
-                <tr key={row.source} className="border-b border-[var(--border)] last:border-0">
-                  <td className="px-6 py-4 font-medium text-[var(--text-primary)]">{row.source}</td>
-                  <td className="px-6 py-4 text-right text-[var(--text-primary)]">{row.leads}</td>
-                  <td className="px-6 py-4 text-right text-[var(--success)]">{row.converted}</td>
-                  <td className="px-6 py-4 text-right text-[var(--text-primary)]">{row.rate}%</td>
+              {agentPerformance.map((agent) => {
+                const rankBadge = getRankBadge(agent.rank);
+                return (
+                  <tr key={agent.id} className="border-b border-[var(--border)] hover:bg-[var(--surface-hover)] transition-colors group">
+                    <td className="px-4 py-3">
+                      <span className={`flex h-6 w-6 items-center justify-center rounded font-bold text-xs ${rankBadge.text === '🥇' || rankBadge.text === '🥈' || rankBadge.text === '🥉' ? 'bg-transparent text-lg' : 'bg-[var(--surface-active)] text-[var(--text-secondary)]'}`}>
+                        {rankBadge.text}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded bg-[var(--surface-active)] border border-[var(--border)]">
+                          <span className="text-[10px] font-bold text-[var(--text-secondary)]">{agent.avatar}</span>
+                        </div>
+                        <span className="font-bold text-sm text-[var(--text-primary)]">{agent.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-right font-medium text-[var(--text-secondary)]">{agent.leadsHandled}</td>
+                    <td className="px-4 py-3 text-right text-emerald-500 font-bold">{agent.converted}</td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <div className="w-12 h-1.5 rounded-full bg-[var(--surface-active)] overflow-hidden">
+                          <div className="h-full rounded-full bg-emerald-500" style={{ width: `${agent.conversionRate}%` }} />
+                        </div>
+                        <span className="font-mono text-xs text-[var(--text-primary)]">{agent.conversionRate}%</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-right text-xs text-[var(--text-secondary)] font-mono">{agent.avgResponseTime}</td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <span className="text-amber-500 text-[10px]">★</span>
+                        <span className="font-bold text-sm text-[var(--text-primary)]">{agent.satisfaction}</span>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Pipeline Performance - Executive Style */}
+      <div className="bg-[var(--surface)] border-t-[4px] border-cyan-500">
+        <div className="px-6 py-4 border-b border-[var(--border)] flex justify-between items-center bg-[var(--surface-active)]/20">
+          <div className="flex items-center gap-3">
+            <TrendingUp size={16} className="text-cyan-500" />
+            <h3 className="font-bold text-[var(--text-primary)]">Pipeline Velocities</h3>
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-[var(--border)] bg-[var(--surface-active)]/10">
+                <th className="px-4 py-2 text-left text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Case Type</th>
+                <th className="px-4 py-2 text-right text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Total</th>
+                <th className="px-4 py-2 text-right text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Conv.</th>
+                <th className="px-4 py-2 text-right text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Rate</th>
+                <th className="px-4 py-2 text-right text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Value</th>
+                <th className="px-4 py-2 text-right text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Trend</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pipelinePerformance.map((pipeline, index) => (
+                <tr key={pipeline.name} className="border-b border-[var(--border)] hover:bg-[var(--surface-hover)] transition-colors">
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="h-1.5 w-1.5 rounded-full bg-cyan-500" />
+                      <span className="font-bold text-sm text-[var(--text-primary)]">{pipeline.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-secondary)]">{pipeline.leads}</td>
+                  <td className="px-4 py-3 text-right text-emerald-500 font-bold text-sm">{pipeline.converted}</td>
+                  <td className="px-4 py-3 text-right">
+                    <span className="font-mono text-sm text-[var(--text-primary)]">{pipeline.rate}%</span>
+                  </td>
+                  <td className="px-4 py-3 text-right font-mono text-sm text-[var(--text-secondary)]">{pipeline.avgValue}</td>
+                  <td className="px-4 py-3 text-right">
+                    <span className={`text-xs font-bold ${pipeline.up ? 'text-emerald-500' : 'text-red-500'}`}>{pipeline.trend}</span>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="bg-[var(--surface)] border-l-[4px] border-purple-500 p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-[var(--text-primary)]">Conversion Funnel</h3>
+            <Badge variant="outline" className="text-[10px] text-purple-500 border-purple-500/30">Stable</Badge>
+          </div>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={conversionFunnel} layout="vertical">
+                <defs>
+                  <linearGradient id="funnelGradientReports" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.8} />
+                    <stop offset="100%" stopColor="#d946ef" stopOpacity={0.8} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
+                <XAxis type="number" stroke="var(--text-muted)" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
+                <YAxis dataKey="stage" type="category" stroke="var(--text-muted)" width={80} tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+                <Tooltip
+                  cursor={{ fill: 'var(--surface-active)', opacity: 0.2 }}
+                  contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '4px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                  itemStyle={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-primary)' }}
+                />
+                <Bar dataKey="count" fill="url(#funnelGradientReports)" radius={[0, 4, 4, 0]} barSize={32} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="bg-[var(--surface)] border-l-[4px] border-emerald-500 p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-[var(--text-primary)]">Monthly Lead Trend</h3>
+            <Badge variant="outline" className="text-[10px] text-emerald-500 border-emerald-500/30">+12% vs avg</Badge>
+          </div>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={monthlyTrend}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                <XAxis dataKey="month" stroke="var(--text-muted)" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
+                <YAxis stroke="var(--text-muted)" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '4px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                  itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
+                  labelStyle={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '4px' }}
+                />
+                <Line type="monotone" dataKey="leads" stroke="#8b5cf6" strokeWidth={3} dot={{ fill: '#8b5cf6', strokeWidth: 0, r: 4 }} activeDot={{ r: 6, stroke: '#8b5cf6', strokeWidth: 2 }} />
+                <Line type="monotone" dataKey="retained" stroke="#10b981" strokeWidth={3} dot={{ fill: '#10b981', strokeWidth: 0, r: 4 }} activeDot={{ r: 6, stroke: '#10b981', strokeWidth: 2 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      {/* Source Performance Table - Executive Style */}
+      <div className="bg-[var(--surface)] border-t-[4px] border-indigo-500">
+        <div className="px-6 py-4 border-b border-[var(--border)] flex justify-between items-center bg-[var(--surface-active)]/20">
+          <div className="flex items-center gap-3">
+            <TrendingUp size={16} className="text-indigo-500" />
+            <h3 className="font-bold text-[var(--text-primary)]">Acquisition Sources</h3>
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-[var(--border)] bg-[var(--surface-active)]/10">
+                <th className="px-6 py-3 text-left text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Source</th>
+                <th className="px-6 py-3 text-right text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Leads</th>
+                <th className="px-6 py-3 text-right text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Converted</th>
+                <th className="px-6 py-3 text-right text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">Rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sourcePerformance.map((row) => (
+                <tr key={row.source} className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-hover)] transition-colors">
+                  <td className="px-6 py-4 font-bold text-sm text-[var(--text-primary)]">{row.source}</td>
+                  <td className="px-6 py-4 text-right text-sm text-[var(--text-secondary)] font-mono">{row.leads}</td>
+                  <td className="px-6 py-4 text-right text-sm text-emerald-500 font-bold">{row.converted}</td>
+                  <td className="px-6 py-4 text-right">
+                    <span className="text-sm font-mono text-[var(--text-primary)]">{row.rate}%</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

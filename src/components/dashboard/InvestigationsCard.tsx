@@ -52,20 +52,22 @@ export function InvestigationsCard() {
       <div className={`transition-all duration-300 ease-in-out overflow-hidden ${expanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="border-t border-[var(--border)]">
           {hasIssues ? (
-            <div className="divide-y divide-[var(--border)]">
+            <div className="flex flex-col gap-1 p-2">
               {allInv.map(inv => {
                 const sevConf = severityConfig[inv.severity];
                 return (
-                  <div key={inv.id} className="flex items-center gap-2.5 px-4 py-3 hover:bg-[var(--surface-hover)] transition-colors">
-                    <AlertTriangle size={12} className={sevConf.color} />
+                  <div key={inv.id} className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-[var(--surface-hover)] transition-colors group">
+                    <div className={`p-1.5 rounded-full ${sevConf.bg} shrink-0`}>
+                      <AlertTriangle size={12} className={sevConf.color} />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <p className="text-xs font-medium text-[var(--text-primary)]">{inv.leadName}</p>
-                        <span className={`px-1.5 py-0.5 rounded-full text-[8px] font-semibold ${sevConf.bg} ${sevConf.color}`}>{sevConf.label}</span>
+                        <p className="text-xs font-semibold text-[var(--text-primary)]">{inv.leadName}</p>
+                        <span className={`px-1.5 py-0.5 rounded-full text-[8px] font-bold ${sevConf.bg} ${sevConf.color}`}>{sevConf.label}</span>
                       </div>
-                      <p className="text-[10px] text-[var(--text-secondary)] truncate">{inv.flag}</p>
+                      <p className="text-[10px] text-[var(--text-secondary)] truncate opacity-80 group-hover:opacity-100 transition-opacity">{inv.flag}</p>
                     </div>
-                    <span className="text-[9px] text-[var(--text-muted)] shrink-0">{inv.agentName}</span>
+                    <span className="text-[9px] font-medium text-[var(--text-muted)] group-hover:text-[var(--text-secondary)] transition-colors shrink-0">{inv.agentName}</span>
                   </div>
                 );
               })}

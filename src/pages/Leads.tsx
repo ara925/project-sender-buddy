@@ -80,22 +80,20 @@ export function Leads() {
       <div className="flex gap-1 p-1 rounded-lg bg-[var(--surface)] border border-[var(--border)] w-fit">
         <button
           onClick={() => setActiveTab('overview')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-            activeTab === 'overview'
+          className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'overview'
               ? 'bg-[var(--surface-hover)] text-[var(--text-primary)] shadow-sm'
               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-          }`}
+            }`}
         >
           <LayoutList size={14} />
           Overview & Leads
         </button>
         <button
           onClick={() => setActiveTab('investigations')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors relative ${
-            activeTab === 'investigations'
+          className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors relative ${activeTab === 'investigations'
               ? 'bg-[var(--surface-hover)] text-[var(--text-primary)] shadow-sm'
               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-          }`}
+            }`}
         >
           <Shield size={14} />
           Investigations
@@ -174,99 +172,68 @@ export function Leads() {
             )}
           </div>
 
-          {/* Leads Table */}
-          <div className="card overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Contact</th>
-                    <th>Source</th>
-                    <th>Status</th>
-                    <th>Created</th>
-                    <th className="text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredLeads.map((lead) => {
-                    const leadInvestigation = investigations.find(
-                      inv => inv.leadName === `${lead.first_name} ${lead.last_name}` && (inv.status === 'open' || inv.status === 'reviewing' || inv.status === 'confirmed')
-                    );
-                    return (
-                      <tr
-                        key={lead.id}
-                        className={`group cursor-pointer ${leadInvestigation ? 'bg-red-500/5' : ''}`}
-                        onClick={() => handleLeadClick(lead)}
-                      >
-                        <td>
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium text-[var(--text-primary)]">{lead.first_name} {lead.last_name}</p>
-                            {leadInvestigation && (
-                              <span title="Under investigation">
-                                <Shield size={12} className="text-red-500" />
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td>
-                          <div className="text-sm">
-                            <p className="text-[var(--text-secondary)]">{lead.email}</p>
-                            <p className="text-[var(--text-muted)]">{lead.phone}</p>
-                          </div>
-                        </td>
-                        <td>
-                          <Badge variant="outline" className="text-[var(--text-secondary)] border-[var(--border)]">
+          {/* Leads List - Executive Style */}
+          <div className="bg-[var(--surface)] border-t-[4px] border-blue-500">
+            <div className="px-6 py-4 border-b border-[var(--border)] flex justify-between items-center bg-[var(--surface-active)]/20">
+              <h3 className="font-bold text-[var(--text-primary)]">Active Leads</h3>
+              <span className="text-xs font-mono text-[var(--text-muted)]">Live Data</span>
+            </div>
+            <div className="divide-y divide-[var(--border)]">
+              {filteredLeads.map((lead) => {
+                const leadInvestigation = investigations.find(
+                  inv => inv.leadName === `${lead.first_name} ${lead.last_name}` && (inv.status === 'open' || inv.status === 'reviewing' || inv.status === 'confirmed')
+                );
+                return (
+                  <div
+                    key={lead.id}
+                    className={`p-4 hover:bg-[var(--surface-hover)] transition-colors cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${leadInvestigation ? 'bg-red-500/5' : ''}`}
+                    onClick={() => handleLeadClick(lead)}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className={`h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm ${leadInvestigation ? 'bg-red-500 text-white' : 'bg-[var(--surface-active)] text-[var(--text-secondary)]'}`}>
+                        {lead.first_name[0]}{lead.last_name[0]}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className="font-bold text-[var(--text-primary)]">{lead.first_name} {lead.last_name}</p>
+                          {leadInvestigation && <Shield size={14} className="text-red-500 animate-pulse" />}
+                          <Badge variant="outline" className="text-[10px] h-5 px-1.5 border-[var(--border-strong)] text-[var(--text-muted)] font-normal uppercase tracking-wider">
                             {lead.source}
                           </Badge>
-                        </td>
-                        <td>
-                          <Badge variant={getStatusColor(lead.status)} className="capitalize">
-                            {lead.status}
-                          </Badge>
-                        </td>
-                        <td className="text-[var(--text-secondary)]">
-                          {formatDate(lead.created_at)}
-                        </td>
-                        <td>
-                          <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setActiveTab('investigations');
-                              }}
-                              title="Investigate"
-                              className="text-red-500 hover:bg-red-500/10"
-                            >
-                              <Shield size={16} />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                              }}
-                            >
-                              <MoreHorizontal size={18} className="text-[var(--text-secondary)]" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                        </div>
+                        <div className="flex items-center gap-3 mt-1 text-xs text-[var(--text-secondary)]">
+                          <span>{lead.email}</span>
+                          <span className="text-[var(--border-strong)]">•</span>
+                          <span className="font-mono">{lead.phone}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between sm:justify-end gap-6 min-w-[200px]">
+                      <div className="text-right">
+                        <Badge variant={getStatusColor(lead.status)} className="uppercase tracking-wider text-[10px] font-bold px-2 py-0.5">
+                          {lead.status}
+                        </Badge>
+                        <p className="text-[10px] text-[var(--text-muted)] mt-1.5">{formatDate(lead.created_at)}</p>
+                      </div>
+
+                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-[var(--surface-active)]">
+                          <MoreHorizontal size={16} className="text-[var(--text-secondary)]" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
-            <div className="flex items-center justify-between border-t border-[var(--border)] px-4 py-3 bg-[var(--surface)]">
-              <p className="text-sm text-[var(--text-secondary)]">
-                Showing <span className="font-medium text-[var(--text-primary)]">{filteredLeads.length}</span> of <span className="font-medium text-[var(--text-primary)]">{mockLeads.length}</span> leads
-              </p>
+            {/* Pagination Footer */}
+            <div className="px-6 py-4 border-t border-[var(--border)] flex items-center justify-between bg-[var(--surface-active)]/10">
+              <p className="text-xs text-[var(--text-muted)]">Showing <strong className="text-[var(--text-primary)]">{filteredLeads.length}</strong> of {mockLeads.length}</p>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" disabled>Previous</Button>
-                <Button variant="outline" size="sm" disabled>Next</Button>
+                <Button variant="outline" size="sm" className="h-8 text-xs bg-[var(--surface)] text-[var(--text-secondary)] border-[var(--border)]" disabled>Previous</Button>
+                <Button variant="outline" size="sm" className="h-8 text-xs bg-[var(--surface)] text-[var(--text-secondary)] border-[var(--border)]" disabled>Next</Button>
               </div>
             </div>
           </div>
