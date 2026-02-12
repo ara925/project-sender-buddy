@@ -23,13 +23,6 @@ interface SidebarProps {
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/' },
-  { icon: Lightbulb, label: 'Insights', href: '/insights' },
-  { icon: Users, label: 'Leads', href: '/leads' },
-  { icon: Phone, label: 'Calls', href: '/calls' },
-  { icon: Headset, label: 'Staff', href: '/staff' },
-  { icon: FileText, label: 'Reports', href: '/reports' },
-  { icon: Activity, label: 'System Health', href: '/system-integrity', adminOnly: true },
-  { icon: Shield, label: 'Admin', href: '/admin', adminOnly: true },
 ];
 
 export function Sidebar({ userRole = 'agent' }: SidebarProps) {
@@ -72,7 +65,6 @@ export function Sidebar({ userRole = 'agent' }: SidebarProps) {
       {/* Navigation */}
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto custom-scroll" role="navigation" aria-label="Main">
         {navItems.map((item) => {
-          if (item.adminOnly && !isAdmin) return null;
           const isActive = location.pathname === item.href;
 
           return (
