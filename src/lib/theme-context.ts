@@ -5,7 +5,7 @@ export type Theme = 'dark' | 'light' | 'purple' | 'midnight' | 'system' | 'execu
 interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  resolvedTheme: 'dark' | 'light' | 'purple' | 'midnight';
+  resolvedTheme: 'dark' | 'light' | 'purple' | 'midnight' | 'executive' | 'slate-dark';
 }
 
 export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
