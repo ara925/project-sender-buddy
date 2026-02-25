@@ -14,13 +14,247 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      activities: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          lead_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          lead_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          lead_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activities_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calls: {
+        Row: {
+          agent_id: string | null
+          caller_number: string
+          callrail_id: string | null
+          created_at: string
+          direction: string
+          duration: number | null
+          id: string
+          lead_id: string | null
+          notes: string | null
+          recording_url: string | null
+          regal_id: string | null
+          status: string
+        }
+        Insert: {
+          agent_id?: string | null
+          caller_number: string
+          callrail_id?: string | null
+          created_at?: string
+          direction: string
+          duration?: number | null
+          id?: string
+          lead_id?: string | null
+          notes?: string | null
+          recording_url?: string | null
+          regal_id?: string | null
+          status?: string
+        }
+        Update: {
+          agent_id?: string | null
+          caller_number?: string
+          callrail_id?: string | null
+          created_at?: string
+          direction?: string
+          duration?: number | null
+          id?: string
+          lead_id?: string | null
+          notes?: string | null
+          recording_url?: string | null
+          regal_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calls_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calls_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_activities: {
+        Row: {
+          agent_name: string | null
+          created_at: string
+          description: string | null
+          id: string
+          lead_id: string
+          metadata: Json | null
+          platform: string
+          title: string
+          type: string
+        }
+        Insert: {
+          agent_name?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          lead_id: string
+          metadata?: Json | null
+          platform: string
+          title: string
+          type: string
+        }
+        Update: {
+          agent_name?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          lead_id?: string
+          metadata?: Json | null
+          platform?: string
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_activities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          assigned_to: string | null
+          case_type: string | null
+          created_at: string
+          email: string | null
+          external_id: string | null
+          first_name: string
+          google_click_id: string | null
+          id: string
+          last_name: string
+          litify_id: string | null
+          notes: string | null
+          phone: string | null
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          case_type?: string | null
+          created_at?: string
+          email?: string | null
+          external_id?: string | null
+          first_name: string
+          google_click_id?: string | null
+          id?: string
+          last_name: string
+          litify_id?: string | null
+          notes?: string | null
+          phone?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          case_type?: string | null
+          created_at?: string
+          email?: string | null
+          external_id?: string | null
+          first_name?: string
+          google_click_id?: string | null
+          id?: string
+          last_name?: string
+          litify_id?: string | null
+          notes?: string | null
+          phone?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          is_active: boolean
+          name: string
+          role: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+          is_active?: boolean
+          name: string
+          role?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          role?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: { Args: { user_id: string }; Returns: string }
     }
     Enums: {
       [_ in never]: never
