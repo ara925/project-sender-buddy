@@ -191,66 +191,57 @@ const eventTypeConfig = {
 export function SystemsHealthTab() {
   const [selectedSystem, setSelectedSystem] = useState<IntegrationSystem | null>(null);
   const [callRailSystem, setCallRailSystem] = useState<IntegrationSystem | null>(null);
+  const [intakerSystem, setIntakerSystem] = useState<IntegrationSystem | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchCallRailStats() {
+    async function fetchLiveStats() {
       setLoading(true);
-      
-      // Fetch all calls
-      const { data: calls, error } = await supabase
-        .from('calls')
-        .select('*')
-        .order('created_at', { ascending: false });
 
-      if (error || !calls) {
-        setLoading(false);
-        return;
-      }
+      // Fetch calls and intaker leads in parallel
+      const [callsRes, intakerRes] = await Promise.all([
+        supabase.from('calls').select('*').order('created_at', { ascending: false }),
+        supabase.from('leads').select('*').eq('source', 'intaker').order('created_at', { ascending: false }),
+      ]);
 
-      const totalCalls = calls.length;
+      // --- CallRail ---
+      const calls = callsRes.data ?? [];
       const callrailCalls = calls.filter((c: any) => c.callrail_id);
       const completedCalls = callrailCalls.filter((c: any) => c.status === 'completed').length;
       const missedCalls = callrailCalls.filter((c: any) => c.status === 'missed').length;
       const lastCall = callrailCalls[0];
-      
-      // Determine status based on data freshness
+
       let crStatus: 'healthy' | 'degraded' | 'down' = 'healthy';
-      let rootCause: string | null = null;
-      let recommendation: string | null = null;
+      let crRootCause: string | null = null;
+      let crRecommendation: string | null = null;
 
       if (lastCall) {
-        const minutesSinceLastCall = Math.floor((Date.now() - new Date(lastCall.created_at).getTime()) / 60000);
-        if (minutesSinceLastCall > 120) {
+        const minsSince = Math.floor((Date.now() - new Date(lastCall.created_at).getTime()) / 60000);
+        if (minsSince > 120) {
           crStatus = 'down';
-          rootCause = `No CallRail data received in ${Math.floor(minutesSinceLastCall / 60)} hours. The webhook endpoint may be unreachable or CallRail has stopped sending events.`;
-          recommendation = 'Check CallRail webhook configuration. Verify the endpoint URL is correct and the function is deployed. Send a test webhook from CallRail settings.';
-        } else if (minutesSinceLastCall > 30) {
+          crRootCause = `No CallRail data received in ${Math.floor(minsSince / 60)} hours. The webhook endpoint may be unreachable or CallRail has stopped sending events.`;
+          crRecommendation = 'Check CallRail webhook configuration. Verify the endpoint URL is correct and the function is deployed. Send a test webhook from CallRail settings.';
+        } else if (minsSince > 30) {
           crStatus = 'degraded';
-          rootCause = `Last CallRail webhook received ${minutesSinceLastCall} minutes ago. Data may be delayed.`;
-          recommendation = 'Monitor for the next few minutes. If no new data arrives, check CallRail webhook delivery logs.';
+          crRootCause = `Last CallRail webhook received ${minsSince} minutes ago. Data may be delayed.`;
+          crRecommendation = 'Monitor for the next few minutes. If no new data arrives, check CallRail webhook delivery logs.';
         }
-      } else if (totalCalls === 0) {
+      } else {
         crStatus = 'down';
-        rootCause = 'No calls have been received yet. The webhook may not be configured.';
-        recommendation = 'Configure CallRail webhooks to point to the backend function endpoint.';
+        crRootCause = 'No calls have been received yet. The webhook may not be configured.';
+        crRecommendation = 'Configure CallRail webhooks to point to the backend function endpoint.';
       }
 
-      // Build event log from real calls
-      const eventLog: IntegrationSystem['eventLog'] = callrailCalls.slice(0, 8).map((c: any) => {
+      const crEventLog: IntegrationSystem['eventLog'] = callrailCalls.slice(0, 8).map((c: any) => {
         const time = new Date(c.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
         const phone = formatPhone(c.caller_number);
-        if (c.status === 'missed') {
-          return { time, event: `Missed call from ${phone}`, type: 'warning' as const };
-        }
-        if (c.status === 'voicemail') {
-          return { time, event: `Voicemail from ${phone}`, type: 'warning' as const };
-        }
+        if (c.status === 'missed') return { time, event: `Missed call from ${phone}`, type: 'warning' as const };
+        if (c.status === 'voicemail') return { time, event: `Voicemail from ${phone}`, type: 'warning' as const };
         const dur = c.duration ? `${Math.floor(c.duration / 60)}m ${c.duration % 60}s` : '';
         return { time, event: `${c.direction === 'inbound' ? 'Inbound' : 'Outbound'} call — ${phone}${dur ? ` (${dur})` : ''}`, type: 'info' as const };
       });
 
-      const system: IntegrationSystem = {
+      setCallRailSystem({
         name: 'CallRail',
         description: 'Call tracking & analytics',
         icon: Phone,
@@ -263,32 +254,102 @@ export function SystemsHealthTab() {
           : 'No calls received',
         uptime: crStatus === 'healthy' ? '99.9%' : crStatus === 'degraded' ? '97.4%' : '0%',
         latency: crStatus === 'down' ? 'N/A' : '~200ms',
-        recentErrors: missedCalls > 0 ? callrailCalls
-          .filter((c: any) => c.status === 'missed')
-          .slice(0, 3)
-          .map((c: any) => ({
-            time: new Date(c.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
-            code: 'MISS',
-            message: `Missed call from ${formatPhone(c.caller_number)}`,
-            endpoint: 'POST /webhooks/call-complete',
-          })) : [],
-        eventLog,
-        rootCause,
-        recommendation,
+        recentErrors: callrailCalls.filter((c: any) => c.status === 'missed').slice(0, 3).map((c: any) => ({
+          time: new Date(c.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+          code: 'MISS',
+          message: `Missed call from ${formatPhone(c.caller_number)}`,
+          endpoint: 'POST /webhooks/call-complete',
+        })),
+        eventLog: crEventLog,
+        rootCause: crRootCause,
+        recommendation: crRecommendation,
         uptimeHistory: [
           { date: 'Mon', pct: 100 }, { date: 'Tue', pct: 100 }, { date: 'Wed', pct: 100 },
-          { date: 'Thu', pct: 100 }, { date: 'Fri', pct: 100 }, { date: 'Sat', pct: 100 }, { date: 'Sun', pct: crStatus === 'healthy' ? 100 : crStatus === 'degraded' ? 97.4 : 0 },
+          { date: 'Thu', pct: 100 }, { date: 'Fri', pct: 100 }, { date: 'Sat', pct: 100 },
+          { date: 'Sun', pct: crStatus === 'healthy' ? 100 : crStatus === 'degraded' ? 97.4 : 0 },
         ],
-      };
+      });
 
-      setCallRailSystem(system);
+      // --- Intaker ---
+      const intakerLeads = intakerRes.data ?? [];
+      const lastIntake = intakerLeads[0];
+      const qualifiedLeads = intakerLeads.filter((l: any) => l.status === 'qualified' || l.status === 'retained').length;
+      const newLeads = intakerLeads.filter((l: any) => l.status === 'new').length;
+      const duplicateLeads = intakerLeads.filter((l: any) => l.status === 'duplicate').length;
+
+      let itStatus: 'healthy' | 'degraded' | 'down' = 'healthy';
+      let itRootCause: string | null = null;
+      let itRecommendation: string | null = null;
+
+      if (lastIntake) {
+        const minsSince = Math.floor((Date.now() - new Date(lastIntake.created_at).getTime()) / 60000);
+        if (minsSince > 1440) { // 24 hours
+          itStatus = 'down';
+          itRootCause = `No Intaker submissions received in ${Math.floor(minsSince / 60)} hours. The Zapier integration may be disconnected or Intaker forms are offline.`;
+          itRecommendation = 'Check the Zapier Zap is turned on and the Intaker trigger is active. Verify intake forms are live on your website.';
+        } else if (minsSince > 360) { // 6 hours
+          itStatus = 'degraded';
+          itRootCause = `Last intake received ${Math.floor(minsSince / 60)} hours ago. Form submissions may be delayed or traffic is low.`;
+          itRecommendation = 'Monitor incoming submissions. Check Zapier task history for errors or paused Zaps.';
+        }
+      } else if (intakerLeads.length === 0) {
+        itStatus = 'down';
+        itRootCause = 'No Intaker leads have been received yet. The Zapier integration may not be configured.';
+        itRecommendation = 'Set up a Zap: Intaker → Webhook (POST) to the Zapier webhook endpoint with source "intaker".';
+      }
+
+      const itEventLog: IntegrationSystem['eventLog'] = intakerLeads.slice(0, 8).map((l: any) => {
+        const time = new Date(l.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        const name = `${l.first_name} ${l.last_name}`;
+        const caseLabel = l.case_type ? ` — ${l.case_type}` : '';
+        if (l.status === 'duplicate') {
+          return { time, event: `Duplicate intake detected — ${name}${caseLabel}`, type: 'warning' as const };
+        }
+        return { time, event: `New intake submitted — ${name}${caseLabel}`, type: 'info' as const };
+      });
+
+      setIntakerSystem({
+        name: 'Intaker',
+        description: 'Intake form processing',
+        icon: FileText,
+        status: itStatus,
+        apiCalls: { success: intakerLeads.length - duplicateLeads, failed: duplicateLeads, total: intakerLeads.length },
+        logsGenerated: intakerLeads.length,
+        lastDataTimestamp: lastIntake ? timeAgo(lastIntake.created_at) : 'Never',
+        lastDataLabel: lastIntake
+          ? `New intake — ${lastIntake.first_name} ${lastIntake.last_name}${lastIntake.case_type ? `, ${lastIntake.case_type}` : ''}`
+          : 'No intakes received',
+        uptime: itStatus === 'healthy' ? '99.99%' : itStatus === 'degraded' ? '98.5%' : '0%',
+        latency: itStatus === 'down' ? 'N/A' : '~150ms',
+        recentErrors: duplicateLeads > 0 ? intakerLeads.filter((l: any) => l.status === 'duplicate').slice(0, 3).map((l: any) => ({
+          time: new Date(l.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+          code: 'DUP',
+          message: `Duplicate intake — ${l.first_name} ${l.last_name}`,
+          endpoint: 'POST /webhooks/zapier',
+        })) : [],
+        eventLog: itEventLog,
+        rootCause: itRootCause,
+        recommendation: itRecommendation,
+        uptimeHistory: [
+          { date: 'Mon', pct: 100 }, { date: 'Tue', pct: 100 }, { date: 'Wed', pct: 100 },
+          { date: 'Thu', pct: 100 }, { date: 'Fri', pct: 100 }, { date: 'Sat', pct: 100 },
+          { date: 'Sun', pct: itStatus === 'healthy' ? 100 : itStatus === 'degraded' ? 98.5 : 0 },
+        ],
+      });
+
       setLoading(false);
     }
 
-    fetchCallRailStats();
+    fetchLiveStats();
   }, []);
 
-  const systems = [...staticSystems.slice(0, 2), ...(callRailSystem ? [callRailSystem] : []), ...staticSystems.slice(2)];
+  // Replace static Intaker (index 1) with live version, insert CallRail after it
+  const systems = [
+    staticSystems[0], // Litify (static)
+    ...(intakerSystem ? [intakerSystem] : [staticSystems[1]]),
+    ...(callRailSystem ? [callRailSystem] : []),
+    ...staticSystems.slice(2), // Loadify, Google Ads, CRM Sync
+  ];
 
   const healthy = systems.filter(s => s.status === 'healthy').length;
   const degraded = systems.filter(s => s.status === 'degraded').length;
@@ -323,15 +384,25 @@ export function SystemsHealthTab() {
         </div>
       </div>
 
-      {/* CallRail Live Badge */}
-      {callRailSystem && (
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs">
-          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-emerald-500 font-bold">CallRail — LIVE DATA</span>
-          <span className="text-[var(--text-muted)]">·</span>
-          <span className="text-[var(--text-secondary)] font-mono">{callRailSystem.apiCalls.total} calls tracked · Last: {callRailSystem.lastDataTimestamp}</span>
-        </div>
-      )}
+      {/* Live Data Badges */}
+      <div className="flex flex-wrap gap-2">
+        {callRailSystem && (
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-emerald-500 font-bold">CallRail — LIVE</span>
+            <span className="text-[var(--text-muted)]">·</span>
+            <span className="text-[var(--text-secondary)] font-mono">{callRailSystem.apiCalls.total} calls · Last: {callRailSystem.lastDataTimestamp}</span>
+          </div>
+        )}
+        {intakerSystem && (
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-emerald-500 font-bold">Intaker — LIVE</span>
+            <span className="text-[var(--text-muted)]">·</span>
+            <span className="text-[var(--text-secondary)] font-mono">{intakerSystem.apiCalls.total} intakes · Last: {intakerSystem.lastDataTimestamp}</span>
+          </div>
+        )}
+      </div>
 
       {/* System Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -342,7 +413,7 @@ export function SystemsHealthTab() {
           const apiSuccessRate = system.apiCalls.total > 0
             ? ((system.apiCalls.success / system.apiCalls.total) * 100).toFixed(1)
             : '0';
-          const isLive = system.name === 'CallRail';
+          const isLive = system.name === 'CallRail' || system.name === 'Intaker';
 
           return (
             <div
