@@ -551,16 +551,32 @@ export function SystemsHealthTab() {
 
                 <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">7-Day Uptime</h4>
-                  <div className="flex items-end gap-2 h-20">
-                    {selectedSystem.uptimeHistory.map((d) => (
-                      <div key={d.date} className="flex-1 flex flex-col items-center gap-1">
-                        <div className="w-full rounded-t-sm relative" style={{ height: `${Math.max((d.pct - 90) * 10, 2)}px` }}>
-                          <div className={`w-full h-full rounded-t-sm ${d.pct >= 99.5 ? 'bg-emerald-500' : d.pct >= 97 ? 'bg-amber-500' : 'bg-red-500'}`} style={{ height: `${(d.pct / 100) * 60}px` }} />
+                  <div className="space-y-1.5">
+                    {selectedSystem.uptimeHistory.map((d) => {
+                      const color = d.pct >= 99.5 ? 'emerald' : d.pct >= 97 ? 'amber' : 'red';
+                      const incidents = d.pct < 100 ? Math.ceil((100 - d.pct) * 10) : 0;
+                      return (
+                        <div key={d.date} className="flex items-center gap-3">
+                          <span className="text-[10px] font-mono text-[var(--text-muted)] w-8 shrink-0">{d.date}</span>
+                          <div className="flex-1 h-5 rounded bg-[var(--surface-hover)] overflow-hidden relative">
+                            <div
+                              className={`h-full rounded bg-${color}-500/20 border border-${color}-500/30`}
+                              style={{ width: `${d.pct}%` }}
+                            />
+                            {d.pct < 100 && (
+                              <div className={`absolute right-0 top-0 h-full bg-${color}-500/40`} style={{ width: `${100 - d.pct}%` }} />
+                            )}
+                          </div>
+                          <span className={`text-[10px] font-mono font-bold w-12 text-right text-${color}-500`}>{d.pct}%</span>
+                          {incidents > 0 && (
+                            <span className={`text-[9px] text-${color}-500 w-16 text-right`}>{incidents} incident{incidents > 1 ? 's' : ''}</span>
+                          )}
+                          {incidents === 0 && (
+                            <span className="text-[9px] text-emerald-500 w-16 text-right">No issues</span>
+                          )}
                         </div>
-                        <span className="text-[9px] text-[var(--text-muted)]">{d.date}</span>
-                        <span className={`text-[8px] font-mono ${d.pct >= 99.5 ? 'text-emerald-500' : d.pct >= 97 ? 'text-amber-500' : 'text-red-500'}`}>{d.pct}%</span>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
