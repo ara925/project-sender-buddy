@@ -49,7 +49,7 @@ export function SystemIntegrity() {
             <div className="font-mono text-xs text-[var(--accent-purple)] mb-2 bg-[var(--accent-purple)]/10 inline-block px-2 py-1 rounded">Batch-8921</div>
             <div className="relative border-l-2 border-[var(--border)] ml-2 space-y-8 pb-2">
               {[
-                { label: 'Data Ingested', time: '10:42:01.230 AM', status: 'Confirmed', sub: 'Received from Google Ads Connector' },
+                { label: 'Data Ingested', time: '10:42:01.230 AM', status: 'Confirmed', sub: 'Received from Website Form Submission' },
                 { label: 'Processing Complete', time: '10:42:01.450 AM', status: 'Verified', sub: 'Enriched with CRM metadata (Latency: 220ms)' },
                 { label: 'Distributed Downstream', time: '10:42:01.890 AM', status: 'Delivered', sub: 'Sent to Client Dashboard & Notification Service' }
               ].map((step, i) => (

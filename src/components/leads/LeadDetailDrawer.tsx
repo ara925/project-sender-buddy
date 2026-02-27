@@ -114,7 +114,7 @@ export function LeadDetailDrawer({ lead, open, onOpenChange }: LeadDetailDrawerP
             {lead.litify_id && (
               <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                 <ExternalLink size={14} className="text-[var(--text-muted)] shrink-0" />
-                <span className="truncate">Litify: {lead.litify_id}</span>
+                <span className="truncate">Salesforce: {lead.litify_id}</span>
               </div>
             )}
           </div>

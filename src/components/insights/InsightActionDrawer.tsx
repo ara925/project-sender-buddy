@@ -10,7 +10,7 @@ interface Props {
 
 const intakerData = {
   title: 'Intaker Settings & Performance',
-  summary: 'Intaker is outperforming Google Ads by 2.8x on lead quality. Reallocating more traffic to Intaker could yield ~15 additional qualified leads per week.',
+  summary: 'Intaker is outperforming Website leads by 2.8x on lead quality. Reallocating more traffic to Intaker could yield ~15 additional qualified leads per week.',
   metrics: [
     { label: 'Weekly Leads', value: '115', trend: '+17%', good: true },
     { label: 'Qualification Rate', value: '73.9%', trend: '+5%', good: true },
@@ -32,8 +32,8 @@ const intakerData = {
 };
 
 const campaignData = {
-  title: 'Google Ads Campaign Review',
-  summary: 'Quality Score dropped from 9.1 to 8.5 over the past 2 weeks. Primary drivers: landing page experience score decreased and ad relevance is slipping on 3 keyword groups.',
+  title: 'Website Performance Review',
+  summary: 'Website lead conversion rate dropped from 4.8% to 3.9% over the past 2 weeks. Primary drivers: landing page load time increased and form completion rates are declining.',
   metrics: [
     { label: 'Quality Score', value: '8.5', trend: '-0.6', good: false },
     { label: 'CTR', value: '3.2%', trend: '-0.4%', good: false },

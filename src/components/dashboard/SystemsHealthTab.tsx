@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CheckCircle2, AlertTriangle, XCircle, Activity, Clock, ArrowUpRight, FileText, Phone, Database, Zap, Globe, Server, X, AlertCircle, ArrowDown, ArrowUp, BarChart3, Loader2 } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, XCircle, Activity, Clock, ArrowUpRight, FileText, Phone, Database, Globe, X, AlertCircle, ArrowDown, ArrowUp, BarChart3, Loader2 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { supabase } from '@/integrations/supabase/client';
 import { formatPhone } from '@/lib/utils';
@@ -24,8 +24,8 @@ interface IntegrationSystem {
 
 const staticSystems: IntegrationSystem[] = [
   {
-    name: 'Litify',
-    description: 'Case management & CRM',
+    name: 'Salesforce',
+    description: 'CRM & case management',
     icon: Database,
     status: 'healthy',
     apiCalls: { success: 1247, failed: 2, total: 1249 },
@@ -39,10 +39,10 @@ const staticSystems: IntegrationSystem[] = [
       { time: '3:15 AM', code: '429', message: 'Rate limit exceeded — throttled for 30s', endpoint: 'GET /api/contacts/search' },
     ],
     eventLog: [
-      { time: '12:58 PM', event: 'Case update synced — Martinez v. TruckCo (#LIT-4892)', type: 'info' },
+      { time: '12:58 PM', event: 'Case update synced — Martinez v. TruckCo (#SF-4892)', type: 'info' },
       { time: '12:45 PM', event: 'Bulk contact sync completed — 142 records', type: 'info' },
       { time: '11:42 AM', event: 'Timeout on bulk-sync — retried successfully', type: 'warning' },
-      { time: '10:30 AM', event: 'New matter created — Davis Employment Claim (#LIT-4891)', type: 'info' },
+      { time: '10:30 AM', event: 'New case created — Davis Employment Claim (#SF-4891)', type: 'info' },
       { time: '9:15 AM', event: 'Daily health check passed', type: 'info' },
     ],
     rootCause: null,
@@ -67,7 +67,7 @@ const staticSystems: IntegrationSystem[] = [
     eventLog: [
       { time: '12:50 PM', event: 'New intake submitted — PI Auto Accident, Maria Gonzalez', type: 'info' },
       { time: '12:22 PM', event: 'Intake form rendered — Employment Law landing page', type: 'info' },
-      { time: '11:58 AM', event: 'Webhook delivered to Litify — intake #INT-2847', type: 'info' },
+      { time: '11:58 AM', event: 'Webhook delivered to Salesforce — intake #INT-2847', type: 'info' },
       { time: '11:30 AM', event: 'Form A/B test variant B served (62% of traffic)', type: 'info' },
       { time: '10:00 AM', event: 'Daily integrity check — all form fields validated', type: 'info' },
     ],
@@ -79,50 +79,25 @@ const staticSystems: IntegrationSystem[] = [
     ],
   },
   {
-    name: 'Loadify',
-    description: 'Document processing',
-    icon: Zap,
-    status: 'healthy',
-    apiCalls: { success: 445, failed: 1, total: 446 },
-    logsGenerated: 998,
-    lastDataTimestamp: '5 mins ago',
-    lastDataLabel: 'Document uploaded — Medical Records',
-    uptime: '99.97%',
-    latency: '156ms',
-    recentErrors: [
-      { time: '8:22 AM', code: '413', message: 'Payload too large — document exceeded 50MB limit', endpoint: 'POST /api/documents/upload' },
-    ],
-    eventLog: [
-      { time: '12:53 PM', event: 'Medical records uploaded — Martinez case (14 pages, OCR complete)', type: 'info' },
-      { time: '12:10 PM', event: 'Police report processed — Davis incident (#DOC-1247)', type: 'info' },
-      { time: '11:45 AM', event: 'Insurance correspondence scanned and classified', type: 'info' },
-      { time: '8:22 AM', event: 'Upload rejected — file exceeded 50MB limit (user notified)', type: 'warning' },
-      { time: '7:00 AM', event: 'Nightly OCR batch completed — 28 documents processed', type: 'info' },
-    ],
-    rootCause: null,
-    recommendation: null,
-    uptimeHistory: [
-      { date: 'Mon', pct: 100 }, { date: 'Tue', pct: 100 }, { date: 'Wed', pct: 100 },
-      { date: 'Thu', pct: 99.9 }, { date: 'Fri', pct: 100 }, { date: 'Sat', pct: 100 }, { date: 'Sun', pct: 100 },
-    ],
-  },
-  {
-    name: 'Google Ads API',
-    description: 'Ad campaign data sync',
+    name: 'Website',
+    description: 'Website traffic & form submissions',
     icon: Globe,
     status: 'healthy',
-    apiCalls: { success: 312, failed: 0, total: 312 },
-    logsGenerated: 756,
-    lastDataTimestamp: '3 mins ago',
-    lastDataLabel: 'Campaign sync — PI Brand Terms',
+    apiCalls: { success: 2840, failed: 3, total: 2843 },
+    logsGenerated: 5620,
+    lastDataTimestamp: '1 min ago',
+    lastDataLabel: 'Form submission — /free-consultation',
     uptime: '99.99%',
-    latency: '201ms',
-    recentErrors: [],
+    latency: '45ms',
+    recentErrors: [
+      { time: '6:12 AM', code: '500', message: 'Form handler timeout — auto-recovered', endpoint: 'POST /api/forms/submit' },
+    ],
     eventLog: [
-      { time: '12:55 PM', event: 'Campaign data synced — PI Brand Terms (18 clicks)', type: 'info' },
-      { time: '12:30 PM', event: 'Conversion tracking updated — 3 new form fills attributed', type: 'info' },
-      { time: '11:00 AM', event: 'Budget pacing check — all campaigns within 5% of daily target', type: 'info' },
-      { time: '9:00 AM', event: 'Daily report generated — 6 campaigns active', type: 'info' },
+      { time: '12:59 PM', event: 'Form submission — /free-consultation, PI Auto Accident', type: 'info' },
+      { time: '12:42 PM', event: 'Live chat session started — Employment Law inquiry', type: 'info' },
+      { time: '12:15 PM', event: 'Contact form submitted — /workers-compensation', type: 'info' },
+      { time: '11:50 AM', event: 'Page speed check — all pages under 2.5s load time', type: 'info' },
+      { time: '10:00 AM', event: 'Daily uptime check passed — all forms operational', type: 'info' },
     ],
     rootCause: null,
     recommendation: null,
@@ -132,35 +107,31 @@ const staticSystems: IntegrationSystem[] = [
     ],
   },
   {
-    name: 'Internal CRM Sync',
-    description: 'Cross-system data pipeline',
-    icon: Server,
-    status: 'down',
-    apiCalls: { success: 0, failed: 47, total: 47 },
-    logsGenerated: 47,
-    lastDataTimestamp: '3 hours ago',
-    lastDataLabel: 'Last sync — Auth token expired',
-    uptime: '91.2%',
-    latency: 'N/A',
+    name: 'Regal',
+    description: 'Outbound engagement & AI agents',
+    icon: Phone,
+    status: 'healthy',
+    apiCalls: { success: 678, failed: 5, total: 683 },
+    logsGenerated: 1890,
+    lastDataTimestamp: '4 mins ago',
+    lastDataLabel: 'AI Agent completed intake call',
+    uptime: '99.95%',
+    latency: '180ms',
     recentErrors: [
-      { time: '12:58 PM', code: '401', message: 'Unauthorized — OAuth token expired', endpoint: 'POST /api/sync/full' },
-      { time: '12:43 PM', code: '401', message: 'Unauthorized — OAuth token expired', endpoint: 'POST /api/sync/incremental' },
-      { time: '12:28 PM', code: '401', message: 'Unauthorized — OAuth token expired', endpoint: 'POST /api/sync/full' },
-      { time: '12:13 PM', code: '401', message: 'Unauthorized — OAuth token expired', endpoint: 'POST /api/sync/incremental' },
-      { time: '11:58 AM', code: '401', message: 'Unauthorized — OAuth token expired', endpoint: 'POST /api/sync/full' },
+      { time: '10:15 AM', code: '503', message: 'Temporary service unavailable — auto-retried', endpoint: 'POST /api/calls/outbound' },
     ],
     eventLog: [
-      { time: '12:58 PM', event: 'Sync attempt failed — 401 Unauthorized (47th consecutive failure)', type: 'error' },
-      { time: '10:02 AM', event: 'Alert escalated — CRM sync down > 2 hours, admin notified', type: 'error' },
-      { time: '9:45 AM', event: 'Auto-retry exhausted — 10 attempts failed, manual intervention required', type: 'error' },
-      { time: '9:00 AM', event: 'OAuth token expiration detected — refresh token also invalid', type: 'error' },
-      { time: '8:30 AM', event: 'Last successful sync — 847 records synced to Litify', type: 'info' },
+      { time: '12:56 PM', event: 'AI Agent Alpha completed qualification — PI case, qualified', type: 'info' },
+      { time: '12:30 PM', event: 'Outbound call completed — follow-up with Kevin White', type: 'info' },
+      { time: '12:05 PM', event: 'AI Agent escalated to human — customer requested', type: 'warning' },
+      { time: '11:40 AM', event: 'SMS follow-up sent — consultation reminder', type: 'info' },
+      { time: '10:15 AM', event: 'Outbound call failed — service temporarily unavailable, retried', type: 'warning' },
     ],
-    rootCause: 'The OAuth 2.0 refresh token for the CRM sync service account expired after 90 days. The auto-refresh mechanism failed because the service account password was changed on Jan 28 without updating the sync configuration. All sync operations have been failing with 401 errors since 9:00 AM.',
-    recommendation: 'Re-authenticate the CRM sync service account: Admin → Integrations → CRM Sync → Re-authorize. A new OAuth token will be generated. After re-auth, trigger a full sync to catch up on the 3-hour data gap. Estimated catch-up time: ~15 minutes.',
+    rootCause: null,
+    recommendation: null,
     uptimeHistory: [
-      { date: 'Mon', pct: 100 }, { date: 'Tue', pct: 100 }, { date: 'Wed', pct: 100 },
-      { date: 'Thu', pct: 100 }, { date: 'Fri', pct: 62.5 }, { date: 'Sat', pct: 100 }, { date: 'Sun', pct: 100 },
+      { date: 'Mon', pct: 100 }, { date: 'Tue', pct: 100 }, { date: 'Wed', pct: 99.9 },
+      { date: 'Thu', pct: 100 }, { date: 'Fri', pct: 100 }, { date: 'Sat', pct: 100 }, { date: 'Sun', pct: 100 },
     ],
   },
 ];
@@ -345,10 +316,11 @@ export function SystemsHealthTab() {
 
   // Replace static Intaker (index 1) with live version, insert CallRail after it
   const systems = [
-    staticSystems[0], // Litify (static)
+    staticSystems[0], // Salesforce (static)
     ...(intakerSystem ? [intakerSystem] : [staticSystems[1]]),
     ...(callRailSystem ? [callRailSystem] : []),
-    ...staticSystems.slice(2), // Loadify, Google Ads, CRM Sync
+    staticSystems[2], // Website
+    staticSystems[3], // Regal
   ];
 
   const healthy = systems.filter(s => s.status === 'healthy').length;

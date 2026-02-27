@@ -23,7 +23,7 @@ const sourceData = [
   { source: 'Organic Search', leads: 312, change: 18, quality: 8.8, icon: Globe },
   { source: 'Direct', leads: 203, change: -2, quality: 7.8, icon: Zap },
   { source: 'Referrals', leads: 156, change: 4, quality: 9.5, icon: Link2 },
-  { source: 'Google Ads', leads: 142, change: -10, quality: 8.5, icon: Target },
+  { source: 'Website', leads: 142, change: 8, quality: 8.5, icon: Globe },
   { source: 'Intaker', leads: 115, change: 17, quality: 9.2, icon: Zap },
   { source: 'Social Media', leads: 89, change: 22, quality: 7.2, icon: Share2 },
   { source: 'CallRail', leads: 78, change: 4, quality: 8.0, icon: PhoneCall },
@@ -31,8 +31,8 @@ const sourceData = [
 ];
 
 const alerts = [
-  { severity: 'critical' as const, title: 'Google Ads leads down 10%', detail: 'Quality score dropped from 9.1→8.5. Check landing page speed and keyword relevance.', metric: '-10%' },
-  { severity: 'critical' as const, title: 'Intaker underutilized', detail: 'Intaker outperforming Google Ads on lead quality — consider reallocating traffic to yield ~15 extra leads/week.', metric: '+15 Leads' },
+  { severity: 'warning' as const, title: 'Website form conversions dipping', detail: 'Form completion rate dropped 5% — check page load times and form UX.', metric: '-5%' },
+  { severity: 'critical' as const, title: 'Intaker underutilized', detail: 'Intaker outperforming Website on lead quality — consider reallocating traffic to yield ~15 extra leads/week.', metric: '+15 Leads' },
   { severity: 'warning' as const, title: 'Form submissions dropped 8%', detail: 'May be related to recent landing page changes. Check form completion rates.', metric: '-8%' },
   { severity: 'success' as const, title: 'Social media leads surging', detail: 'Up 22% week-over-week. Consider increasing allocation to capitalize on momentum.', metric: '+22%' },
   { severity: 'success' as const, title: 'CallRail conversion spike', detail: 'Phone leads are converting at 28% this week, well above the 19% average.', metric: '+9% Conv.' },
@@ -41,10 +41,10 @@ const alerts = [
 type FunnelStep = { stage: string; count: number; dropoff: string | number };
 
 const funnelData: Record<string, FunnelStep[]> = {
-  google: [
-    { stage: 'Impressions', count: 15400, dropoff: 0 },
-    { stage: 'Clicks', count: 3200, dropoff: '79%' },
-    { stage: 'Leads', count: 142, dropoff: '95%' },
+  website: [
+    { stage: 'Visitors', count: 18520, dropoff: 0 },
+    { stage: 'Form Views', count: 4200, dropoff: '77%' },
+    { stage: 'Submissions', count: 142, dropoff: '97%' },
     { stage: 'Qualified', count: 48, dropoff: '66%' },
     { stage: 'Retained', count: 12, dropoff: '75%' },
   ],
@@ -95,7 +95,7 @@ const severityConfig = {
 
 export function Insights() {
   const [activeTab, setActiveTab] = useState<'overview' | 'funnels' | 'ai-agents'>('overview');
-  const [selectedFunnel, setSelectedFunnel] = useState<string>('google');
+  const [selectedFunnel, setSelectedFunnel] = useState<string>('website');
 
   const tabClass = (active: boolean) =>
     cn(
@@ -137,7 +137,7 @@ export function Insights() {
           <div className="space-y-3">
             <h2 className="text-sm font-bold text-[var(--text-muted)] uppercase tracking-wider">Select Pipeline</h2>
             {[
-              { id: 'google', label: 'Google Ads', sub: 'PPC', Icon: Target },
+              { id: 'website', label: 'Website', sub: 'Forms & Chat', Icon: Globe },
               { id: 'intaker', label: 'Intaker Chat', sub: 'Automated', Icon: Zap },
               { id: 'organic', label: 'Organic Search', sub: 'SEO', Icon: Globe },
               { id: 'social', label: 'Social Media', sub: 'Paid + Organic', Icon: Share2 },

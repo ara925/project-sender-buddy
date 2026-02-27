@@ -40,7 +40,7 @@ const dailyLeadsData = [
 ];
 
 const leadsBySource = [
-  { name: 'Google Ads', value: 142 }, { name: 'Intaker', value: 115 }, { name: 'Organic', value: 312 },
+  { name: 'Website', value: 142 }, { name: 'Intaker', value: 115 }, { name: 'Organic', value: 312 },
   { name: 'Referrals', value: 156 }, { name: 'Social', value: 89 }, { name: 'Direct', value: 203 },
   { name: 'CallRail', value: 78 }, { name: 'Forms', value: 85 }, { name: 'Other', value: 67 },
 ];
@@ -115,13 +115,13 @@ const organicPages = [
   { page: '/blog/what-to-do-after-accident', sessions: 5200, leads: 22, convRate: '0.42%' },
 ];
 
-const googleAdsCampaigns = [
-  { campaign: 'PI - Los Angeles', spend: '$1,450', clicks: 820, leads: 48, cpl: '$30.21', convRate: '5.85%', quality: 8.8 },
-  { campaign: 'PI - Orange County', spend: '$890', clicks: 510, leads: 32, cpl: '$27.81', convRate: '6.27%', quality: 8.2 },
-  { campaign: 'Auto Accident - Brand', spend: '$620', clicks: 380, leads: 28, cpl: '$22.14', convRate: '7.37%', quality: 9.1 },
-  { campaign: 'Workers Comp', spend: '$540', clicks: 290, leads: 18, cpl: '$30.00', convRate: '6.21%', quality: 7.8 },
-  { campaign: 'Employment Law', spend: '$480', clicks: 260, leads: 12, cpl: '$40.00', convRate: '4.62%', quality: 7.2 },
-  { campaign: 'Remarketing', spend: '$220', clicks: 140, leads: 4, cpl: '$55.00', convRate: '2.86%', quality: 6.5 },
+const websitePages = [
+  { page: '/free-consultation', submissions: 48, convRate: '5.85%', avgTime: '2:15' },
+  { page: '/car-accident-lawyer', submissions: 32, convRate: '6.27%', avgTime: '1:58' },
+  { page: '/personal-injury', submissions: 28, convRate: '4.92%', avgTime: '2:42' },
+  { page: '/workers-compensation', submissions: 18, convRate: '3.21%', avgTime: '3:10' },
+  { page: '/employment-law', submissions: 12, convRate: '2.62%', avgTime: '2:55' },
+  { page: '/contact', submissions: 4, convRate: '1.86%', avgTime: '1:30' },
 ];
 
 const socialPlatforms = [
@@ -356,38 +356,30 @@ const detailContent: Record<string, () => React.ReactNode> = {
     </>
   ),
 
-  'Google Ads': () => (
+  'Website': () => (
     <>
       <div className="grid grid-cols-2 gap-3">
-        <MiniTrend label="Total Leads" value="142" change="-10% vs last month" positive={false} />
-        <MiniTrend label="Total Spend" value="$4,200" change="+$180" positive={false} />
-        <MiniTrend label="Avg CPL" value="$29.57" change="+$2.12" positive={false} />
-        <MiniTrend label="ROAS" value="3.2x" change="-0.4x" positive={false} />
+        <MiniTrend label="Total Leads" value="142" change="+8% vs last month" positive />
+        <MiniTrend label="Total Visitors" value="18,520" change="+12%" positive />
+        <MiniTrend label="Conv. Rate" value="3.9%" change="-0.9%" positive={false} />
+        <MiniTrend label="Avg Session" value="3:42" change="+15s" positive />
       </div>
-      <SectionTitle>Campaign Breakdown</SectionTitle>
+      <SectionTitle>Top Converting Pages</SectionTitle>
       <div className="space-y-1">
-        {googleAdsCampaigns.map(c => (
-          <div key={c.campaign} className="p-3 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-hover)] transition-colors">
+        {websitePages.map(p => (
+          <div key={p.page} className="p-3 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-hover)] transition-colors">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-[var(--text-primary)]">{c.campaign}</span>
-              <span className="text-xs font-mono text-[var(--text-secondary)]">{c.spend}</span>
+              <span className="text-sm font-semibold text-[var(--text-primary)]">{p.page}</span>
+              <span className="text-xs font-mono text-[var(--text-secondary)]">{p.submissions} leads</span>
             </div>
-            <div className="grid grid-cols-4 gap-2 text-center">
+            <div className="grid grid-cols-2 gap-2 text-center">
               <div>
-                <div className="text-[10px] text-[var(--text-muted)]">Clicks</div>
-                <div className="text-xs font-semibold text-[var(--text-primary)]">{c.clicks}</div>
+                <div className="text-[10px] text-[var(--text-muted)]">Conv. Rate</div>
+                <div className="text-xs font-semibold text-[var(--text-primary)]">{p.convRate}</div>
               </div>
               <div>
-                <div className="text-[10px] text-[var(--text-muted)]">Leads</div>
-                <div className="text-xs font-semibold text-[var(--text-primary)]">{c.leads}</div>
-              </div>
-              <div>
-                <div className="text-[10px] text-[var(--text-muted)]">CPL</div>
-                <div className="text-xs font-semibold text-[var(--text-primary)]">{c.cpl}</div>
-              </div>
-              <div>
-                <div className="text-[10px] text-[var(--text-muted)]">Quality</div>
-                <div className="text-xs font-semibold text-[var(--text-primary)]">{c.quality}</div>
+                <div className="text-[10px] text-[var(--text-muted)]">Avg Time</div>
+                <div className="text-xs font-semibold text-[var(--text-primary)]">{p.avgTime}</div>
               </div>
             </div>
           </div>
