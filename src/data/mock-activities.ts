@@ -2,7 +2,7 @@ import type { LeadActivity } from '@/types';
 
 export const mockLeadActivities: LeadActivity[] = [
   // Lead 1 — James Wilson (new, from forms)
-  { id: 'a1', lead_id: '1', platform: 'google_ads', type: 'ad_click', title: 'Google Ads click', description: 'Clicked "PI Lawyer Near Me" ad — Campaign: PI_Brand_2024', agent_name: null, metadata: { campaign: 'PI_Brand_2024', keyword: 'personal injury lawyer', cost: 4.20 }, created_at: '2024-02-05T10:28:00Z' },
+  { id: 'a1', lead_id: '1', platform: 'google_ads', type: 'ad_click', title: 'Google Ads click', description: 'Clicked "PI Lawyer Near Me" ad — Campaign: PI_Brand_2024', agent_name: null, metadata: { campaign: 'PI_Brand_2024', keyword: 'personal injury lawyer' }, created_at: '2024-02-05T10:28:00Z' },
   { id: 'a2', lead_id: '1', platform: 'forms', type: 'form_submission', title: 'Web form submitted', description: 'Contact form on /free-consultation — PI case evaluation', agent_name: null, metadata: { form: 'free-consultation', page: '/free-consultation' }, created_at: '2024-02-05T10:30:00Z' },
   { id: 'a3', lead_id: '1', platform: 'internal', type: 'status_change', title: 'Status → New', description: 'Lead auto-created from web form submission', agent_name: 'System', metadata: { from: null, to: 'new' }, created_at: '2024-02-05T10:30:01Z' },
 
@@ -26,7 +26,7 @@ export const mockLeadActivities: LeadActivity[] = [
   { id: 'a18', lead_id: '3', platform: 'internal', type: 'status_change', title: 'Status → Qualified', description: null, agent_name: 'John Adams', metadata: { from: 'contacted', to: 'qualified' }, created_at: '2024-02-05T11:00:00Z' },
 
   // Lead 4 — Emily Davis (new, callrail)
-  { id: 'a19', lead_id: '4', platform: 'google_ads', type: 'ad_click', title: 'Google Ads click', description: 'Clicked "Car Accident Lawyer" ad', agent_name: null, metadata: { campaign: 'MVA_Generic_2024', keyword: 'car accident lawyer', cost: 6.80 }, created_at: '2024-02-03T09:55:00Z' },
+  { id: 'a19', lead_id: '4', platform: 'google_ads', type: 'ad_click', title: 'Google Ads click', description: 'Clicked "Car Accident Lawyer" ad', agent_name: null, metadata: { campaign: 'MVA_Generic_2024', keyword: 'car accident lawyer' }, created_at: '2024-02-03T09:55:00Z' },
   { id: 'a20', lead_id: '4', platform: 'callrail', type: 'call_inbound', title: 'Inbound call via CallRail', description: 'Call from 555-0126, tracking number match', agent_name: null, metadata: { duration: 95, tracking_number: '800-555-0199' }, created_at: '2024-02-03T10:00:00Z' },
   { id: 'a21', lead_id: '4', platform: 'internal', type: 'status_change', title: 'Status → New', description: 'Lead auto-created from CallRail', agent_name: 'System', metadata: { from: null, to: 'new' }, created_at: '2024-02-03T10:00:01Z' },
 

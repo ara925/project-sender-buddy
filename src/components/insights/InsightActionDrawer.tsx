@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, ExternalLink, TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, BarChart3, Settings, Phone, DollarSign, Target, Zap } from 'lucide-react';
+import { X, ExternalLink, TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, BarChart3, Settings, Phone, Target, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface Props {
@@ -10,14 +10,12 @@ interface Props {
 
 const intakerData = {
   title: 'Intaker Settings & Performance',
-  summary: 'Intaker is outperforming Google Ads by 2.8x on cost-per-lead. Reallocating 20% of Google Ads budget ($840/week) to Intaker could yield ~15 additional qualified leads per week.',
+  summary: 'Intaker is outperforming Google Ads by 2.8x on lead quality. Reallocating more traffic to Intaker could yield ~15 additional qualified leads per week.',
   metrics: [
-    { label: 'Current CPL', value: '$10.43', trend: '-12%', good: true },
     { label: 'Weekly Leads', value: '115', trend: '+17%', good: true },
     { label: 'Qualification Rate', value: '73.9%', trend: '+5%', good: true },
     { label: 'Avg Response Time', value: '2.4 min', trend: '-18%', good: true },
     { label: 'Retention Rate', value: '36.5%', trend: '+8%', good: true },
-    { label: 'Weekly Spend', value: '$1,200', trend: '0%', good: true },
   ],
   settings: [
     { name: 'Auto-assignment', status: 'Enabled', desc: 'Leads auto-assigned to available agents within 30 seconds' },
@@ -27,7 +25,7 @@ const intakerData = {
     { name: 'Duplicate detection', status: 'Active', desc: 'Cross-referencing phone, email, and case details' },
   ],
   recommendations: [
-    'Increase Intaker budget allocation from 14% to 25% of total ad spend',
+    'Increase Intaker traffic allocation to capture more qualified leads',
     'Enable "smart scheduling" to optimize agent availability during peak hours (10-2 PM)',
     'Add Spanish-language Intaker flow — 18% of missed leads are Spanish-speaking',
   ],
@@ -38,18 +36,16 @@ const campaignData = {
   summary: 'Quality Score dropped from 9.1 to 8.5 over the past 2 weeks. Primary drivers: landing page experience score decreased and ad relevance is slipping on 3 keyword groups.',
   metrics: [
     { label: 'Quality Score', value: '8.5', trend: '-0.6', good: false },
-    { label: 'Weekly Spend', value: '$4,200', trend: '+5%', good: false },
-    { label: 'CPL', value: '$29.57', trend: '+8%', good: false },
     { label: 'CTR', value: '3.2%', trend: '-0.4%', good: false },
     { label: 'Conversion Rate', value: '4.4%', trend: '-1.1%', good: false },
-    { label: 'ROAS', value: '3.2x', trend: '-0.5x', good: false },
+    { label: 'Weekly Leads', value: '142', trend: '-10%', good: false },
   ],
   campaigns: [
-    { name: 'PI - Auto Accidents', spend: '$1,800', leads: 62, cpl: '$29.03', quality: 8.8, status: 'Active' },
-    { name: 'PI - Slip & Fall', spend: '$950', leads: 28, cpl: '$33.93', quality: 7.9, status: 'Needs Review' },
-    { name: 'Employment - Wrongful Term', spend: '$720', leads: 24, cpl: '$30.00', quality: 8.2, status: 'Active' },
-    { name: 'Employment - Wage Theft', spend: '$430', leads: 18, cpl: '$23.89', quality: 9.1, status: 'Active' },
-    { name: 'Brand - Wilshire Law', spend: '$300', leads: 10, cpl: '$30.00', quality: 9.5, status: 'Active' },
+    { name: 'PI - Auto Accidents', leads: 62, quality: 8.8, status: 'Active' },
+    { name: 'PI - Slip & Fall', leads: 28, quality: 7.9, status: 'Needs Review' },
+    { name: 'Employment - Wrongful Term', leads: 24, quality: 8.2, status: 'Active' },
+    { name: 'Employment - Wage Theft', leads: 18, quality: 9.1, status: 'Active' },
+    { name: 'Brand - Wilshire Law', leads: 10, quality: 9.5, status: 'Active' },
   ],
   issues: [
     { severity: 'high', issue: 'Landing page load time increased to 4.2s (was 2.1s)', fix: 'Optimize hero image and defer non-critical scripts' },
@@ -177,7 +173,7 @@ export function InsightActionDrawer({ open, onClose, actionType }: Props) {
                     <div key={c.name} className="p-3 rounded-lg bg-[var(--surface-hover)] flex items-center justify-between">
                       <div>
                         <p className="text-xs font-medium text-[var(--text-primary)]">{c.name}</p>
-                        <p className="text-[10px] text-[var(--text-muted)]">{c.leads} leads · CPL {c.cpl} · Spend {c.spend}</p>
+                        <p className="text-[10px] text-[var(--text-muted)]">{c.leads} leads · Quality {c.quality}</p>
                       </div>
                       <span className={`text-[10px] font-semibold px-2 py-1 rounded-md ${
                         c.status === 'Active' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'
