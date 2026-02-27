@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CheckCircle2, AlertTriangle, XCircle, Activity, Clock, ArrowUpRight, FileText, Phone, Database, Globe, X, AlertCircle, ArrowDown, ArrowUp, BarChart3, Loader2 } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, XCircle, Activity, Clock, ArrowUpRight, FileText, Phone, Database, Globe, Zap, X, AlertCircle, ArrowDown, ArrowUp, BarChart3, Loader2 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { supabase } from '@/integrations/supabase/client';
 import { formatPhone } from '@/lib/utils';
@@ -132,6 +132,34 @@ const staticSystems: IntegrationSystem[] = [
     uptimeHistory: [
       { date: 'Mon', pct: 100 }, { date: 'Tue', pct: 100 }, { date: 'Wed', pct: 99.9 },
       { date: 'Thu', pct: 100 }, { date: 'Fri', pct: 100 }, { date: 'Sat', pct: 100 }, { date: 'Sun', pct: 100 },
+    ],
+  },
+  {
+    name: 'Zapier',
+    description: 'Workflow automation & data routing',
+    icon: Zap,
+    status: 'healthy',
+    apiCalls: { success: 1542, failed: 8, total: 1550 },
+    logsGenerated: 3210,
+    lastDataTimestamp: '3 mins ago',
+    lastDataLabel: 'Zap executed — New Intaker lead routed',
+    uptime: '99.94%',
+    latency: '320ms',
+    recentErrors: [
+      { time: '7:22 AM', code: '429', message: 'Rate limit — throttled for 60s on bulk trigger', endpoint: 'POST /hooks/catch' },
+    ],
+    eventLog: [
+      { time: '12:57 PM', event: 'Zap executed — Intaker lead routed to webhook', type: 'info' },
+      { time: '12:35 PM', event: 'Zap executed — CallRail call data forwarded', type: 'info' },
+      { time: '11:50 AM', event: 'Zap executed — New lead notification sent to Slack', type: 'info' },
+      { time: '10:20 AM', event: 'Zap executed — Salesforce record created from intake', type: 'info' },
+      { time: '7:22 AM', event: 'Rate limit hit on bulk trigger — retried after 60s', type: 'warning' },
+    ],
+    rootCause: null,
+    recommendation: null,
+    uptimeHistory: [
+      { date: 'Mon', pct: 100 }, { date: 'Tue', pct: 100 }, { date: 'Wed', pct: 100 },
+      { date: 'Thu', pct: 99.9 }, { date: 'Fri', pct: 100 }, { date: 'Sat', pct: 100 }, { date: 'Sun', pct: 100 },
     ],
   },
 ];
@@ -321,6 +349,7 @@ export function SystemsHealthTab() {
     ...(callRailSystem ? [callRailSystem] : []),
     staticSystems[2], // Website
     staticSystems[3], // Regal
+    staticSystems[4], // Zapier
   ];
 
   const healthy = systems.filter(s => s.status === 'healthy').length;
