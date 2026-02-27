@@ -1,10 +1,11 @@
-import { Phone, Mail, MapPin, Calendar, Tag, User, ExternalLink } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Phone, Mail, MapPin, Calendar, Tag, User, ExternalLink, Loader2 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Badge, Button } from '@/components/ui';
 import { formatDate, formatDateTime } from '@/lib/utils';
 import { ActivityTimeline } from './ActivityTimeline';
-import { getActivitiesForLead } from '@/data/mock-activities';
-import type { Lead } from '@/types';
+import { supabase } from '@/integrations/supabase/client';
+import type { Lead, LeadActivity } from '@/types';
 
 const statusColors: Record<string, 'default' | 'secondary' | 'success' | 'destructive' | 'warning' | 'info'> = {
   new: 'info',
@@ -29,9 +30,29 @@ interface LeadDetailDrawerProps {
 }
 
 export function LeadDetailDrawer({ lead, open, onOpenChange }: LeadDetailDrawerProps) {
-  if (!lead) return null;
+  const [activities, setActivities] = useState<LeadActivity[]>([]);
+  const [loadingActivities, setLoadingActivities] = useState(false);
 
-  const activities = getActivitiesForLead(lead.id);
+  useEffect(() => {
+    if (!lead || !open) return;
+    
+    async function fetchActivities() {
+      setLoadingActivities(true);
+      const { data, error } = await supabase
+        .from('lead_activities')
+        .select('*')
+        .eq('lead_id', lead!.id)
+        .order('created_at', { ascending: false });
+      
+      if (!error && data) {
+        setActivities(data as unknown as LeadActivity[]);
+      }
+      setLoadingActivities(false);
+    }
+    fetchActivities();
+  }, [lead?.id, open]);
+
+  if (!lead) return null;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -112,10 +133,19 @@ export function LeadDetailDrawer({ lead, open, onOpenChange }: LeadDetailDrawerP
               Activity Timeline
             </h3>
             <span className="text-xs text-[var(--text-muted)]">
-              {activities.length} event{activities.length !== 1 ? 's' : ''}
+              {loadingActivities ? '...' : `${activities.length} event${activities.length !== 1 ? 's' : ''}`}
             </span>
           </div>
-          <ActivityTimeline activities={activities} />
+          {loadingActivities ? (
+            <div className="flex items-center justify-center py-8 gap-2 text-[var(--text-muted)]">
+              <Loader2 size={16} className="animate-spin" />
+              <span className="text-sm">Loading activities...</span>
+            </div>
+          ) : activities.length === 0 ? (
+            <p className="text-sm text-[var(--text-muted)] text-center py-8">No activities recorded yet.</p>
+          ) : (
+            <ActivityTimeline activities={activities} />
+          )}
         </div>
       </SheetContent>
     </Sheet>
