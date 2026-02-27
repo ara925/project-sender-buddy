@@ -549,37 +549,39 @@ export function SystemsHealthTab() {
                   </div>
                 </div>
 
+                {/* Health Summary */}
                 <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">7-Day Uptime</h4>
-                  <div className="space-y-1.5">
-                    {selectedSystem.uptimeHistory.map((d) => {
-                      const color = d.pct >= 99.5 ? 'emerald' : d.pct >= 97 ? 'amber' : 'red';
-                      const incidents = d.pct < 100 ? Math.ceil((100 - d.pct) * 10) : 0;
-                      return (
-                        <div key={d.date} className="flex items-center gap-3">
-                          <span className="text-[10px] font-mono text-[var(--text-muted)] w-8 shrink-0">{d.date}</span>
-                          <div className="flex-1 h-5 rounded bg-[var(--surface-hover)] overflow-hidden relative">
-                            <div
-                              className={`h-full rounded bg-${color}-500/20 border border-${color}-500/30`}
-                              style={{ width: `${d.pct}%` }}
-                            />
-                            {d.pct < 100 && (
-                              <div className={`absolute right-0 top-0 h-full bg-${color}-500/40`} style={{ width: `${100 - d.pct}%` }} />
-                            )}
-                          </div>
-                          <span className={`text-[10px] font-mono font-bold w-12 text-right text-${color}-500`}>{d.pct}%</span>
-                          {incidents > 0 && (
-                            <span className={`text-[9px] text-${color}-500 w-16 text-right`}>{incidents} incident{incidents > 1 ? 's' : ''}</span>
-                          )}
-                          {incidents === 0 && (
-                            <span className="text-[9px] text-emerald-500 w-16 text-right">No issues</span>
-                          )}
-                        </div>
-                      );
-                    })}
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">Health Summary</h4>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-[var(--text-secondary)]">Error Rate (24h)</span>
+                      <span className={`text-xs font-mono font-bold ${selectedSystem.apiCalls.failed === 0 ? 'text-emerald-500' : selectedSystem.apiCalls.failed <= 5 ? 'text-amber-500' : 'text-red-500'}`}>
+                        {selectedSystem.apiCalls.total > 0 ? ((selectedSystem.apiCalls.failed / selectedSystem.apiCalls.total) * 100).toFixed(2) : '0.00'}%
+                        <span className="text-[var(--text-muted)] font-normal ml-1">({selectedSystem.apiCalls.failed} failed)</span>
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-[var(--text-secondary)]">Throughput</span>
+                      <span className="text-xs font-mono font-bold text-[var(--text-primary)]">
+                        {selectedSystem.apiCalls.total.toLocaleString()} requests
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-[var(--text-secondary)]">Last Incident</span>
+                      <span className={`text-xs font-mono ${selectedSystem.recentErrors.length > 0 ? 'text-amber-500' : 'text-emerald-500'}`}>
+                        {selectedSystem.recentErrors.length > 0 ? selectedSystem.recentErrors[0].time : 'None today'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-[var(--text-secondary)]">Warnings (24h)</span>
+                      <span className={`text-xs font-mono font-bold ${selectedSystem.eventLog.filter(e => e.type === 'warning').length > 0 ? 'text-amber-500' : 'text-emerald-500'}`}>
+                        {selectedSystem.eventLog.filter(e => e.type === 'warning').length}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
+                {/* Recent Errors */}
                 {selectedSystem.recentErrors.length > 0 && (
                   <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">
