@@ -49,7 +49,7 @@ export interface Activity {
   created_at: string;
 }
 
-export type LeadActivityPlatform = 'callrail' | 'regal' | 'regal_ai' | 'intaker' | 'litify' | 'google_ads' | 'forms' | 'internal';
+export type LeadActivityPlatform = 'callrail' | 'regal' | 'regal_ai' | 'intaker' | 'salesforce' | 'website' | 'forms' | 'internal';
 
 export type LeadActivityType =
   | 'call_inbound'
@@ -64,9 +64,9 @@ export type LeadActivityType =
   | 'status_change'
   | 'note_added'
   | 'assigned'
-  | 'litify_synced'
-  | 'litify_matter_created'
-  | 'ad_click'
+  | 'salesforce_synced'
+  | 'salesforce_case_created'
+  | 'website_visit'
   | 'retainer_signed'
   | 'document_uploaded'
   | 'ai_call_inbound'

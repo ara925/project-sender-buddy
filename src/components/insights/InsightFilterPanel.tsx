@@ -7,7 +7,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-const SOURCES = ['Google Ads', 'Intaker', 'CallRail', 'Forms', 'Organic', 'Social Media', 'Referrals', 'Direct', 'Manual'];
+const SOURCES = ['Website', 'Intaker', 'CallRail', 'Forms', 'Organic', 'Social Media', 'Referrals', 'Direct', 'Manual', 'Regal', 'Salesforce'];
 const CASE_TYPES = ['Personal Injury', 'Auto Accident', 'Truck Accident', 'Motorcycle', 'Workers Comp', 'Employment Law', 'Slip & Fall', 'Other'];
 const STATUSES = ['New', 'Contacted', 'Qualified', 'Retained', 'Disqualified', 'Lost'];
 const AGENTS = ['Maria Santos', 'James Rodriguez', 'Ashley Kim', 'David Chen', 'Rachel Martinez', 'Kevin Park', 'Sarah Johnson', 'Michael Brown', 'Lisa Nguyen', 'Chris Taylor', 'Amanda White', 'Brian Lopez'];

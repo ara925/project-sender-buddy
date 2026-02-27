@@ -141,9 +141,9 @@ export function Admin() {
           {[
             { name: 'Intaker', status: 'Connected', color: 'success', icon: '⚡' },
             { name: 'CallRail', status: 'Connected', color: 'success', icon: '📞' },
-            { name: 'Litify', status: 'Not Connected', color: 'secondary', icon: '⚖️' },
+            { name: 'Salesforce', status: 'Not Connected', color: 'secondary', icon: '☁️' },
             { name: 'Regal', status: 'Not Connected', color: 'secondary', icon: '👑' },
-            { name: 'Google Ads', status: 'Not Connected', color: 'secondary', icon: '🎯' },
+            { name: 'Website', status: 'Connected', color: 'success', icon: '🌐' },
             { name: 'Zapier', status: 'Connected', color: 'success', icon: '🔗' },
           ].map((integration) => (
             <div key={integration.name} className={`relative overflow-hidden pl-4 pr-4 py-5 bg-[var(--surface)] border-l-4 hover:bg-[var(--surface-hover)] transition-colors cursor-pointer group ${integration.status === 'Connected' ? 'border-emerald-500' : 'border-[var(--border)]'}`}>

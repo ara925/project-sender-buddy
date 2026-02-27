@@ -13,8 +13,8 @@ const platformColors: Record<LeadActivityPlatform, string> = {
   regal: 'bg-purple-500/15 text-purple-600 border-purple-500/30',
   regal_ai: 'bg-purple-600/15 text-purple-700 border-purple-600/30',
   intaker: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/30',
-  litify: 'bg-amber-500/15 text-amber-600 border-amber-500/30',
-  google_ads: 'bg-red-500/15 text-red-600 border-red-500/30',
+  salesforce: 'bg-blue-600/15 text-blue-700 border-blue-600/30',
+  website: 'bg-orange-500/15 text-orange-600 border-orange-500/30',
   forms: 'bg-cyan-500/15 text-cyan-600 border-cyan-500/30',
   internal: 'bg-[var(--text-muted)]/10 text-[var(--text-secondary)] border-[var(--border)]',
 };
@@ -24,8 +24,8 @@ const platformLabels: Record<LeadActivityPlatform, string> = {
   regal: 'Regal',
   regal_ai: 'Regal AI',
   intaker: 'Intaker',
-  litify: 'Litify',
-  google_ads: 'Google Ads',
+  salesforce: 'Salesforce',
+  website: 'Website',
   forms: 'Web Forms',
   internal: 'Internal',
 };
@@ -45,9 +45,9 @@ function getActivityIcon(type: LeadActivityType) {
     case 'status_change': return <ArrowRightLeft size={size} />;
     case 'note_added': return <StickyNote size={size} />;
     case 'assigned': return <UserCheck size={size} />;
-    case 'litify_synced': return <RefreshCw size={size} />;
-    case 'litify_matter_created': return <Database size={size} />;
-    case 'ad_click': return <MousePointerClick size={size} />;
+    case 'salesforce_synced': return <RefreshCw size={size} />;
+    case 'salesforce_case_created': return <Database size={size} />;
+    case 'website_visit': return <MousePointerClick size={size} />;
     case 'retainer_signed': return <PenTool size={size} />;
     case 'document_uploaded': return <Upload size={size} />;
     case 'ai_call_inbound': return <Bot size={size} />;
@@ -81,11 +81,11 @@ function getIconBg(type: LeadActivityType): string {
       return 'bg-yellow-500/15 text-yellow-600';
     case 'assigned':
       return 'bg-teal-500/15 text-teal-500';
-    case 'litify_synced':
-    case 'litify_matter_created':
-      return 'bg-amber-500/15 text-amber-600';
-    case 'ad_click':
-      return 'bg-red-500/15 text-red-500';
+    case 'salesforce_synced':
+    case 'salesforce_case_created':
+      return 'bg-blue-600/15 text-blue-700';
+    case 'website_visit':
+      return 'bg-orange-500/15 text-orange-600';
     case 'retainer_signed':
       return 'bg-green-500/15 text-green-600';
     case 'document_uploaded':
