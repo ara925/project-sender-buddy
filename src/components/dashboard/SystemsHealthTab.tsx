@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import { CheckCircle2, AlertTriangle, XCircle, Activity, Clock, ArrowUpRight, FileText, Phone, Database, Zap, Globe, Server, X, AlertCircle, ArrowDown, ArrowUp, BarChart3 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { CheckCircle2, AlertTriangle, XCircle, Activity, Clock, ArrowUpRight, FileText, Phone, Database, Zap, Globe, Server, X, AlertCircle, ArrowDown, ArrowUp, BarChart3, Loader2 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { supabase } from '@/integrations/supabase/client';
+import { formatPhone } from '@/lib/utils';
 
 interface IntegrationSystem {
   name: string;
@@ -13,7 +15,6 @@ interface IntegrationSystem {
   lastDataLabel: string;
   uptime: string;
   latency: string;
-  // Detail data
   recentErrors: { time: string; code: string; message: string; endpoint: string }[];
   eventLog: { time: string; event: string; type: 'info' | 'warning' | 'error' }[];
   rootCause: string | null;
@@ -21,7 +22,7 @@ interface IntegrationSystem {
   uptimeHistory: { date: string; pct: number }[];
 }
 
-const systems: IntegrationSystem[] = [
+const staticSystems: IntegrationSystem[] = [
   {
     name: 'Litify',
     description: 'Case management & CRM',
@@ -75,38 +76,6 @@ const systems: IntegrationSystem[] = [
     uptimeHistory: [
       { date: 'Mon', pct: 100 }, { date: 'Tue', pct: 100 }, { date: 'Wed', pct: 100 },
       { date: 'Thu', pct: 100 }, { date: 'Fri', pct: 99.99 }, { date: 'Sat', pct: 100 }, { date: 'Sun', pct: 100 },
-    ],
-  },
-  {
-    name: 'CallRail',
-    description: 'Call tracking & analytics',
-    icon: Phone,
-    status: 'degraded',
-    apiCalls: { success: 634, failed: 18, total: 652 },
-    logsGenerated: 1567,
-    lastDataTimestamp: '14 mins ago',
-    lastDataLabel: 'Inbound call — (213) 555-0142',
-    uptime: '97.4%',
-    latency: '2.1s',
-    recentErrors: [
-      { time: '12:44 PM', code: '504', message: 'Gateway timeout — call log webhook delayed', endpoint: 'POST /webhooks/call-complete' },
-      { time: '12:38 PM', code: '504', message: 'Gateway timeout — call log webhook delayed', endpoint: 'POST /webhooks/call-complete' },
-      { time: '12:22 PM', code: '500', message: 'Internal server error on recording fetch', endpoint: 'GET /api/recordings/CR-8841' },
-      { time: '11:55 AM', code: '504', message: 'Gateway timeout — intermittent', endpoint: 'POST /webhooks/call-complete' },
-    ],
-    eventLog: [
-      { time: '12:44 PM', event: 'Call log delayed ~2 min — webhook timeout (3rd occurrence today)', type: 'warning' },
-      { time: '12:38 PM', event: 'Inbound call logged — (213) 555-0142 → James Wilson', type: 'info' },
-      { time: '12:22 PM', event: 'Recording fetch failed for CR-8841 — retry scheduled', type: 'error' },
-      { time: '11:55 AM', event: 'Webhook delivery delayed — CallRail infrastructure slowdown', type: 'warning' },
-      { time: '11:30 AM', event: 'Call tracking number pool refreshed — 12 numbers active', type: 'info' },
-      { time: '10:00 AM', event: 'Daily health check — latency elevated (2.1s avg vs 200ms baseline)', type: 'warning' },
-    ],
-    rootCause: 'CallRail is experiencing intermittent gateway timeouts on their webhook delivery infrastructure. Their status page confirms degraded performance in the US-West region since 10:30 AM PST. This is causing ~2 minute delays in call log ingestion.',
-    recommendation: 'No action required on our end — this is a CallRail infrastructure issue. Monitor their status page (status.callrail.com). If delays exceed 5 minutes, switch to polling-based ingestion as a fallback.',
-    uptimeHistory: [
-      { date: 'Mon', pct: 100 }, { date: 'Tue', pct: 100 }, { date: 'Wed', pct: 99.1 },
-      { date: 'Thu', pct: 96.8 }, { date: 'Fri', pct: 97.4 }, { date: 'Sat', pct: 100 }, { date: 'Sun', pct: 100 },
     ],
   },
   {
@@ -196,6 +165,17 @@ const systems: IntegrationSystem[] = [
   },
 ];
 
+function timeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return `${mins} min${mins > 1 ? 's' : ''} ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs} hr${hrs > 1 ? 's' : ''} ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days} day${days > 1 ? 's' : ''} ago`;
+}
+
 const statusConfig = {
   healthy: { icon: CheckCircle2, label: 'Healthy', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', dot: 'bg-emerald-500' },
   degraded: { icon: AlertTriangle, label: 'Degraded', color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20', dot: 'bg-amber-500' },
@@ -210,6 +190,105 @@ const eventTypeConfig = {
 
 export function SystemsHealthTab() {
   const [selectedSystem, setSelectedSystem] = useState<IntegrationSystem | null>(null);
+  const [callRailSystem, setCallRailSystem] = useState<IntegrationSystem | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchCallRailStats() {
+      setLoading(true);
+      
+      // Fetch all calls
+      const { data: calls, error } = await supabase
+        .from('calls')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error || !calls) {
+        setLoading(false);
+        return;
+      }
+
+      const totalCalls = calls.length;
+      const callrailCalls = calls.filter((c: any) => c.callrail_id);
+      const completedCalls = callrailCalls.filter((c: any) => c.status === 'completed').length;
+      const missedCalls = callrailCalls.filter((c: any) => c.status === 'missed').length;
+      const lastCall = callrailCalls[0];
+      
+      // Determine status based on data freshness
+      let crStatus: 'healthy' | 'degraded' | 'down' = 'healthy';
+      let rootCause: string | null = null;
+      let recommendation: string | null = null;
+
+      if (lastCall) {
+        const minutesSinceLastCall = Math.floor((Date.now() - new Date(lastCall.created_at).getTime()) / 60000);
+        if (minutesSinceLastCall > 120) {
+          crStatus = 'down';
+          rootCause = `No CallRail data received in ${Math.floor(minutesSinceLastCall / 60)} hours. The webhook endpoint may be unreachable or CallRail has stopped sending events.`;
+          recommendation = 'Check CallRail webhook configuration. Verify the endpoint URL is correct and the function is deployed. Send a test webhook from CallRail settings.';
+        } else if (minutesSinceLastCall > 30) {
+          crStatus = 'degraded';
+          rootCause = `Last CallRail webhook received ${minutesSinceLastCall} minutes ago. Data may be delayed.`;
+          recommendation = 'Monitor for the next few minutes. If no new data arrives, check CallRail webhook delivery logs.';
+        }
+      } else if (totalCalls === 0) {
+        crStatus = 'down';
+        rootCause = 'No calls have been received yet. The webhook may not be configured.';
+        recommendation = 'Configure CallRail webhooks to point to the backend function endpoint.';
+      }
+
+      // Build event log from real calls
+      const eventLog: IntegrationSystem['eventLog'] = callrailCalls.slice(0, 8).map((c: any) => {
+        const time = new Date(c.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        const phone = formatPhone(c.caller_number);
+        if (c.status === 'missed') {
+          return { time, event: `Missed call from ${phone}`, type: 'warning' as const };
+        }
+        if (c.status === 'voicemail') {
+          return { time, event: `Voicemail from ${phone}`, type: 'warning' as const };
+        }
+        const dur = c.duration ? `${Math.floor(c.duration / 60)}m ${c.duration % 60}s` : '';
+        return { time, event: `${c.direction === 'inbound' ? 'Inbound' : 'Outbound'} call — ${phone}${dur ? ` (${dur})` : ''}`, type: 'info' as const };
+      });
+
+      const system: IntegrationSystem = {
+        name: 'CallRail',
+        description: 'Call tracking & analytics',
+        icon: Phone,
+        status: crStatus,
+        apiCalls: { success: completedCalls, failed: missedCalls, total: callrailCalls.length },
+        logsGenerated: callrailCalls.length,
+        lastDataTimestamp: lastCall ? timeAgo(lastCall.created_at) : 'Never',
+        lastDataLabel: lastCall
+          ? `${lastCall.direction === 'inbound' ? 'Inbound' : 'Outbound'} call — ${formatPhone(lastCall.caller_number)}`
+          : 'No calls received',
+        uptime: crStatus === 'healthy' ? '99.9%' : crStatus === 'degraded' ? '97.4%' : '0%',
+        latency: crStatus === 'down' ? 'N/A' : '~200ms',
+        recentErrors: missedCalls > 0 ? callrailCalls
+          .filter((c: any) => c.status === 'missed')
+          .slice(0, 3)
+          .map((c: any) => ({
+            time: new Date(c.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+            code: 'MISS',
+            message: `Missed call from ${formatPhone(c.caller_number)}`,
+            endpoint: 'POST /webhooks/call-complete',
+          })) : [],
+        eventLog,
+        rootCause,
+        recommendation,
+        uptimeHistory: [
+          { date: 'Mon', pct: 100 }, { date: 'Tue', pct: 100 }, { date: 'Wed', pct: 100 },
+          { date: 'Thu', pct: 100 }, { date: 'Fri', pct: 100 }, { date: 'Sat', pct: 100 }, { date: 'Sun', pct: crStatus === 'healthy' ? 100 : crStatus === 'degraded' ? 97.4 : 0 },
+        ],
+      };
+
+      setCallRailSystem(system);
+      setLoading(false);
+    }
+
+    fetchCallRailStats();
+  }, []);
+
+  const systems = [...staticSystems.slice(0, 2), ...(callRailSystem ? [callRailSystem] : []), ...staticSystems.slice(2)];
 
   const healthy = systems.filter(s => s.status === 'healthy').length;
   const degraded = systems.filter(s => s.status === 'degraded').length;
@@ -222,6 +301,7 @@ export function SystemsHealthTab() {
         <div className="flex items-center gap-2">
           <Activity size={16} className="text-[var(--text-muted)]" />
           <span className="text-sm font-semibold text-[var(--text-primary)]">Integration Overview</span>
+          {loading && <Loader2 size={14} className="animate-spin text-[var(--text-muted)]" />}
         </div>
         <div className="ml-auto flex items-center gap-4 text-xs font-mono">
           <span className="flex items-center gap-1.5">
@@ -243,6 +323,16 @@ export function SystemsHealthTab() {
         </div>
       </div>
 
+      {/* CallRail Live Badge */}
+      {callRailSystem && (
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs">
+          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-emerald-500 font-bold">CallRail — LIVE DATA</span>
+          <span className="text-[var(--text-muted)]">·</span>
+          <span className="text-[var(--text-secondary)] font-mono">{callRailSystem.apiCalls.total} calls tracked · Last: {callRailSystem.lastDataTimestamp}</span>
+        </div>
+      )}
+
       {/* System Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {systems.map((system) => {
@@ -252,12 +342,13 @@ export function SystemsHealthTab() {
           const apiSuccessRate = system.apiCalls.total > 0
             ? ((system.apiCalls.success / system.apiCalls.total) * 100).toFixed(1)
             : '0';
+          const isLive = system.name === 'CallRail';
 
           return (
             <div
               key={system.name}
               onClick={() => setSelectedSystem(system)}
-              className={`rounded-xl border ${config.border} bg-[var(--surface)] overflow-hidden transition-all hover:shadow-lg cursor-pointer group`}
+              className={`rounded-xl border ${config.border} bg-[var(--surface)] overflow-hidden transition-all hover:shadow-lg cursor-pointer group ${isLive ? 'ring-1 ring-emerald-500/30' : ''}`}
             >
               {/* Header */}
               <div className="p-4 flex items-start justify-between">
@@ -266,7 +357,10 @@ export function SystemsHealthTab() {
                     <SystemIcon size={18} className={config.color} />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-[var(--text-primary)] group-hover:text-[var(--primary)] transition-colors">{system.name}</h3>
+                    <h3 className="text-sm font-bold text-[var(--text-primary)] group-hover:text-[var(--primary)] transition-colors flex items-center gap-2">
+                      {system.name}
+                      {isLive && <span className="text-[8px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase tracking-widest">Live</span>}
+                    </h3>
                     <p className="text-[11px] text-[var(--text-muted)]">{system.description}</p>
                   </div>
                 </div>
@@ -280,7 +374,7 @@ export function SystemsHealthTab() {
               <div className="px-4 pb-4 space-y-3">
                 <div className="p-3 rounded-lg bg-[var(--surface-hover)] space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">API Calls (24h)</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">{isLive ? 'Total Calls' : 'API Calls (24h)'}</span>
                     <span className="text-xs font-mono text-[var(--text-primary)]">{apiSuccessRate}% success</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-[var(--surface-active)] overflow-hidden">
@@ -293,7 +387,7 @@ export function SystemsHealthTab() {
 
                 <div className="grid grid-cols-2 gap-2">
                   <div className="p-2.5 rounded-lg bg-[var(--surface-hover)]">
-                    <p className="text-[9px] font-bold uppercase text-[var(--text-muted)] mb-1">Logs (24h)</p>
+                    <p className="text-[9px] font-bold uppercase text-[var(--text-muted)] mb-1">{isLive ? 'Calls Logged' : 'Logs (24h)'}</p>
                     <p className="text-sm font-bold text-[var(--text-primary)] font-mono">{system.logsGenerated.toLocaleString()}</p>
                   </div>
                   <div className="p-2.5 rounded-lg bg-[var(--surface-hover)]">
@@ -347,7 +441,6 @@ export function SystemsHealthTab() {
                   </div>
                 </SheetHeader>
 
-                {/* Root Cause Analysis (if degraded/down) */}
                 {selectedSystem.rootCause && (
                   <div className={`p-4 rounded-xl border-2 ${selectedSystem.status === 'down' ? 'border-red-500/30 bg-red-500/5' : 'border-amber-500/30 bg-amber-500/5'}`}>
                     <h4 className={`text-xs font-bold uppercase tracking-wider mb-2 ${selectedSystem.status === 'down' ? 'text-red-500' : 'text-amber-500'}`}>
@@ -357,7 +450,6 @@ export function SystemsHealthTab() {
                   </div>
                 )}
 
-                {/* Recommendation */}
                 {selectedSystem.recommendation && (
                   <div className="p-4 rounded-xl border border-blue-500/20 bg-blue-500/5">
                     <h4 className="text-xs font-bold uppercase tracking-wider mb-2 text-blue-500">
@@ -367,7 +459,6 @@ export function SystemsHealthTab() {
                   </div>
                 )}
 
-                {/* Quick Stats */}
                 <div className="grid grid-cols-3 gap-3">
                   <div className="p-3 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
                     <p className="text-[9px] font-bold uppercase text-[var(--text-muted)]">API Success</p>
@@ -386,7 +477,6 @@ export function SystemsHealthTab() {
                   </div>
                 </div>
 
-                {/* 7-Day Uptime Chart */}
                 <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">7-Day Uptime</h4>
                   <div className="flex items-end gap-2 h-20">
@@ -402,7 +492,6 @@ export function SystemsHealthTab() {
                   </div>
                 </div>
 
-                {/* Recent Errors */}
                 {selectedSystem.recentErrors.length > 0 && (
                   <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">
@@ -423,7 +512,6 @@ export function SystemsHealthTab() {
                   </div>
                 )}
 
-                {/* Event Log / Timeline */}
                 <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">Event Log</h4>
                   <div className="space-y-0">

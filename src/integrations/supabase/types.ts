@@ -116,6 +116,66 @@ export type Database = {
           },
         ]
       }
+      honeypots: {
+        Row: {
+          access_count: number
+          access_log: Json | null
+          accessed_by: string | null
+          burner_activity: Json | null
+          burner_phone: string
+          case_type: string
+          case_value: string | null
+          cover_story: string | null
+          created_at: string
+          description: string
+          fake_name: string
+          id: string
+          last_accessed: string | null
+          phone_service: string
+          planted_in: string[] | null
+          status: string
+          threat_analysis: string | null
+        }
+        Insert: {
+          access_count?: number
+          access_log?: Json | null
+          accessed_by?: string | null
+          burner_activity?: Json | null
+          burner_phone: string
+          case_type: string
+          case_value?: string | null
+          cover_story?: string | null
+          created_at?: string
+          description: string
+          fake_name: string
+          id?: string
+          last_accessed?: string | null
+          phone_service?: string
+          planted_in?: string[] | null
+          status?: string
+          threat_analysis?: string | null
+        }
+        Update: {
+          access_count?: number
+          access_log?: Json | null
+          accessed_by?: string | null
+          burner_activity?: Json | null
+          burner_phone?: string
+          case_type?: string
+          case_value?: string | null
+          cover_story?: string | null
+          created_at?: string
+          description?: string
+          fake_name?: string
+          id?: string
+          last_accessed?: string | null
+          phone_service?: string
+          planted_in?: string[] | null
+          status?: string
+          threat_analysis?: string | null
+        }
+        Relationships: []
+      }
       lead_activities: {
         Row: {
           agent_name: string | null
