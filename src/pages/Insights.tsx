@@ -20,19 +20,19 @@ const topKPIs = [
 ];
 
 const sourceData = [
-  { source: 'Organic Search', leads: 312, change: 18, cost: 0, cpl: 0, quality: 8.8, icon: Globe },
-  { source: 'Direct', leads: 203, change: -2, cost: 0, cpl: 0, quality: 7.8, icon: Zap },
-  { source: 'Referrals', leads: 156, change: 4, cost: 0, cpl: 0, quality: 9.5, icon: Link2 },
-  { source: 'Google Ads', leads: 142, change: -10, cost: 4200, cpl: 29.57, quality: 8.5, icon: Target },
-  { source: 'Intaker', leads: 115, change: 17, cost: 1200, cpl: 10.43, quality: 9.2, icon: Zap },
-  { source: 'Social Media', leads: 89, change: 22, cost: 1840, cpl: 20.67, quality: 7.2, icon: Share2 },
-  { source: 'CallRail', leads: 78, change: 4, cost: 850, cpl: 10.89, quality: 8.0, icon: PhoneCall },
-  { source: 'Forms', leads: 85, change: -8, cost: 0, cpl: 0, quality: 7.4, icon: BarChart3 },
+  { source: 'Organic Search', leads: 312, change: 18, quality: 8.8, icon: Globe },
+  { source: 'Direct', leads: 203, change: -2, quality: 7.8, icon: Zap },
+  { source: 'Referrals', leads: 156, change: 4, quality: 9.5, icon: Link2 },
+  { source: 'Google Ads', leads: 142, change: -10, quality: 8.5, icon: Target },
+  { source: 'Intaker', leads: 115, change: 17, quality: 9.2, icon: Zap },
+  { source: 'Social Media', leads: 89, change: 22, quality: 7.2, icon: Share2 },
+  { source: 'CallRail', leads: 78, change: 4, quality: 8.0, icon: PhoneCall },
+  { source: 'Forms', leads: 85, change: -8, quality: 7.4, icon: BarChart3 },
 ];
 
 const alerts = [
   { severity: 'critical' as const, title: 'Google Ads leads down 10%', detail: 'Quality score dropped from 9.1→8.5. Check landing page speed and keyword relevance.', metric: '-10%' },
-  { severity: 'critical' as const, title: 'Intaker budget underutilized', detail: 'CPL $10.43 vs Google Ads $29.57 — moving 20% budget here could yield ~15 extra leads/week.', metric: '+15 Leads' },
+  { severity: 'critical' as const, title: 'Intaker underutilized', detail: 'Intaker outperforming Google Ads on lead quality — consider reallocating traffic to yield ~15 extra leads/week.', metric: '+15 Leads' },
   { severity: 'warning' as const, title: 'Form submissions dropped 8%', detail: 'May be related to recent landing page changes. Check form completion rates.', metric: '-8%' },
   { severity: 'success' as const, title: 'Social media leads surging', detail: 'Up 22% week-over-week. Consider increasing allocation to capitalize on momentum.', metric: '+22%' },
   { severity: 'success' as const, title: 'CallRail conversion spike', detail: 'Phone leads are converting at 28% this week, well above the 19% average.', metric: '+9% Conv.' },
@@ -293,11 +293,10 @@ export function Insights() {
             </div>
 
             {/* Header */}
-            <div className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-[var(--border)] text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+            <div className="grid grid-cols-10 gap-4 px-6 py-3 border-b border-[var(--border)] text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
               <div className="col-span-3">Source</div>
               <div className="col-span-2 text-right">Leads</div>
               <div className="col-span-2 text-right">Change</div>
-              <div className="col-span-2 text-right">CPL</div>
               <div className="col-span-3 text-right">Quality</div>
             </div>
 
@@ -306,7 +305,7 @@ export function Insights() {
               {sourceData.map((row) => {
                 const Icon = row.icon;
                 return (
-                  <div key={row.source} className="grid grid-cols-12 gap-4 px-6 py-3.5 items-center hover:bg-[var(--surface-hover)] transition-colors">
+                  <div key={row.source} className="grid grid-cols-10 gap-4 px-6 py-3.5 items-center hover:bg-[var(--surface-hover)] transition-colors">
                     <div className="col-span-3 flex items-center gap-2">
                       <Icon size={14} className="text-[var(--text-muted)]" />
                       <span className="font-medium text-sm text-[var(--text-primary)]">{row.source}</span>
@@ -320,13 +319,6 @@ export function Insights() {
                         {row.change >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
                         {row.change >= 0 ? '+' : ''}{row.change}%
                       </span>
-                    </div>
-                    <div className="col-span-2 text-right font-mono text-xs text-[var(--text-secondary)]">
-                      {row.cpl > 0 ? (
-                        <span className={row.cpl < 20 ? 'text-emerald-500 font-bold' : ''}>${row.cpl.toFixed(2)}</span>
-                      ) : (
-                        <span className="text-[var(--text-muted)]">—</span>
-                      )}
                     </div>
                     <div className="col-span-3 flex items-center justify-end gap-2">
                       <div className="w-20 h-1.5 rounded-full bg-[var(--surface-active)] overflow-hidden">

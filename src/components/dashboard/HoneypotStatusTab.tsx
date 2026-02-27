@@ -11,12 +11,11 @@ interface HoneypotRecord {
   description: string;
   burnerPhone: string;
   phoneService: string;
-  status: 'active' | 'triggered' | 'dormant';
+  status: 'active' | 'alert' | 'dormant';
   lastAccessed: string | null;
   accessedBy: string | null;
   accessCount: number;
   createdDate: string;
-  caseValue: string;
   accessLog: { time: string; action: string; user: string; ip: string; device: string; type: 'access' | 'export' | 'call' | 'alert' }[];
   threatAnalysis: string | null;
   burnerActivity: { type: 'call' | 'text' | 'voicemail'; from: string; time: string; content: string }[];
@@ -37,7 +36,7 @@ function timeAgo(dateStr: string | null): string | null {
 }
 
 const statusConfig = {
-  triggered: { icon: AlertTriangle, label: 'TRIGGERED', color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/30', dot: 'bg-red-500' },
+  alert: { icon: AlertTriangle, label: 'ALERT', color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/30', dot: 'bg-red-500' },
   active: { icon: Eye, label: 'Active', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', dot: 'bg-emerald-500' },
   dormant: { icon: Clock, label: 'Dormant', color: 'text-[var(--text-muted)]', bg: 'bg-[var(--surface-hover)]', border: 'border-[var(--border)]', dot: 'bg-[var(--text-muted)]' },
 };
@@ -63,25 +62,28 @@ export function HoneypotStatusTab() {
         .order('created_at', { ascending: false });
 
       if (!error && data) {
-        const mapped: HoneypotRecord[] = data.map((hp: any) => ({
-          id: hp.id,
-          fakeName: hp.fake_name,
-          caseType: hp.case_type,
-          description: hp.description,
-          burnerPhone: hp.burner_phone,
-          phoneService: hp.phone_service,
-          status: hp.status as 'active' | 'triggered' | 'dormant',
-          lastAccessed: hp.last_accessed ? timeAgo(hp.last_accessed) : null,
-          accessedBy: hp.accessed_by,
-          accessCount: hp.access_count,
-          createdDate: formatDate(hp.created_at),
-          caseValue: hp.case_value || 'N/A',
-          accessLog: (hp.access_log || []) as any[],
-          threatAnalysis: hp.threat_analysis,
-          burnerActivity: (hp.burner_activity || []) as any[],
-          plantedIn: hp.planted_in || [],
-          coverStory: hp.cover_story || '',
-        }));
+        const mapped: HoneypotRecord[] = data.map((hp: any) => {
+          // Map 'triggered' status from DB to 'alert' for display
+          let status: 'active' | 'alert' | 'dormant' = hp.status === 'triggered' ? 'alert' : hp.status as any;
+          return {
+            id: hp.id,
+            fakeName: hp.fake_name,
+            caseType: hp.case_type,
+            description: hp.description,
+            burnerPhone: hp.burner_phone,
+            phoneService: hp.phone_service,
+            status,
+            lastAccessed: hp.last_accessed ? timeAgo(hp.last_accessed) : null,
+            accessedBy: hp.accessed_by,
+            accessCount: hp.access_count,
+            createdDate: formatDate(hp.created_at),
+            accessLog: (hp.access_log || []) as any[],
+            threatAnalysis: hp.threat_analysis,
+            burnerActivity: (hp.burner_activity || []) as any[],
+            plantedIn: hp.planted_in || [],
+            coverStory: hp.cover_story || '',
+          };
+        });
         setHoneypots(mapped);
       }
       setLoading(false);
@@ -89,7 +91,7 @@ export function HoneypotStatusTab() {
     fetchHoneypots();
   }, []);
 
-  const triggered = honeypots.filter(h => h.status === 'triggered');
+  const alerted = honeypots.filter(h => h.status === 'alert');
   const active = honeypots.filter(h => h.status === 'active');
   const dormant = honeypots.filter(h => h.status === 'dormant');
 
@@ -128,13 +130,13 @@ export function HoneypotStatusTab() {
         <>
           {/* Summary Stats */}
           <div className="grid grid-cols-3 gap-4">
-            <div className={`p-4 rounded-xl border ${triggered.length > 0 ? 'border-red-500/30 bg-red-500/5' : 'border-[var(--border)] bg-[var(--surface)]'}`}>
+            <div className={`p-4 rounded-xl border ${alerted.length > 0 ? 'border-red-500/30 bg-red-500/5' : 'border-[var(--border)] bg-[var(--surface)]'}`}>
               <div className="flex items-center gap-2 mb-2">
                 <AlertTriangle size={14} className="text-red-500" />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-red-500">Triggered</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-red-500">Alert</span>
               </div>
-              <p className={`text-3xl font-bold ${triggered.length > 0 ? 'text-red-500' : 'text-[var(--text-primary)]'}`}>{triggered.length}</p>
-              {triggered.length > 0 && (
+              <p className={`text-3xl font-bold ${alerted.length > 0 ? 'text-red-500' : 'text-[var(--text-primary)]'}`}>{alerted.length}</p>
+              {alerted.length > 0 && (
                 <p className="text-[10px] text-red-500 mt-1 font-mono animate-pulse">⚠ IMMEDIATE ACTION REQUIRED</p>
               )}
             </div>
@@ -156,8 +158,8 @@ export function HoneypotStatusTab() {
             </div>
           </div>
 
-          {/* Triggered Alert (if any) */}
-          {triggered.map((hp) => (
+          {/* Alert Banner (if any) */}
+          {alerted.map((hp) => (
             <div
               key={hp.id}
               onClick={() => setSelectedHoneypot(hp)}
@@ -166,7 +168,7 @@ export function HoneypotStatusTab() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-red-500 animate-pulse" />
-                  <span className="text-sm font-bold text-red-500 uppercase tracking-wider">🚨 Honeypot Triggered</span>
+                  <span className="text-sm font-bold text-red-500 uppercase tracking-wider">🚨 Honeypot Alert</span>
                 </div>
                 <span className="text-[10px] font-mono text-red-500">{hp.lastAccessed}</span>
               </div>
@@ -175,7 +177,7 @@ export function HoneypotStatusTab() {
                 <div>
                   <p className="text-[10px] font-bold uppercase text-[var(--text-muted)] mb-1">Fake Lead</p>
                   <p className="text-sm font-bold text-[var(--text-primary)]">{hp.fakeName}</p>
-                  <p className="text-xs text-[var(--text-secondary)]">{hp.caseType} — {hp.caseValue}</p>
+                  <p className="text-xs text-[var(--text-secondary)]">{hp.caseType}</p>
                 </div>
                 <div>
                   <p className="text-[10px] font-bold uppercase text-[var(--text-muted)] mb-1">Accessed By</p>
@@ -218,7 +220,7 @@ export function HoneypotStatusTab() {
                     <div
                       key={hp.id}
                       onClick={() => setSelectedHoneypot(hp)}
-                      className={`p-4 hover:bg-[var(--surface-hover)] transition-colors cursor-pointer group ${hp.status === 'triggered' ? 'bg-red-500/5' : ''}`}
+                      className={`p-4 hover:bg-[var(--surface-hover)] transition-colors cursor-pointer group ${hp.status === 'alert' ? 'bg-red-500/5' : ''}`}
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
@@ -230,7 +232,7 @@ export function HoneypotStatusTab() {
                             </span>
                           </div>
                           <p className="text-sm font-bold text-[var(--text-primary)] group-hover:text-[var(--primary)] transition-colors">{hp.fakeName}</p>
-                          <p className="text-xs text-[var(--text-secondary)] mt-0.5">{hp.caseType} — {hp.caseValue}</p>
+                          <p className="text-xs text-[var(--text-secondary)] mt-0.5">{hp.caseType}</p>
                         </div>
                         <div className="text-right shrink-0 space-y-1">
                           <div className="flex items-center gap-1.5 text-xs">
@@ -276,7 +278,7 @@ export function HoneypotStatusTab() {
                         </span>
                       </div>
                       <SheetTitle className="text-lg font-bold text-[var(--text-primary)]">{hp.fakeName}</SheetTitle>
-                      <p className="text-xs text-[var(--text-secondary)]">{hp.caseType} — {hp.caseValue}</p>
+                      <p className="text-xs text-[var(--text-secondary)]">{hp.caseType}</p>
                     </div>
                   </div>
                 </SheetHeader>
@@ -337,7 +339,7 @@ export function HoneypotStatusTab() {
                   )}
                 </div>
 
-                {/* Threat Analysis (if triggered) */}
+                {/* Threat Analysis (if alerted) */}
                 {hp.threatAnalysis && (
                   <div className="p-4 rounded-xl border-2 border-red-500/30 bg-red-500/5">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-red-500 mb-2 flex items-center gap-2">

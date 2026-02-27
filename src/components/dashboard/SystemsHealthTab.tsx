@@ -119,10 +119,10 @@ const staticSystems: IntegrationSystem[] = [
     latency: '201ms',
     recentErrors: [],
     eventLog: [
-      { time: '12:55 PM', event: 'Campaign data synced — PI Brand Terms ($142 spend, 18 clicks)', type: 'info' },
+      { time: '12:55 PM', event: 'Campaign data synced — PI Brand Terms (18 clicks)', type: 'info' },
       { time: '12:30 PM', event: 'Conversion tracking updated — 3 new form fills attributed', type: 'info' },
       { time: '11:00 AM', event: 'Budget pacing check — all campaigns within 5% of daily target', type: 'info' },
-      { time: '9:00 AM', event: 'Daily spend report generated — $2,847 total across 6 campaigns', type: 'info' },
+      { time: '9:00 AM', event: 'Daily report generated — 6 campaigns active', type: 'info' },
     ],
     rootCause: null,
     recommendation: null,
