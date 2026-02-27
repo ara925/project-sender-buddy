@@ -549,37 +549,83 @@ export function SystemsHealthTab() {
                   </div>
                 </div>
 
-                {/* Health Summary */}
-                <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">Health Summary</h4>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-[var(--text-secondary)]">Error Rate (24h)</span>
-                      <span className={`text-xs font-mono font-bold ${selectedSystem.apiCalls.failed === 0 ? 'text-emerald-500' : selectedSystem.apiCalls.failed <= 5 ? 'text-amber-500' : 'text-red-500'}`}>
-                        {selectedSystem.apiCalls.total > 0 ? ((selectedSystem.apiCalls.failed / selectedSystem.apiCalls.total) * 100).toFixed(2) : '0.00'}%
-                        <span className="text-[var(--text-muted)] font-normal ml-1">({selectedSystem.apiCalls.failed} failed)</span>
-                      </span>
+                {/* CallRail Tracking Numbers or Health Summary */}
+                {selectedSystem.name === 'CallRail' ? (
+                  <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Tracking Number Pool</h4>
+                      <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-bold">10 Numbers · Rotating</span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-[var(--text-secondary)]">Throughput</span>
-                      <span className="text-xs font-mono font-bold text-[var(--text-primary)]">
-                        {selectedSystem.apiCalls.total.toLocaleString()} requests
-                      </span>
+                    <div className="space-y-1.5">
+                      {[
+                        { number: '(855) 596-0919', label: 'Website Pool | Employment', source: 'Google Ads', active: true, calls24h: 14 },
+                        { number: '(855) 619-1317', label: 'Website Pool | PI', source: 'Google Ads', active: false, calls24h: 22 },
+                        { number: '(213) 817-5855', label: 'Elexpand MVA | English', source: 'Van Wrap', active: false, calls24h: 8 },
+                        { number: '(800) 973-0730', label: 'Wilshire Toll Free', source: 'Direct', active: false, calls24h: 31 },
+                        { number: '(213) 335-2402', label: 'LA GMB Listing', source: 'Google Ads', active: true, calls24h: 6 },
+                        { number: '(213) 630-9537', label: 'Local Services Ad', source: 'Google LSA', active: false, calls24h: 11 },
+                        { number: '(213) 329-7808', label: 'Location Extension LA', source: 'Google Ads', active: true, calls24h: 9 },
+                        { number: '(888) 222-3334', label: 'Radio - EMP', source: 'Radio', active: false, calls24h: 3 },
+                        { number: '(855) 441-8820', label: 'Website Pool | WC', source: 'Google Ads', active: false, calls24h: 5 },
+                        { number: '(213) 550-6200', label: 'Billboard - PI', source: 'Billboard', active: true, calls24h: 7 },
+                      ].map((tn, i) => (
+                        <div key={i} className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${tn.active ? 'bg-emerald-500/5 border border-emerald-500/20' : 'hover:bg-[var(--surface-hover)]'}`}>
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
+                            <div className={`h-2 w-2 rounded-full shrink-0 ${tn.active ? 'bg-emerald-500 animate-pulse' : 'bg-[var(--text-muted)] opacity-30'}`} />
+                            <span className="text-xs font-mono font-bold text-[var(--text-primary)]">{tn.number}</span>
+                          </div>
+                          <div className="flex-1 min-w-0 hidden sm:block">
+                            <p className="text-[10px] text-[var(--text-secondary)] truncate">{tn.label}</p>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-[9px] font-mono text-[var(--text-muted)]">{tn.calls24h} calls</span>
+                            {tn.active && (
+                              <span className="text-[8px] font-bold uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded">On Site</span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-[var(--text-secondary)]">Last Incident</span>
-                      <span className={`text-xs font-mono ${selectedSystem.recentErrors.length > 0 ? 'text-amber-500' : 'text-emerald-500'}`}>
-                        {selectedSystem.recentErrors.length > 0 ? selectedSystem.recentErrors[0].time : 'None today'}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-[var(--text-secondary)]">Warnings (24h)</span>
-                      <span className={`text-xs font-mono font-bold ${selectedSystem.eventLog.filter(e => e.type === 'warning').length > 0 ? 'text-amber-500' : 'text-emerald-500'}`}>
-                        {selectedSystem.eventLog.filter(e => e.type === 'warning').length}
-                      </span>
+                    <div className="mt-3 pt-3 border-t border-[var(--border)] flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Activity size={12} className="text-[var(--text-muted)]" />
+                        <span className="text-[10px] text-[var(--text-secondary)]">4 numbers currently displayed on site</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)]">Pool rotates every 60s</span>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">Health Summary</h4>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-[var(--text-secondary)]">Error Rate (24h)</span>
+                        <span className={`text-xs font-mono font-bold ${selectedSystem.apiCalls.failed === 0 ? 'text-emerald-500' : selectedSystem.apiCalls.failed <= 5 ? 'text-amber-500' : 'text-red-500'}`}>
+                          {selectedSystem.apiCalls.total > 0 ? ((selectedSystem.apiCalls.failed / selectedSystem.apiCalls.total) * 100).toFixed(2) : '0.00'}%
+                          <span className="text-[var(--text-muted)] font-normal ml-1">({selectedSystem.apiCalls.failed} failed)</span>
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-[var(--text-secondary)]">Throughput</span>
+                        <span className="text-xs font-mono font-bold text-[var(--text-primary)]">
+                          {selectedSystem.apiCalls.total.toLocaleString()} requests
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-[var(--text-secondary)]">Last Incident</span>
+                        <span className={`text-xs font-mono ${selectedSystem.recentErrors.length > 0 ? 'text-amber-500' : 'text-emerald-500'}`}>
+                          {selectedSystem.recentErrors.length > 0 ? selectedSystem.recentErrors[0].time : 'None today'}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-[var(--text-secondary)]">Warnings (24h)</span>
+                        <span className={`text-xs font-mono font-bold ${selectedSystem.eventLog.filter(e => e.type === 'warning').length > 0 ? 'text-amber-500' : 'text-emerald-500'}`}>
+                          {selectedSystem.eventLog.filter(e => e.type === 'warning').length}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Recent Errors */}
                 {selectedSystem.recentErrors.length > 0 && (
