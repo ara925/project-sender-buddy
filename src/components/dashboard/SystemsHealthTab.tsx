@@ -368,13 +368,12 @@ export function SystemsHealthTab() {
     fetchLiveStats();
   }, []);
 
-  // Replace static Intaker (index 1) with live version, insert CallRail after it
   const systems = [
-    staticSystems[0], // Salesforce (static)
-    ...(intakerSystem ? [intakerSystem] : [staticSystems[1]]),
-    ...(callRailSystem ? [callRailSystem] : []),
     staticSystems[2], // Website
+    ...(callRailSystem ? [callRailSystem] : []),
     staticSystems[3], // Regal
+    staticSystems[0], // Salesforce
+    ...(intakerSystem ? [intakerSystem] : [staticSystems[1]]),
     staticSystems[4], // Zapier
   ];
 
