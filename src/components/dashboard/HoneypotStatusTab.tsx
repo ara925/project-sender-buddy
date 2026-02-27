@@ -339,16 +339,6 @@ export function HoneypotStatusTab() {
                   )}
                 </div>
 
-                {/* Threat Analysis (if alerted) */}
-                {hp.threatAnalysis && (
-                  <div className="p-4 rounded-xl border-2 border-red-500/30 bg-red-500/5">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-red-500 mb-2 flex items-center gap-2">
-                      <Fingerprint size={12} />
-                      🔍 Threat Analysis
-                    </h4>
-                    <p className="text-sm text-[var(--text-primary)] leading-relaxed">{hp.threatAnalysis}</p>
-                  </div>
-                )}
 
                 {/* Access Log Timeline */}
                 {hp.accessLog.length > 0 && (

@@ -98,14 +98,6 @@ export function InvestigationPanel() {
               {/* Expanded Detail */}
               {isExpanded && (
                 <div className="border-t border-[var(--border)] p-4 space-y-4 animate-in fade-in duration-200">
-                  {/* AI Analysis */}
-                  <div className="p-3 rounded-lg bg-[var(--primary)]/5 border border-[var(--primary)]/20">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Sparkles size={14} className="text-[var(--primary)]" />
-                      <span className="text-xs font-semibold text-[var(--primary)]">AI Analysis</span>
-                    </div>
-                    <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{inv.aiSummary}</p>
-                  </div>
 
                   {/* Details */}
                   <div className="p-3 rounded-lg bg-[var(--surface-hover)]">
