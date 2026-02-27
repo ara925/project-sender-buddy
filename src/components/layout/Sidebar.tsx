@@ -16,7 +16,6 @@ import { useAuth } from '@/lib/auth-context';
 
 const dashboardTabs = [
   { title: 'Systems Health', url: '/?tab=systems', icon: Activity },
-  { title: 'Leads Investigation', url: '/?tab=leads', icon: Search },
   { title: 'Honeypot Status', url: '/?tab=honeypot', icon: Shield },
 ];
 
