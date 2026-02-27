@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import { AlertTriangle, Clock, User, TrendingDown, XCircle, AlertCircle, Phone, Mail, MessageSquare, FileText, ArrowRight, Calendar, MapPin } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { AlertTriangle, Clock, User, TrendingDown, XCircle, AlertCircle, Phone, Mail, MessageSquare, FileText, ArrowRight, Calendar, MapPin, Loader2 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { supabase } from '@/integrations/supabase/client';
+import { formatPhone, formatDate } from '@/lib/utils';
 
 interface LeadIssue {
   id: string;
@@ -11,7 +13,6 @@ interface LeadIssue {
   daysSinceContact: number;
   assignedTo: string;
   value: string;
-  // Detail data
   phone: string;
   email: string;
   caseType: string;
@@ -31,114 +32,13 @@ interface StaffIssue {
   leadsAssigned: number;
   leadsConverted: number;
   flagReason: string;
-  // Detail data
   recentLeads: { name: string; outcome: 'converted' | 'lost' | 'pending'; reason: string; daysAgo: number }[];
   weeklyTrend: { week: string; rate: number }[];
   analysis: string;
   recommendation: string;
 }
 
-const leadIssues: LeadIssue[] = [
-  {
-    id: 'L-1042', name: 'Maria Gonzalez', source: 'Google Ads', issue: 'No outreach in 72 hours — lead going cold',
-    issueType: 'stale', daysSinceContact: 3, assignedTo: 'James Wilson', value: '$45,000',
-    phone: '(213) 555-0188', email: 'mgonzalez@email.com', caseType: 'Personal Injury — Auto', intakeDate: 'Feb 9, 2026',
-    rootCause: 'Lead was assigned to James Wilson who has 42 active leads — significantly above the 25-lead capacity threshold. Combined with his low conversion rate (12%), this lead has been deprioritized in his queue. No automated reminder was triggered because the SLA alert system only fires after 96 hours.',
-    timeline: [
-      { time: 'Feb 9, 10:22 AM', event: 'Lead captured via Google Ads click — "car accident lawyer los angeles"', type: 'info', source: 'Google Ads' },
-      { time: 'Feb 9, 10:23 AM', event: 'Intake form submitted — PI Auto Accident, rear-end collision', type: 'info', source: 'Intaker' },
-      { time: 'Feb 9, 10:25 AM', event: 'Auto-assigned to James Wilson (round-robin)', type: 'info', source: 'System' },
-      { time: 'Feb 9, 10:25 AM', event: 'Assignment notification sent to James Wilson', type: 'info', source: 'Email' },
-      { time: 'Feb 9, 2:00 PM', event: 'No action taken — 4 hours elapsed', type: 'warning', source: 'System' },
-      { time: 'Feb 10, 9:00 AM', event: 'No action taken — 24 hours elapsed', type: 'warning', source: 'System' },
-      { time: 'Feb 11, 9:00 AM', event: 'No action taken — 48 hours elapsed', type: 'error', source: 'System' },
-      { time: 'Feb 12, 10:22 AM', event: 'ALERT: 72 hours with zero outreach — lead at risk', type: 'error', source: 'System' },
-    ],
-    recommendation: 'Reassign immediately to Sarah Kim or David Park. Send automated apology text + callback scheduling link. Flag James Wilson for workload review.',
-    riskLevel: 'high',
-  },
-  {
-    id: 'L-1038', name: 'Robert Chen', source: 'Intaker', issue: 'No outreach in 56 hours',
-    issueType: 'stale', daysSinceContact: 2, assignedTo: 'Sarah Kim', value: '$120,000',
-    phone: '(310) 555-0277', email: 'rchen@email.com', caseType: 'Employment Law — Wrongful Termination', intakeDate: 'Feb 10, 2026',
-    rootCause: 'Sarah Kim was on PTO Feb 10-11 but the auto-assign system did not check agent availability. Lead sat in her queue without coverage. PTO integration with the assignment engine is not yet configured.',
-    timeline: [
-      { time: 'Feb 10, 3:15 PM', event: 'Intake form submitted — Wrongful Termination claim', type: 'info', source: 'Intaker' },
-      { time: 'Feb 10, 3:16 PM', event: 'Auto-assigned to Sarah Kim (expertise match)', type: 'info', source: 'System' },
-      { time: 'Feb 10, 3:16 PM', event: 'Sarah Kim is on PTO — notification NOT sent', type: 'error', source: 'System' },
-      { time: 'Feb 11, 9:00 AM', event: 'No action — Sarah Kim still on PTO', type: 'warning', source: 'System' },
-      { time: 'Feb 12, 9:00 AM', event: 'Sarah Kim returned — 56 hours elapsed on lead', type: 'warning', source: 'System' },
-    ],
-    recommendation: 'Configure PTO calendar integration with auto-assignment engine. Reassign coverage agent for future PTO periods. Sarah to prioritize this lead immediately upon return.',
-    riskLevel: 'high',
-  },
-  {
-    id: 'L-1035', name: 'Angela Davis', source: 'CallRail', issue: 'Lead assigned to wrong practice area — needs rerouting',
-    issueType: 'routing', daysSinceContact: 1, assignedTo: 'Unassigned', value: '$85,000',
-    phone: '(818) 555-0334', email: 'adavis@email.com', caseType: 'Workers Comp (misrouted as PI)', intakeDate: 'Feb 11, 2026',
-    rootCause: 'Caller described a workplace injury during a phone call tracked by CallRail. The AI call classifier tagged it as "Personal Injury" based on keyword "injury", but the actual case is Workers Compensation. The PI intake team recognized the misroute and unassigned the lead, but no one re-routed it to the Workers Comp team.',
-    timeline: [
-      { time: 'Feb 11, 11:30 AM', event: 'Inbound call — (818) 555-0334, 4 min 22 sec', type: 'info', source: 'CallRail' },
-      { time: 'Feb 11, 11:31 AM', event: 'AI classified: Personal Injury (confidence: 67%)', type: 'warning', source: 'Regal AI' },
-      { time: 'Feb 11, 11:32 AM', event: 'Assigned to PI intake queue', type: 'info', source: 'System' },
-      { time: 'Feb 11, 2:00 PM', event: 'PI team flagged: "This is Workers Comp, not PI"', type: 'error', source: 'Manual' },
-      { time: 'Feb 11, 2:01 PM', event: 'Lead unassigned from PI queue — no re-route triggered', type: 'error', source: 'System' },
-      { time: 'Feb 12, 12:00 PM', event: 'Lead still unassigned — 24 hours in limbo', type: 'error', source: 'System' },
-    ],
-    recommendation: 'Route immediately to Workers Comp team. Improve AI classifier training data for workplace injury vs. personal injury distinction. Add automatic escalation when a lead is unassigned for >2 hours.',
-    riskLevel: 'high',
-  },
-  {
-    id: 'L-1029', name: 'Tom Nakamura', source: 'Web Form', issue: 'Duplicate entry — data split across two records',
-    issueType: 'duplicate', daysSinceContact: 4, assignedTo: 'James Wilson', value: '$60,000',
-    phone: '(424) 555-0189', email: 'tnakamura@email.com', caseType: 'Personal Injury — Slip & Fall', intakeDate: 'Feb 8, 2026',
-    rootCause: 'Tom submitted a web form on Feb 8 and then called in on Feb 9. The phone intake created a second record because the deduplication engine matches on exact name + email, but the phone record used "Thomas" while the web form used "Tom". Two agents are now working the same lead independently.',
-    timeline: [
-      { time: 'Feb 8, 4:45 PM', event: 'Web form submitted as "Tom Nakamura"', type: 'info', source: 'Web Form' },
-      { time: 'Feb 8, 4:46 PM', event: 'Lead L-1029 created, assigned to James Wilson', type: 'info', source: 'System' },
-      { time: 'Feb 9, 10:00 AM', event: 'Phone call from same number — "Thomas Nakamura"', type: 'info', source: 'CallRail' },
-      { time: 'Feb 9, 10:01 AM', event: 'New lead L-1031 created (dedup check: no match for "Thomas")', type: 'warning', source: 'System' },
-      { time: 'Feb 9, 10:02 AM', event: 'L-1031 assigned to Lisa Torres', type: 'info', source: 'System' },
-      { time: 'Feb 12, 9:00 AM', event: 'Duplicate detected by audit — same phone number on two records', type: 'error', source: 'System' },
-    ],
-    recommendation: 'Merge records L-1029 and L-1031. Update dedup engine to use fuzzy name matching + phone number. Notify both agents and consolidate under single assignment.',
-    riskLevel: 'medium',
-  },
-  {
-    id: 'L-1044', name: 'Priya Sharma', source: 'Regal AI', issue: 'AI handoff failed — no human follow-up logged',
-    issueType: 'routing', daysSinceContact: 1, assignedTo: 'David Park', value: '$95,000',
-    phone: '(562) 555-0211', email: 'psharma@email.com', caseType: 'Employment — Discrimination', intakeDate: 'Feb 11, 2026',
-    rootCause: 'The Regal AI agent successfully qualified this lead and attempted a warm transfer to David Park. The transfer webhook fired but David\'s softphone was in DND mode. The system marked the handoff as "complete" despite the call not connecting, and no fallback routing was triggered.',
-    timeline: [
-      { time: 'Feb 11, 1:30 PM', event: 'Inbound call answered by Regal AI agent', type: 'info', source: 'Regal AI' },
-      { time: 'Feb 11, 1:34 PM', event: 'AI qualification complete — Employment Discrimination, high value', type: 'info', source: 'Regal AI' },
-      { time: 'Feb 11, 1:35 PM', event: 'Warm transfer initiated to David Park', type: 'info', source: 'Regal AI' },
-      { time: 'Feb 11, 1:35 PM', event: 'Transfer webhook fired — HTTP 200 response', type: 'info', source: 'System' },
-      { time: 'Feb 11, 1:35 PM', event: 'David Park softphone in DND — call not connected', type: 'error', source: 'Phone System' },
-      { time: 'Feb 11, 1:36 PM', event: 'System marked handoff as "complete" (false positive)', type: 'error', source: 'System' },
-      { time: 'Feb 12, 12:00 PM', event: 'No human follow-up logged — 22 hours since AI qualification', type: 'error', source: 'System' },
-    ],
-    recommendation: 'Fix transfer verification — check call connection status, not just webhook response. Add DND-aware routing with automatic fallback to next available agent. Contact Priya immediately.',
-    riskLevel: 'high',
-  },
-  {
-    id: 'L-1047', name: 'Kevin O\'Brien', source: 'Google Ads', issue: 'No response to 3 callback attempts',
-    issueType: 'stale', daysSinceContact: 5, assignedTo: 'Sarah Kim', value: '$35,000',
-    phone: '(323) 555-0156', email: 'kobrien@email.com', caseType: 'Personal Injury — Dog Bite', intakeDate: 'Feb 7, 2026',
-    rootCause: 'Sarah Kim made 3 callback attempts (Feb 7, 8, 9) but all went to voicemail. No text message or email follow-up was sent. The lead has not responded to any voicemails. Standard protocol requires multi-channel outreach after 2 failed calls, but this was not followed.',
-    timeline: [
-      { time: 'Feb 7, 2:15 PM', event: 'Lead captured via Google Ads — "dog bite lawyer"', type: 'info', source: 'Google Ads' },
-      { time: 'Feb 7, 2:30 PM', event: 'Callback attempt #1 — voicemail left', type: 'info', source: 'CallRail' },
-      { time: 'Feb 8, 10:00 AM', event: 'Callback attempt #2 — voicemail left', type: 'warning', source: 'CallRail' },
-      { time: 'Feb 9, 11:00 AM', event: 'Callback attempt #3 — voicemail left', type: 'warning', source: 'CallRail' },
-      { time: 'Feb 9, 11:01 AM', event: 'No text or email sent (protocol violation)', type: 'error', source: 'System' },
-      { time: 'Feb 12, 12:00 PM', event: '5 days with no response — lead likely cold', type: 'error', source: 'System' },
-    ],
-    recommendation: 'Send immediate text + email with scheduling link. If no response in 24h, move to nurture campaign. Coach Sarah on multi-channel protocol after 2 failed calls.',
-    riskLevel: 'medium',
-  },
-];
-
+// Staff issues remain mock for now (no real staff performance data yet)
 const staffIssues: StaffIssue[] = [
   {
     id: 'S-01', name: 'James Wilson', role: 'Senior Intake Specialist', conversionRate: 12, avgConversion: 34,
@@ -153,23 +53,23 @@ const staffIssues: StaffIssue[] = [
     weeklyTrend: [
       { week: 'W1', rate: 28 }, { week: 'W2', rate: 22 }, { week: 'W3', rate: 18 }, { week: 'W4', rate: 12 },
     ],
-    analysis: 'James has been on a consistent 4-week decline from 28% to 12% conversion. His lead volume (42 active) is 68% above the recommended capacity of 25. He\'s not triaging effectively — high-value leads are getting the same response time as low-value ones. Two confirmed lost leads cited "slow response" as the reason for choosing a competitor. The workload issue is compounding — more leads assigned means slower response on each, which lowers conversion, which means more leads pile up.',
-    recommendation: 'Immediately reduce his active queue to 25 leads by redistributing 17 leads to other agents. Implement a priority scoring system so high-value leads get same-day response. Schedule a 1:1 coaching session on time management and lead triage. Monitor weekly for 4 weeks.',
+    analysis: 'James has been on a consistent 4-week decline from 28% to 12% conversion. His lead volume (42 active) is 68% above the recommended capacity of 25. He\'s not triaging effectively — high-value leads are getting the same response time as low-value ones.',
+    recommendation: 'Immediately reduce his active queue to 25 leads by redistributing 17 leads to other agents. Implement a priority scoring system so high-value leads get same-day response.',
   },
   {
     id: 'S-02', name: 'Lisa Torres', role: 'Intake Specialist', conversionRate: 18, avgConversion: 34,
     leadsAssigned: 28, leadsConverted: 5, flagReason: 'Consistent decline over 3 weeks',
     recentLeads: [
-      { name: 'Jennifer Adams', outcome: 'lost', reason: 'Lead wanted Spanish-speaking attorney — Lisa couldn\'t accommodate', daysAgo: 2 },
-      { name: 'Robert Martinez', outcome: 'lost', reason: 'Intake call too scripted — felt impersonal', daysAgo: 5 },
+      { name: 'Jennifer Adams', outcome: 'lost', reason: 'Lead wanted Spanish-speaking attorney', daysAgo: 2 },
+      { name: 'Robert Martinez', outcome: 'lost', reason: 'Intake call too scripted', daysAgo: 5 },
       { name: 'Amy Chen', outcome: 'converted', reason: 'Good rapport, quick retainer signing', daysAgo: 7 },
       { name: 'Carlos Reyes', outcome: 'lost', reason: 'Competitor offered free consultation', daysAgo: 9 },
     ],
     weeklyTrend: [
       { week: 'W1', rate: 32 }, { week: 'W2', rate: 26 }, { week: 'W3', rate: 20 }, { week: 'W4', rate: 18 },
     ],
-    analysis: 'Lisa\'s decline correlates with a shift in her lead sources — she\'s receiving more Spanish-preferred leads that she can\'t fully service. Her English-language conversions remain at ~30%, but her blended rate has dropped because of the language mismatch. Additionally, recent call recordings show she\'s relying too heavily on the intake script, leading to lower rapport scores.',
-    recommendation: 'Reroute Spanish-preferred leads to bilingual agents. Provide conversational intake training to reduce script dependency. Her English-language performance is acceptable — isolate the language issue before escalating.',
+    analysis: 'Lisa\'s decline correlates with a shift in her lead sources — she\'s receiving more Spanish-preferred leads that she can\'t fully service.',
+    recommendation: 'Reroute Spanish-preferred leads to bilingual agents. Provide conversational intake training to reduce script dependency.',
   },
   {
     id: 'S-03', name: 'David Park', role: 'Junior Intake', conversionRate: 22, avgConversion: 34,
@@ -178,13 +78,13 @@ const staffIssues: StaffIssue[] = [
       { name: 'Priya Sharma', outcome: 'pending', reason: 'AI handoff failed — no follow-up yet', daysAgo: 1 },
       { name: 'Mark Thompson', outcome: 'lost', reason: 'Didn\'t explain retainer structure clearly', daysAgo: 3 },
       { name: 'Susan Wright', outcome: 'converted', reason: 'Employment case — strong pitch', daysAgo: 4 },
-      { name: 'James Garcia', outcome: 'lost', reason: 'Lead had unrealistic expectations, not managed', daysAgo: 6 },
+      { name: 'James Garcia', outcome: 'lost', reason: 'Lead had unrealistic expectations', daysAgo: 6 },
     ],
     weeklyTrend: [
       { week: 'W1', rate: 20 }, { week: 'W2', rate: 24 }, { week: 'W3', rate: 21 }, { week: 'W4', rate: 22 },
     ],
-    analysis: 'David is a junior agent with stable but below-average conversion. His trend shows no decline — he\'s consistently around 21-24%, which suggests a skill plateau rather than a behavioral issue. Call recordings indicate he struggles with objection handling (particularly around fees and timelines) and doesn\'t effectively convey urgency. His lead volume (36) is also above the recommended 25 for a junior agent.',
-    recommendation: 'Enroll in advanced objection handling workshop. Pair with a senior mentor for 2 weeks of shadowing. Reduce lead volume to 20 until conversion improves above 28%. Focus training on fee discussion and urgency framing.',
+    analysis: 'David is a junior agent with stable but below-average conversion. His trend shows no decline — he\'s consistently around 21-24%, which suggests a skill plateau rather than a behavioral issue.',
+    recommendation: 'Enroll in advanced objection handling workshop. Pair with a senior mentor for 2 weeks. Reduce lead volume to 20 until conversion improves above 28%.',
   },
 ];
 
@@ -210,6 +110,127 @@ type DrawerContent = { type: 'lead'; data: LeadIssue } | { type: 'staff'; data: 
 
 export function LeadsInvestigationTab() {
   const [drawer, setDrawer] = useState<DrawerContent>(null);
+  const [leadIssues, setLeadIssues] = useState<LeadIssue[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchLeadIssues() {
+      setLoading(true);
+
+      // Fetch all leads with status 'new'
+      const { data: leads, error: leadsErr } = await supabase
+        .from('leads')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (leadsErr || !leads) {
+        setLoading(false);
+        return;
+      }
+
+      // Fetch activities for these leads
+      const leadIds = leads.map((l: any) => l.id);
+      const { data: activities } = await supabase
+        .from('lead_activities')
+        .select('*')
+        .in('lead_id', leadIds)
+        .order('created_at', { ascending: false });
+
+      const activitiesByLead: Record<string, any[]> = {};
+      (activities || []).forEach((a: any) => {
+        if (!activitiesByLead[a.lead_id]) activitiesByLead[a.lead_id] = [];
+        activitiesByLead[a.lead_id].push(a);
+      });
+
+      const issues: LeadIssue[] = [];
+
+      for (const lead of leads as any[]) {
+        const leadActivities = activitiesByLead[lead.id] || [];
+        const daysSinceCreation = Math.floor((Date.now() - new Date(lead.created_at).getTime()) / (1000 * 60 * 60 * 24));
+        
+        // Check for stale leads: status is still 'new' and no human follow-up activities
+        const hasHumanFollowUp = leadActivities.some((a: any) => 
+          ['call_outbound', 'email_sent', 'sms_sent', 'assigned', 'status_change'].includes(a.type)
+        );
+
+        if (lead.status === 'new' && !hasHumanFollowUp && daysSinceCreation >= 0) {
+          const hoursStale = Math.floor((Date.now() - new Date(lead.created_at).getTime()) / (1000 * 60 * 60));
+          
+          let riskLevel: 'high' | 'medium' | 'low' = 'low';
+          if (hoursStale >= 48) riskLevel = 'high';
+          else if (hoursStale >= 12) riskLevel = 'medium';
+
+          const timeline: LeadIssue['timeline'] = [];
+          
+          // Add creation event
+          timeline.push({
+            time: formatDate(lead.created_at),
+            event: `Lead captured via ${lead.source === 'callrail' ? 'CallRail call' : lead.source}`,
+            type: 'info',
+            source: lead.source === 'callrail' ? 'CallRail' : lead.source,
+          });
+
+          // Add activity events
+          leadActivities.forEach((a: any) => {
+            timeline.push({
+              time: formatDate(a.created_at),
+              event: a.title + (a.description ? ` — ${a.description.slice(0, 80)}...` : ''),
+              type: a.type.includes('missed') ? 'error' : 'info',
+              source: a.platform,
+            });
+          });
+
+          // Add stale warning
+          if (hoursStale >= 1) {
+            timeline.push({
+              time: 'Now',
+              event: `No human follow-up after ${hoursStale >= 24 ? `${daysSinceCreation}+ days` : `${hoursStale} hours`}`,
+              type: hoursStale >= 24 ? 'error' : 'warning',
+              source: 'System',
+            });
+          }
+
+          issues.push({
+            id: lead.id.slice(0, 8).toUpperCase(),
+            name: `${lead.first_name} ${lead.last_name}`,
+            source: lead.source === 'callrail' ? 'CallRail' : lead.source,
+            issue: hoursStale >= 24
+              ? `No outreach in ${daysSinceCreation} day${daysSinceCreation !== 1 ? 's' : ''} — lead going cold`
+              : `No outreach in ${hoursStale} hours`,
+            issueType: 'stale',
+            daysSinceContact: daysSinceCreation,
+            assignedTo: lead.assigned_to || 'Unassigned',
+            value: lead.case_type || 'Unknown',
+            phone: lead.phone ? formatPhone(lead.phone) : 'N/A',
+            email: lead.email || 'N/A',
+            caseType: lead.case_type || 'Not classified',
+            intakeDate: formatDate(lead.created_at),
+            rootCause: lead.assigned_to
+              ? `Lead was assigned but no follow-up actions have been recorded. The assigned agent may be overloaded or missed the notification.`
+              : `Lead was auto-created from ${lead.source} but was never assigned to an agent. No follow-up has occurred.`,
+            timeline,
+            recommendation: lead.assigned_to
+              ? 'Check agent workload and send immediate reminder. If no response in 1 hour, reassign to available agent.'
+              : 'Assign to an available intake specialist immediately. Send automated outreach (text + email) with callback scheduling link.',
+            riskLevel,
+          });
+        }
+      }
+
+      // Sort by risk: high first, then by days stale
+      issues.sort((a, b) => {
+        const riskOrder = { high: 0, medium: 1, low: 2 };
+        if (riskOrder[a.riskLevel] !== riskOrder[b.riskLevel]) return riskOrder[a.riskLevel] - riskOrder[b.riskLevel];
+        return b.daysSinceContact - a.daysSinceContact;
+      });
+
+      setLeadIssues(issues);
+      setLoading(false);
+    }
+
+    fetchLeadIssues();
+  }, []);
+
   const staleCount = leadIssues.filter(l => l.issueType === 'stale').length;
   const routingCount = leadIssues.filter(l => l.issueType === 'routing').length;
 
@@ -222,7 +243,11 @@ export function LeadsInvestigationTab() {
           <div className="flex items-center gap-2">
             <AlertTriangle size={16} className="text-amber-500" />
             <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--text-primary)]">Leads with Issues</h3>
-            <span className="text-[10px] font-mono bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded-full font-bold">{leadIssues.length} flagged</span>
+            {loading ? (
+              <Loader2 size={14} className="animate-spin text-[var(--text-muted)]" />
+            ) : (
+              <span className="text-[10px] font-mono bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded-full font-bold">{leadIssues.length} flagged</span>
+            )}
           </div>
           <div className="flex gap-3 text-[10px] font-mono text-[var(--text-muted)]">
             <span>{staleCount} stale</span>
@@ -231,46 +256,65 @@ export function LeadsInvestigationTab() {
           </div>
         </div>
 
+        {/* Live data badge */}
+        <div className="flex items-center gap-2 px-3 py-2 mb-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs">
+          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-emerald-500 font-bold">LIVE DATA</span>
+          <span className="text-[var(--text-muted)]">·</span>
+          <span className="text-[var(--text-secondary)]">Issues computed from real leads & activities</span>
+        </div>
+
         <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
-          <div className="divide-y divide-[var(--border)]">
-            {leadIssues.map((lead) => {
-              const typeConfig = issueTypeConfig[lead.issueType];
-              return (
-                <div
-                  key={lead.id}
-                  onClick={() => setDrawer({ type: 'lead', data: lead })}
-                  className="p-4 hover:bg-[var(--surface-hover)] transition-colors cursor-pointer group"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[10px] font-mono text-[var(--text-muted)]">{lead.id}</span>
-                        <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${typeConfig.bg} ${typeConfig.color}`}>
-                          {typeConfig.label}
-                        </span>
-                        <span className="text-[10px] text-[var(--text-muted)]">via {lead.source}</span>
+          {loading ? (
+            <div className="flex items-center justify-center py-12 gap-2 text-[var(--text-muted)]">
+              <Loader2 size={18} className="animate-spin" />
+              <span className="text-sm">Analyzing leads...</span>
+            </div>
+          ) : leadIssues.length === 0 ? (
+            <div className="text-center py-12 text-[var(--text-muted)] text-sm">
+              No lead issues detected — all leads have been followed up. ✅
+            </div>
+          ) : (
+            <div className="divide-y divide-[var(--border)]">
+              {leadIssues.map((lead) => {
+                const typeConfig = issueTypeConfig[lead.issueType];
+                return (
+                  <div
+                    key={lead.id}
+                    onClick={() => setDrawer({ type: 'lead', data: lead })}
+                    className="p-4 hover:bg-[var(--surface-hover)] transition-colors cursor-pointer group"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-[10px] font-mono text-[var(--text-muted)]">{lead.id}</span>
+                          <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${typeConfig.bg} ${typeConfig.color}`}>
+                            {typeConfig.label}
+                          </span>
+                          <span className="text-[10px] text-[var(--text-muted)]">via {lead.source}</span>
+                        </div>
+                        <p className="text-sm font-bold text-[var(--text-primary)] group-hover:text-[var(--primary)] transition-colors">{lead.name}</p>
+                        <p className="text-xs text-[var(--text-secondary)] mt-0.5">{lead.issue}</p>
                       </div>
-                      <p className="text-sm font-bold text-[var(--text-primary)] group-hover:text-[var(--primary)] transition-colors">{lead.name}</p>
-                      <p className="text-xs text-[var(--text-secondary)] mt-0.5">{lead.issue}</p>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <p className="text-sm font-bold text-[var(--text-primary)]">{lead.value}</p>
-                      <div className="flex items-center gap-1 mt-1 text-[10px] text-[var(--text-muted)]">
-                        <User size={10} />
-                        <span>{lead.assignedTo}</span>
-                      </div>
-                      <div className="flex items-center gap-1 mt-0.5 text-[10px]">
-                        <Clock size={10} className={lead.daysSinceContact >= 3 ? 'text-red-500' : 'text-amber-500'} />
-                        <span className={lead.daysSinceContact >= 3 ? 'text-red-500 font-bold' : 'text-amber-500'}>
-                          {lead.daysSinceContact}d no contact
-                        </span>
+                      <div className="text-right shrink-0">
+                        <p className="text-sm font-bold text-[var(--text-primary)]">{lead.value}</p>
+                        <div className="flex items-center gap-1 mt-1 text-[10px] text-[var(--text-muted)]">
+                          <User size={10} />
+                          <span>{lead.assignedTo}</span>
+                        </div>
+                        <div className="flex items-center gap-1 mt-0.5 text-[10px]">
+                          <Clock size={10} className={lead.daysSinceContact >= 3 ? 'text-red-500' : 'text-amber-500'} />
+                          <span className={lead.daysSinceContact >= 3 ? 'text-red-500 font-bold' : 'text-amber-500'}>
+                            {lead.daysSinceContact}d no contact
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
@@ -356,7 +400,6 @@ export function LeadsInvestigationTab() {
                   </div>
                 </SheetHeader>
 
-                {/* Contact Info */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 rounded-lg bg-[var(--surface)] border border-[var(--border)] flex items-center gap-2">
                     <Phone size={14} className="text-[var(--text-muted)]" />
@@ -368,19 +411,16 @@ export function LeadsInvestigationTab() {
                   </div>
                 </div>
 
-                {/* Root Cause */}
                 <div className="p-4 rounded-xl border-2 border-red-500/20 bg-red-500/5">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-red-500 mb-2">🔍 Why This Happened</h4>
                   <p className="text-sm text-[var(--text-primary)] leading-relaxed">{lead.rootCause}</p>
                 </div>
 
-                {/* Recommendation */}
                 <div className="p-4 rounded-xl border border-blue-500/20 bg-blue-500/5">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-blue-500 mb-2">💡 Recommended Action</h4>
                   <p className="text-sm text-[var(--text-primary)] leading-relaxed">{lead.recommendation}</p>
                 </div>
 
-                {/* Activity Timeline */}
                 <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">Activity Timeline</h4>
                   <div className="space-y-0">
@@ -406,7 +446,6 @@ export function LeadsInvestigationTab() {
                   </div>
                 </div>
 
-                {/* Meta */}
                 <div className="grid grid-cols-3 gap-3 text-center">
                   <div className="p-3 rounded-lg bg-[var(--surface)] border border-[var(--border)]">
                     <p className="text-[9px] font-bold uppercase text-[var(--text-muted)]">Source</p>
@@ -442,7 +481,6 @@ export function LeadsInvestigationTab() {
                   </div>
                 </SheetHeader>
 
-                {/* Performance Overview */}
                 <div className="grid grid-cols-3 gap-3">
                   <div className="p-3 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-center">
                     <p className="text-[9px] font-bold uppercase text-[var(--text-muted)]">Conversion</p>
@@ -458,7 +496,6 @@ export function LeadsInvestigationTab() {
                   </div>
                 </div>
 
-                {/* Weekly Trend */}
                 <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">4-Week Conversion Trend</h4>
                   <div className="flex items-end gap-3 h-24">
@@ -474,19 +511,16 @@ export function LeadsInvestigationTab() {
                   </div>
                 </div>
 
-                {/* Analysis */}
                 <div className="p-4 rounded-xl border-2 border-red-500/20 bg-red-500/5">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-red-500 mb-2">🔍 Performance Analysis</h4>
                   <p className="text-sm text-[var(--text-primary)] leading-relaxed">{staff.analysis}</p>
                 </div>
 
-                {/* Recommendation */}
                 <div className="p-4 rounded-xl border border-blue-500/20 bg-blue-500/5">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-blue-500 mb-2">💡 Recommended Action</h4>
                   <p className="text-sm text-[var(--text-primary)] leading-relaxed">{staff.recommendation}</p>
                 </div>
 
-                {/* Recent Leads */}
                 <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">Recent Lead Outcomes</h4>
                   <div className="space-y-2">
