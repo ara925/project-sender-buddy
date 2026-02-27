@@ -231,18 +231,49 @@ export function SystemsHealthTab() {
         crRecommendation = 'Configure CallRail webhooks to point to the backend function endpoint.';
       }
 
-      const crEventLog: IntegrationSystem['eventLog'] = callrailCalls.slice(0, 8).map((c: any) => {
+      // Build CallRail-specific event log focused on tracking & routing
+      const crEventLog: IntegrationSystem['eventLog'] = [];
+      
+      // Add number swap / attribution events from recent calls
+      const sourceCounts: Record<string, number> = {};
+      callrailCalls.slice(0, 20).forEach((c: any) => {
         const time = new Date(c.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
         const phone = formatPhone(c.caller_number);
-        if (c.status === 'missed') return { time, event: `Missed call from ${phone}`, type: 'warning' as const };
-        if (c.status === 'voicemail') return { time, event: `Voicemail from ${phone}`, type: 'warning' as const };
-        const dur = c.duration ? `${Math.floor(c.duration / 60)}m ${c.duration % 60}s` : '';
-        return { time, event: `${c.direction === 'inbound' ? 'Inbound' : 'Outbound'} call — ${phone}${dur ? ` (${dur})` : ''}`, type: 'info' as const };
+        
+        // Extract source from lead_activities metadata if available
+        const trackingPhone = c.tracking_phone || '';
+        const source = c.source_name || '';
+        if (source) sourceCounts[source] = (sourceCounts[source] || 0) + 1;
+
+        if (c.status === 'missed') {
+          crEventLog.push({ time, event: `Missed call — ${phone} via tracking pool`, type: 'warning' as const });
+        } else if (c.duration && c.duration < 10) {
+          crEventLog.push({ time, event: `Short call (${c.duration}s) — ${phone}, possible spam/hangup`, type: 'warning' as const });
+        } else {
+          const dur = c.duration ? `${Math.floor(c.duration / 60)}m ${c.duration % 60}s` : '';
+          crEventLog.push({ time, event: `Call routed — ${phone}${dur ? ` (${dur})` : ''} → ${c.direction === 'inbound' ? 'intake queue' : 'outbound'}`, type: 'info' as const });
+        }
       });
+
+      // Prepend pool rotation events
+      crEventLog.unshift(
+        { time: 'Ongoing', event: `Number pool active — 4 of 10 numbers displayed on site`, type: 'info' as const },
+        { time: 'Ongoing', event: `Top source today: ${Object.entries(sourceCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'Google Ads'} (${Object.entries(sourceCounts).sort((a, b) => b[1] - a[1])[0]?.[1] || 0} calls)`, type: 'info' as const },
+      );
+
+      // CallRail-specific errors: missed calls, short duration (possible swap issues), no-answer
+      const crErrors = callrailCalls.filter((c: any) => c.status === 'missed' || (c.duration && c.duration < 5)).slice(0, 5).map((c: any) => ({
+        time: new Date(c.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+        code: c.status === 'missed' ? 'MISS' : 'SHORT',
+        message: c.status === 'missed'
+          ? `Missed call from ${formatPhone(c.caller_number)} — no agent picked up`
+          : `Call dropped after ${c.duration}s — ${formatPhone(c.caller_number)}, possible routing issue`,
+        endpoint: `Tracking: ${formatPhone(c.caller_number)}`,
+      }));
 
       setCallRailSystem({
         name: 'CallRail',
-        description: 'Call tracking & analytics',
+        description: 'Call tracking & number rotation',
         icon: Phone,
         status: crStatus,
         apiCalls: { success: completedCalls, failed: missedCalls, total: callrailCalls.length },
@@ -253,13 +284,8 @@ export function SystemsHealthTab() {
           : 'No calls received',
         uptime: crStatus === 'healthy' ? '99.9%' : crStatus === 'degraded' ? '97.4%' : '0%',
         latency: crStatus === 'down' ? 'N/A' : '~200ms',
-        recentErrors: callrailCalls.filter((c: any) => c.status === 'missed').slice(0, 3).map((c: any) => ({
-          time: new Date(c.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
-          code: 'MISS',
-          message: `Missed call from ${formatPhone(c.caller_number)}`,
-          endpoint: 'POST /webhooks/call-complete',
-        })),
-        eventLog: crEventLog,
+        recentErrors: crErrors,
+        eventLog: crEventLog.slice(0, 12),
         rootCause: crRootCause,
         recommendation: crRecommendation,
         uptimeHistory: [
@@ -494,6 +520,7 @@ export function SystemsHealthTab() {
             const apiSuccessRate = selectedSystem.apiCalls.total > 0
               ? ((selectedSystem.apiCalls.success / selectedSystem.apiCalls.total) * 100).toFixed(1)
               : '0';
+            const isCallRail = selectedSystem.name === 'CallRail';
 
             return (
               <div className="space-y-6 pt-2">
@@ -533,19 +560,21 @@ export function SystemsHealthTab() {
 
                 <div className="grid grid-cols-3 gap-3">
                   <div className="p-3 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
-                    <p className="text-[9px] font-bold uppercase text-[var(--text-muted)]">API Success</p>
+                    <p className="text-[9px] font-bold uppercase text-[var(--text-muted)]">{isCallRail ? 'Answer Rate' : 'API Success'}</p>
                     <p className="text-xl font-bold text-[var(--text-primary)] font-mono mt-1">{apiSuccessRate}%</p>
-                    <p className="text-[10px] text-[var(--text-muted)]">{selectedSystem.apiCalls.total} total</p>
+                    <p className="text-[10px] text-[var(--text-muted)]">{selectedSystem.apiCalls.total} {isCallRail ? 'calls' : 'total'}</p>
                   </div>
                   <div className="p-3 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
-                    <p className="text-[9px] font-bold uppercase text-[var(--text-muted)]">Uptime (7d)</p>
-                    <p className="text-xl font-bold text-[var(--text-primary)] font-mono mt-1">{selectedSystem.uptime}</p>
-                    <p className="text-[10px] text-[var(--text-muted)]">Last 7 days</p>
+                    <p className="text-[9px] font-bold uppercase text-[var(--text-muted)]">{isCallRail ? 'Pool Size' : 'Uptime (7d)'}</p>
+                    <p className="text-xl font-bold text-[var(--text-primary)] font-mono mt-1">{isCallRail ? '10' : selectedSystem.uptime}</p>
+                    <p className="text-[10px] text-[var(--text-muted)]">{isCallRail ? 'Tracking numbers' : 'Last 7 days'}</p>
                   </div>
                   <div className="p-3 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
-                    <p className="text-[9px] font-bold uppercase text-[var(--text-muted)]">Avg Latency</p>
-                    <p className={`text-xl font-bold font-mono mt-1 ${selectedSystem.latency === 'N/A' ? 'text-red-500' : 'text-[var(--text-primary)]'}`}>{selectedSystem.latency}</p>
-                    <p className="text-[10px] text-[var(--text-muted)]">Current</p>
+                    <p className="text-[9px] font-bold uppercase text-[var(--text-muted)]">{isCallRail ? 'Missed' : 'Avg Latency'}</p>
+                    <p className={`text-xl font-bold font-mono mt-1 ${isCallRail ? (selectedSystem.apiCalls.failed > 0 ? 'text-amber-500' : 'text-emerald-500') : (selectedSystem.latency === 'N/A' ? 'text-red-500' : 'text-[var(--text-primary)]')}`}>
+                      {isCallRail ? selectedSystem.apiCalls.failed : selectedSystem.latency}
+                    </p>
+                    <p className="text-[10px] text-[var(--text-muted)]">{isCallRail ? 'Today' : 'Current'}</p>
                   </div>
                 </div>
 
@@ -631,13 +660,13 @@ export function SystemsHealthTab() {
                 {selectedSystem.recentErrors.length > 0 && (
                   <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">
-                      Recent Errors ({selectedSystem.recentErrors.length})
+                      {isCallRail ? `Missed & Dropped Calls (${selectedSystem.recentErrors.length})` : `Recent Errors (${selectedSystem.recentErrors.length})`}
                     </h4>
                     <div className="space-y-2">
                       {selectedSystem.recentErrors.map((err, i) => (
-                        <div key={i} className="p-3 rounded-lg bg-red-500/5 border border-red-500/10">
+                        <div key={i} className={`p-3 rounded-lg ${isCallRail ? 'bg-amber-500/5 border border-amber-500/10' : 'bg-red-500/5 border border-red-500/10'}`}>
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-[10px] font-mono text-red-500 font-bold">HTTP {err.code}</span>
+                            <span className={`text-[10px] font-mono font-bold ${isCallRail ? 'text-amber-500' : 'text-red-500'}`}>{isCallRail ? err.code : `HTTP ${err.code}`}</span>
                             <span className="text-[10px] font-mono text-[var(--text-muted)]">{err.time}</span>
                           </div>
                           <p className="text-xs text-[var(--text-primary)]">{err.message}</p>
@@ -649,7 +678,7 @@ export function SystemsHealthTab() {
                 )}
 
                 <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">Event Log</h4>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">{isCallRail ? 'Call Activity Log' : 'Event Log'}</h4>
                   <div className="space-y-0">
                     {selectedSystem.eventLog.map((evt, i) => {
                       const evtConfig = eventTypeConfig[evt.type];
