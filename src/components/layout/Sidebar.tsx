@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/sidebar';
 import { NavLink } from '@/components/NavLink';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/lib/auth-context';
 
 const dashboardTabs = [
   { title: 'Systems Health', url: '/?tab=systems', icon: Activity },
@@ -21,7 +22,7 @@ const dashboardTabs = [
 
 export function AppSidebar() {
   const location = useLocation();
-
+  const { signOut } = useAuth();
   // Determine active tab from URL params
   const params = new URLSearchParams(location.search);
   const activeTab = params.get('tab') || 'systems';
@@ -57,6 +58,7 @@ export function AppSidebar() {
           variant="ghost"
           size="sm"
           className="w-full justify-start text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+          onClick={() => signOut()}
         >
           <LogOut size={16} />
           <span className="ml-2">Sign Out</span>
