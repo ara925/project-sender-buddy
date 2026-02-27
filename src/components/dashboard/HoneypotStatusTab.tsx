@@ -16,7 +16,7 @@ interface HoneypotRecord {
   accessedBy: string | null;
   accessCount: number;
   createdDate: string;
-  accessLog: { time: string; action: string; user: string; ip: string; device: string; type: 'access' | 'export' | 'call' | 'alert' }[];
+  accessLog: { time: string; action: string; user: string; ip: string; device: string; type: 'access' | 'call' | 'alert' }[];
   threatAnalysis: string | null;
   burnerActivity: { type: 'call' | 'text' | 'voicemail'; from: string; time: string; content: string }[];
   plantedIn: string[];
@@ -43,7 +43,6 @@ const statusConfig = {
 
 const accessTypeConfig = {
   access: { color: 'text-amber-500', dot: 'bg-amber-500' },
-  export: { color: 'text-red-500', dot: 'bg-red-500' },
   call: { color: 'text-red-500', dot: 'bg-red-500' },
   alert: { color: 'text-red-500', dot: 'bg-red-500' },
 };
