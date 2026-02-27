@@ -1,24 +1,13 @@
-import { useState } from 'react';
-import { Search, Filter, MoreHorizontal, FileDown, Plus, Shield, LayoutList } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, Filter, MoreHorizontal, FileDown, Plus, Shield, LayoutList, Loader2 } from 'lucide-react';
 import { Button, Badge, Select } from '@/components/ui';
 import { formatDate } from '@/lib/utils';
 import { LeadDetailDrawer } from '@/components/leads/LeadDetailDrawer';
 import { LeadsOverview } from '@/components/leads/LeadsOverview';
 import { InvestigationPanel } from '@/components/leads/InvestigationPanel';
 import { investigations } from '@/data/mock-investigations';
+import { supabase } from '@/integrations/supabase/client';
 import type { Lead } from '@/types';
-
-const mockLeads: Lead[] = [
-  { id: '1', source: 'forms', external_id: null, first_name: 'James', last_name: 'Wilson', email: 'james.w@example.com', phone: '555-0123', status: 'new', assigned_to: null, case_type: null, notes: 'Interested in PI case evaluation', litify_id: null, google_click_id: null, created_at: '2024-02-05T10:30:00Z', updated_at: '2024-02-05T10:30:00Z' },
-  { id: '2', source: 'intaker', external_id: null, first_name: 'Sarah', last_name: 'Parker', email: 'sarah.p@example.com', phone: '555-0124', status: 'contacted', assigned_to: null, case_type: null, notes: 'Left voicemail', litify_id: null, google_click_id: null, created_at: '2024-02-05T09:15:00Z', updated_at: '2024-02-05T09:45:00Z' },
-  { id: '3', source: 'manual', external_id: null, first_name: 'Michael', last_name: 'Johnson', email: 'm.johnson@example.com', phone: '555-0125', status: 'qualified', assigned_to: null, case_type: null, notes: 'Strong case potential', litify_id: null, google_click_id: null, created_at: '2024-02-04T16:20:00Z', updated_at: '2024-02-05T11:00:00Z' },
-  { id: '4', source: 'callrail', external_id: null, first_name: 'Emily', last_name: 'Davis', email: 'emily.d@example.com', phone: '555-0126', status: 'new', assigned_to: null, case_type: null, notes: 'Called in', litify_id: null, google_click_id: null, created_at: '2024-02-03T10:00:00Z', updated_at: '2024-02-03T10:00:00Z' },
-  { id: '5', source: 'intaker', external_id: null, first_name: 'Robert', last_name: 'Brown', email: 'r.brown@example.com', phone: '555-0127', status: 'lost', assigned_to: null, case_type: null, notes: 'Not interested', litify_id: null, google_click_id: null, created_at: '2024-02-04T11:30:00Z', updated_at: '2024-02-05T09:00:00Z' },
-  { id: '6', source: 'manual', external_id: null, first_name: 'Jennifer', last_name: 'Smith', email: 'j.smith@example.com', phone: '555-0128', status: 'retained', assigned_to: null, case_type: null, notes: 'Signed retainer', litify_id: null, google_click_id: null, created_at: '2024-02-03T15:10:00Z', updated_at: '2024-02-05T10:15:00Z' },
-  { id: '7', source: 'forms', external_id: null, first_name: 'David', last_name: 'Miller', email: 'd.miller@example.com', phone: '555-0129', status: 'contacted', assigned_to: null, case_type: null, notes: 'Follow up notes', litify_id: null, google_click_id: null, created_at: '2024-02-03T13:20:00Z', updated_at: '2024-02-04T16:00:00Z' },
-  { id: '8', source: 'callrail', external_id: null, first_name: 'Lisa', last_name: 'Anderson', email: 'l.anderson@example.com', phone: '555-0130', status: 'new', assigned_to: null, case_type: null, notes: 'Called in', litify_id: null, google_click_id: null, created_at: '2024-02-03T10:00:00Z', updated_at: '2024-02-03T10:00:00Z' },
-  { id: '9', source: 'intaker', external_id: null, first_name: 'Kevin', last_name: 'White', email: 'k.white@example.com', phone: '555-0131', status: 'qualified', assigned_to: null, case_type: null, notes: 'Medical records needed', litify_id: null, google_click_id: null, created_at: '2024-02-02T16:45:00Z', updated_at: '2024-02-04T11:30:00Z' },
-];
 
 const getStatusColor = (status: string): 'default' | 'secondary' | 'success' | 'destructive' | 'warning' | 'info' => {
   switch (status) {
@@ -39,8 +28,26 @@ export function Leads() {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'investigations'>('overview');
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredLeads = mockLeads.filter(lead => {
+  useEffect(() => {
+    async function fetchLeads() {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (!error && data) {
+        setLeads(data as unknown as Lead[]);
+      }
+      setLoading(false);
+    }
+    fetchLeads();
+  }, []);
+
+  const filteredLeads = leads.filter(lead => {
     const matchesSearch =
       lead.first_name.toLowerCase().includes(search.toLowerCase()) ||
       lead.last_name.toLowerCase().includes(search.toLowerCase()) ||
@@ -109,11 +116,11 @@ export function Leads() {
         <>
           {/* Overview KPIs */}
           <LeadsOverview
-            totalLeads={mockLeads.length}
-            newLeads={mockLeads.filter(l => l.status === 'new').length}
-            qualifiedLeads={mockLeads.filter(l => l.status === 'qualified').length}
-            retainedLeads={mockLeads.filter(l => l.status === 'retained').length}
-            lostLeads={mockLeads.filter(l => l.status === 'lost').length}
+            totalLeads={leads.length}
+            newLeads={leads.filter(l => l.status === 'new').length}
+            qualifiedLeads={leads.filter(l => l.status === 'qualified').length}
+            retainedLeads={leads.filter(l => l.status === 'retained').length}
+            lostLeads={leads.filter(l => l.status === 'lost').length}
             openInvestigations={openInvestigations}
           />
 
@@ -172,65 +179,77 @@ export function Leads() {
             )}
           </div>
 
-          {/* Leads List - Executive Style */}
+          {/* Leads List */}
           <div className="bg-[var(--surface)] border-t-[4px] border-blue-500">
             <div className="px-6 py-4 border-b border-[var(--border)] flex justify-between items-center bg-[var(--surface-active)]/20">
               <h3 className="font-bold text-[var(--text-primary)]">Active Leads</h3>
               <span className="text-xs font-mono text-[var(--text-muted)]">Live Data</span>
             </div>
-            <div className="divide-y divide-[var(--border)]">
-              {filteredLeads.map((lead) => {
-                const leadInvestigation = investigations.find(
-                  inv => inv.leadName === `${lead.first_name} ${lead.last_name}` && (inv.status === 'open' || inv.status === 'reviewing' || inv.status === 'confirmed')
-                );
-                return (
-                  <div
-                    key={lead.id}
-                    className={`p-4 hover:bg-[var(--surface-hover)] transition-colors cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${leadInvestigation ? 'bg-red-500/5' : ''}`}
-                    onClick={() => handleLeadClick(lead)}
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className={`h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm ${leadInvestigation ? 'bg-red-500 text-white' : 'bg-[var(--surface-active)] text-[var(--text-secondary)]'}`}>
-                        {lead.first_name[0]}{lead.last_name[0]}
+
+            {loading ? (
+              <div className="flex items-center justify-center py-12 gap-2 text-[var(--text-muted)]">
+                <Loader2 size={18} className="animate-spin" />
+                <span className="text-sm">Loading leads...</span>
+              </div>
+            ) : filteredLeads.length === 0 ? (
+              <div className="text-center py-12 text-[var(--text-muted)] text-sm">
+                No leads found.
+              </div>
+            ) : (
+              <div className="divide-y divide-[var(--border)]">
+                {filteredLeads.map((lead) => {
+                  const leadInvestigation = investigations.find(
+                    inv => inv.leadName === `${lead.first_name} ${lead.last_name}` && (inv.status === 'open' || inv.status === 'reviewing' || inv.status === 'confirmed')
+                  );
+                  return (
+                    <div
+                      key={lead.id}
+                      className={`p-4 hover:bg-[var(--surface-hover)] transition-colors cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${leadInvestigation ? 'bg-red-500/5' : ''}`}
+                      onClick={() => handleLeadClick(lead)}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className={`h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm ${leadInvestigation ? 'bg-red-500 text-white' : 'bg-[var(--surface-active)] text-[var(--text-secondary)]'}`}>
+                          {lead.first_name[0]}{lead.last_name[0]}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="font-bold text-[var(--text-primary)]">{lead.first_name} {lead.last_name}</p>
+                            {leadInvestigation && <Shield size={14} className="text-red-500 animate-pulse" />}
+                            <Badge variant="outline" className="text-[10px] h-5 px-1.5 border-[var(--border-strong)] text-[var(--text-muted)] font-normal uppercase tracking-wider">
+                              {lead.source}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-3 mt-1 text-xs text-[var(--text-secondary)]">
+                            <span>{lead.email}</span>
+                            <span className="text-[var(--border-strong)]">•</span>
+                            <span className="font-mono">{lead.phone}</span>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <p className="font-bold text-[var(--text-primary)]">{lead.first_name} {lead.last_name}</p>
-                          {leadInvestigation && <Shield size={14} className="text-red-500 animate-pulse" />}
-                          <Badge variant="outline" className="text-[10px] h-5 px-1.5 border-[var(--border-strong)] text-[var(--text-muted)] font-normal uppercase tracking-wider">
-                            {lead.source}
+
+                      <div className="flex items-center justify-between sm:justify-end gap-6 min-w-[200px]">
+                        <div className="text-right">
+                          <Badge variant={getStatusColor(lead.status)} className="uppercase tracking-wider text-[10px] font-bold px-2 py-0.5">
+                            {lead.status}
                           </Badge>
+                          <p className="text-[10px] text-[var(--text-muted)] mt-1.5">{formatDate(lead.created_at)}</p>
                         </div>
-                        <div className="flex items-center gap-3 mt-1 text-xs text-[var(--text-secondary)]">
-                          <span>{lead.email}</span>
-                          <span className="text-[var(--border-strong)]">•</span>
-                          <span className="font-mono">{lead.phone}</span>
+
+                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-[var(--surface-active)]">
+                            <MoreHorizontal size={16} className="text-[var(--text-secondary)]" />
+                          </Button>
                         </div>
                       </div>
                     </div>
-
-                    <div className="flex items-center justify-between sm:justify-end gap-6 min-w-[200px]">
-                      <div className="text-right">
-                        <Badge variant={getStatusColor(lead.status)} className="uppercase tracking-wider text-[10px] font-bold px-2 py-0.5">
-                          {lead.status}
-                        </Badge>
-                        <p className="text-[10px] text-[var(--text-muted)] mt-1.5">{formatDate(lead.created_at)}</p>
-                      </div>
-
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-[var(--surface-active)]">
-                          <MoreHorizontal size={16} className="text-[var(--text-secondary)]" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
 
             {/* Pagination Footer */}
             <div className="px-6 py-4 border-t border-[var(--border)] flex items-center justify-between bg-[var(--surface-active)]/10">
-              <p className="text-xs text-[var(--text-muted)]">Showing <strong className="text-[var(--text-primary)]">{filteredLeads.length}</strong> of {mockLeads.length}</p>
+              <p className="text-xs text-[var(--text-muted)]">Showing <strong className="text-[var(--text-primary)]">{filteredLeads.length}</strong> of {leads.length}</p>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" className="h-8 text-xs bg-[var(--surface)] text-[var(--text-secondary)] border-[var(--border)]" disabled>Previous</Button>
                 <Button variant="outline" size="sm" className="h-8 text-xs bg-[var(--surface)] text-[var(--text-secondary)] border-[var(--border)]" disabled>Next</Button>
