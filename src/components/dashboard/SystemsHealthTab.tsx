@@ -393,25 +393,6 @@ export function SystemsHealthTab() {
         </div>
       )}
 
-      {/* Live Data Badges */}
-      <div className="flex flex-wrap gap-2">
-        {callRailSystem && (
-          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-emerald-500 font-bold">CallRail — LIVE</span>
-            <span className="text-[var(--text-muted)]">·</span>
-            <span className="text-[var(--text-secondary)] font-mono">{callRailSystem.apiCalls.total} calls · Last: {callRailSystem.lastDataTimestamp}</span>
-          </div>
-        )}
-        {intakerSystem && (
-          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-emerald-500 font-bold">Intaker — LIVE</span>
-            <span className="text-[var(--text-muted)]">·</span>
-            <span className="text-[var(--text-secondary)] font-mono">{intakerSystem.apiCalls.total} intakes · Last: {intakerSystem.lastDataTimestamp}</span>
-          </div>
-        )}
-      </div>
 
       {/* System Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
