@@ -447,8 +447,8 @@ export function SystemsHealthTab() {
           return (
             <div
               key={system.name}
-              onClick={() => setSelectedSystem(system)}
-              className={`rounded-xl border ${config.border} bg-[var(--surface)] overflow-hidden transition-all hover:shadow-lg cursor-pointer group ${isLive ? 'ring-1 ring-emerald-500/30' : ''}`}
+              onClick={() => system.name === 'Salesforce' ? setSelectedSystem(system) : undefined}
+              className={`rounded-xl border ${config.border} bg-[var(--surface)] overflow-hidden transition-all ${system.name === 'Salesforce' ? 'hover:shadow-lg cursor-pointer' : ''} group ${isLive ? 'ring-1 ring-emerald-500/30' : ''}`}
             >
               {/* Header */}
               <div className="p-4 flex items-start justify-between">
@@ -533,7 +533,6 @@ export function SystemsHealthTab() {
                     </div>
                     <div>
                       <SheetTitle className="text-lg font-bold text-[var(--text-primary)]">{selectedSystem.name}</SheetTitle>
-                      <p className="text-xs text-[var(--text-secondary)]">{selectedSystem.description}</p>
                     </div>
                     <div className={`ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${config.bg} ${config.color}`}>
                       <StatusIcon size={12} />
@@ -542,7 +541,7 @@ export function SystemsHealthTab() {
                   </div>
                 </SheetHeader>
 
-                {selectedSystem.rootCause && (
+                {selectedSystem.rootCause && selectedSystem.name !== 'Intaker' && (
                   <div className={`p-4 rounded-xl border-2 ${selectedSystem.status === 'down' ? 'border-red-500/30 bg-red-500/5' : 'border-amber-500/30 bg-amber-500/5'}`}>
                     <h4 className={`text-xs font-bold uppercase tracking-wider mb-2 ${selectedSystem.status === 'down' ? 'text-red-500' : 'text-amber-500'}`}>
                       🔍 Root Cause Analysis
