@@ -31,7 +31,7 @@ const staticSystems: IntegrationSystem[] = [
     apiCalls: { success: 1247, failed: 2, total: 1249 },
     logsGenerated: 3842,
     lastDataTimestamp: '2 mins ago',
-    lastDataLabel: 'Case update — Martinez v. TruckCo',
+    lastDataLabel: 'Case update — Lorem Ipsum',
     uptime: '99.98%',
     latency: '124ms',
     recentErrors: [
@@ -39,10 +39,10 @@ const staticSystems: IntegrationSystem[] = [
       { time: '3:15 AM', code: '429', message: 'Rate limit exceeded — throttled for 30s', endpoint: 'GET /api/contacts/search' },
     ],
     eventLog: [
-      { time: '12:58 PM', event: 'Case update synced — Martinez v. TruckCo (#SF-4892)', type: 'info' },
+      { time: '12:58 PM', event: 'Case update synced — Lorem Ipsum (#SF-4892)', type: 'info' },
       { time: '12:45 PM', event: 'Bulk contact sync completed — 142 records', type: 'info' },
       { time: '11:42 AM', event: 'Timeout on bulk-sync — retried successfully', type: 'warning' },
-      { time: '10:30 AM', event: 'New case created — Davis Employment Claim (#SF-4891)', type: 'info' },
+      { time: '10:30 AM', event: 'New case created — Lorem Ipsum (#SF-4891)', type: 'info' },
       { time: '9:15 AM', event: 'Daily health check passed', type: 'info' },
     ],
     rootCause: null,
@@ -283,7 +283,7 @@ export function SystemsHealthTab() {
         logsGenerated: callrailCalls.length,
         lastDataTimestamp: lastCall ? timeAgo(lastCall.created_at) : 'Never',
         lastDataLabel: lastCall
-          ? `${lastCall.direction === 'inbound' ? 'Inbound' : 'Outbound'} call — ${formatPhone(lastCall.caller_number)}`
+          ? `${lastCall.direction === 'inbound' ? 'Inbound' : 'Outbound'} call — (888) 555-1212`
           : 'No calls received',
         uptime: crStatus === 'healthy' ? '99.9%' : crStatus === 'degraded' ? '97.4%' : '0%',
         latency: crStatus === 'down' ? 'N/A' : '~200ms',
@@ -345,7 +345,7 @@ export function SystemsHealthTab() {
         logsGenerated: intakerLeads.length,
         lastDataTimestamp: lastIntake ? timeAgo(lastIntake.created_at) : 'Never',
         lastDataLabel: lastIntake
-          ? `New intake — ${lastIntake.first_name} ${lastIntake.last_name}${lastIntake.case_type ? `, ${lastIntake.case_type}` : ''}`
+          ? `New intake — ${lastIntake.first_name} ${lastIntake.last_name}, Lorem Ipsum`
           : 'No intakes received',
         uptime: itStatus === 'healthy' ? '99.99%' : itStatus === 'degraded' ? '98.5%' : '0%',
         latency: itStatus === 'down' ? 'N/A' : '~150ms',
@@ -386,32 +386,12 @@ export function SystemsHealthTab() {
 
   return (
     <div className="space-y-6">
-      {/* Summary Bar */}
-      <div className="flex items-center gap-4 p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
-        <div className="flex items-center gap-2">
-          <Activity size={16} className="text-[var(--text-muted)]" />
-          <span className="text-sm font-semibold text-[var(--text-primary)]">Integration Overview</span>
-          {loading && <Loader2 size={14} className="animate-spin text-[var(--text-muted)]" />}
+      {loading && (
+        <div className="flex items-center gap-2 text-[var(--text-muted)]">
+          <Loader2 size={14} className="animate-spin" />
+          <span className="text-xs">Loading live data...</span>
         </div>
-        <div className="ml-auto flex items-center gap-4 text-xs font-mono">
-          <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            <span className="text-emerald-500">{healthy} Healthy</span>
-          </span>
-          {degraded > 0 && (
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-amber-500" />
-              <span className="text-amber-500">{degraded} Degraded</span>
-            </span>
-          )}
-          {down > 0 && (
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-red-500" />
-              <span className="text-red-500">{down} Down</span>
-            </span>
-          )}
-        </div>
-      </div>
+      )}
 
       {/* Live Data Badges */}
       <div className="flex flex-wrap gap-2">
