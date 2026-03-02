@@ -426,12 +426,12 @@ export function SystemsHealthTab() {
                 <div className="p-3 rounded-lg bg-[var(--surface-hover)] space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">{isLive ? 'Total Calls' : 'API Calls (24h)'}</span>
-                    <span className="text-xs font-mono text-[var(--text-primary)]">{apiSuccessRate}% success</span>
+                    <span className="text-xs font-mono text-[var(--text-primary)]">Lorem</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-[var(--surface-active)] overflow-hidden">
                     <div
                       className={`h-full rounded-full ${system.status === 'down' ? 'bg-red-500' : system.status === 'degraded' ? 'bg-amber-500' : 'bg-emerald-500'}`}
-                      style={{ width: `${apiSuccessRate}%` }}
+                      style={{ width: '100%' }}
                     />
                   </div>
                 </div>
@@ -439,11 +439,11 @@ export function SystemsHealthTab() {
                 <div className="grid grid-cols-2 gap-2">
                   <div className="p-2.5 rounded-lg bg-[var(--surface-hover)]">
                     <p className="text-[9px] font-bold uppercase text-[var(--text-muted)] mb-1">{isLive ? 'Calls Logged' : 'Logs (24h)'}</p>
-                    <p className="text-sm font-bold text-[var(--text-primary)] font-mono">{system.logsGenerated.toLocaleString()}</p>
+                    <p className="text-sm font-bold text-[var(--text-primary)] font-mono">Lorem</p>
                   </div>
                   <div className="p-2.5 rounded-lg bg-[var(--surface-hover)]">
                     <p className="text-[9px] font-bold uppercase text-[var(--text-muted)] mb-1">Latency</p>
-                    <p className={`text-sm font-bold font-mono ${system.latency === 'N/A' ? 'text-red-500' : 'text-[var(--text-primary)]'}`}>{system.latency}</p>
+                    <p className="text-sm font-bold font-mono text-[var(--text-primary)]">{system.latency}</p>
                   </div>
                 </div>
 
@@ -513,20 +513,18 @@ export function SystemsHealthTab() {
                 <div className="grid grid-cols-3 gap-3">
                   <div className="p-3 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
                     <p className="text-[9px] font-bold uppercase text-[var(--text-muted)]">{isCallRail ? 'Answer Rate' : 'API Success'}</p>
-                    <p className="text-xl font-bold text-[var(--text-primary)] font-mono mt-1">{apiSuccessRate}%</p>
-                    <p className="text-[10px] text-[var(--text-muted)]">{selectedSystem.apiCalls.total} {isCallRail ? 'calls' : 'total'}</p>
+                    <p className="text-xl font-bold text-[var(--text-primary)] font-mono mt-1">Lorem</p>
+                    <p className="text-[10px] text-[var(--text-muted)]">Lorem</p>
                   </div>
                   <div className="p-3 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
                     <p className="text-[9px] font-bold uppercase text-[var(--text-muted)]">{isCallRail ? 'Pool Size' : 'Uptime (7d)'}</p>
-                    <p className="text-xl font-bold text-[var(--text-primary)] font-mono mt-1">{isCallRail ? '10' : selectedSystem.uptime}</p>
-                    <p className="text-[10px] text-[var(--text-muted)]">{isCallRail ? 'Tracking numbers' : 'Last 7 days'}</p>
+                    <p className="text-xl font-bold text-[var(--text-primary)] font-mono mt-1">Lorem</p>
+                    <p className="text-[10px] text-[var(--text-muted)]">Lorem</p>
                   </div>
                   <div className="p-3 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
                     <p className="text-[9px] font-bold uppercase text-[var(--text-muted)]">{isCallRail ? 'Missed' : 'Avg Latency'}</p>
-                    <p className={`text-xl font-bold font-mono mt-1 ${isCallRail ? (selectedSystem.apiCalls.failed > 0 ? 'text-amber-500' : 'text-emerald-500') : (selectedSystem.latency === 'N/A' ? 'text-red-500' : 'text-[var(--text-primary)]')}`}>
-                      {isCallRail ? selectedSystem.apiCalls.failed : selectedSystem.latency}
-                    </p>
-                    <p className="text-[10px] text-[var(--text-muted)]">{isCallRail ? 'Today' : 'Current'}</p>
+                    <p className="text-xl font-bold font-mono mt-1 text-[var(--text-primary)]">Lorem</p>
+                    <p className="text-[10px] text-[var(--text-muted)]">Lorem</p>
                   </div>
                 </div>
 
