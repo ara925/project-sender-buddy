@@ -104,11 +104,6 @@ export function HoneypotStatusTab() {
         </div>
         <div>
           <h3 className="text-sm font-bold text-[var(--text-primary)] mb-1">Honeypot System</h3>
-          <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-            High-value fake leads planted in the system to detect insider threats. Each honeypot uses a burner phone number
-            (Burner / TextMe / TextNow) that can receive calls and texts. Any access to honeypot data
-            instantly triggers a security alert — identifying both the insider <strong>and</strong> who is paying them.
-          </p>
         </div>
       </div>
 
@@ -153,7 +148,7 @@ export function HoneypotStatusTab() {
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Dormant</span>
               </div>
               <p className="text-3xl font-bold text-[var(--text-primary)]">{dormant.length}</p>
-              <p className="text-[10px] text-[var(--text-muted)] mt-1 font-mono">Needs refresh</p>
+              <p className="text-[10px] text-[var(--text-muted)] mt-1 font-mono">Awaiting inject</p>
             </div>
           </div>
 
