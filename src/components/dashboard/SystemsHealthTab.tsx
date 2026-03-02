@@ -59,23 +59,23 @@ const staticSystems: IntegrationSystem[] = [
     status: 'healthy',
     apiCalls: { success: 892, failed: 0, total: 892 },
     logsGenerated: 2104,
-    lastDataTimestamp: '8 mins ago',
-    lastDataLabel: 'New intake — Personal Injury',
-    uptime: '99.99%',
-    latency: '89ms',
+    lastDataTimestamp: 'Lorem ipsum',
+    lastDataLabel: 'Lorem ipsum',
+    uptime: 'Lorem',
+    latency: 'Lorem',
     recentErrors: [],
     eventLog: [
-      { time: '12:50 PM', event: 'New intake submitted — PI Auto Accident, Maria Gonzalez', type: 'info' },
-      { time: '12:22 PM', event: 'Intake form rendered — Employment Law landing page', type: 'info' },
-      { time: '11:58 AM', event: 'Webhook delivered to Salesforce — intake #INT-2847', type: 'info' },
-      { time: '11:30 AM', event: 'Form A/B test variant B served (62% of traffic)', type: 'info' },
-      { time: '10:00 AM', event: 'Daily integrity check — all form fields validated', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet consectetur', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'info' },
     ],
     rootCause: null,
     recommendation: null,
     uptimeHistory: [
-      { date: 'Mon', pct: 100 }, { date: 'Tue', pct: 100 }, { date: 'Wed', pct: 100 },
-      { date: 'Thu', pct: 100 }, { date: 'Fri', pct: 99.99 }, { date: 'Sat', pct: 100 }, { date: 'Sun', pct: 100 },
+      { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 },
+      { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 },
     ],
   },
   {
@@ -85,25 +85,25 @@ const staticSystems: IntegrationSystem[] = [
     status: 'healthy',
     apiCalls: { success: 2840, failed: 3, total: 2843 },
     logsGenerated: 5620,
-    lastDataTimestamp: '1 min ago',
-    lastDataLabel: 'Form submission — /free-consultation',
-    uptime: '99.99%',
-    latency: '45ms',
+    lastDataTimestamp: 'Lorem ipsum',
+    lastDataLabel: 'Lorem ipsum',
+    uptime: 'Lorem',
+    latency: 'Lorem',
     recentErrors: [
-      { time: '6:12 AM', code: '500', message: 'Form handler timeout — auto-recovered', endpoint: 'POST /api/forms/submit' },
+      { time: 'Lorem', code: 'Lorem', message: 'Lorem ipsum dolor sit amet', endpoint: 'Lorem ipsum' },
     ],
     eventLog: [
-      { time: '12:59 PM', event: 'Form submission — /free-consultation, PI Auto Accident', type: 'info' },
-      { time: '12:42 PM', event: 'Live chat session started — Employment Law inquiry', type: 'info' },
-      { time: '12:15 PM', event: 'Contact form submitted — /workers-compensation', type: 'info' },
-      { time: '11:50 AM', event: 'Page speed check — all pages under 2.5s load time', type: 'info' },
-      { time: '10:00 AM', event: 'Daily uptime check passed — all forms operational', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet consectetur', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'info' },
     ],
     rootCause: null,
     recommendation: null,
     uptimeHistory: [
-      { date: 'Mon', pct: 100 }, { date: 'Tue', pct: 100 }, { date: 'Wed', pct: 100 },
-      { date: 'Thu', pct: 100 }, { date: 'Fri', pct: 100 }, { date: 'Sat', pct: 100 }, { date: 'Sun', pct: 99.99 },
+      { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 },
+      { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 },
     ],
   },
   {
@@ -113,28 +113,28 @@ const staticSystems: IntegrationSystem[] = [
     status: 'healthy',
     apiCalls: { success: 678, failed: 5, total: 683 },
     logsGenerated: 1890,
-    lastDataTimestamp: '4 mins ago',
-    lastDataLabel: 'AI Agent answered inbound PI call',
-    uptime: '99.95%',
-    latency: '180ms',
+    lastDataTimestamp: 'Lorem ipsum',
+    lastDataLabel: 'Lorem ipsum dolor sit amet',
+    uptime: 'Lorem',
+    latency: 'Lorem',
     recentErrors: [
-      { time: '10:15 AM', code: '503', message: 'Inbound call routing timeout — auto-retried', endpoint: 'POST /api/calls/inbound' },
-      { time: '8:42 AM', code: 'DROP', message: 'Caller dropped during AI hold queue — 22s wait', endpoint: 'Inbound queue' },
+      { time: 'Lorem', code: 'Lorem', message: 'Lorem ipsum dolor sit amet', endpoint: 'Lorem ipsum' },
+      { time: 'Lorem', code: 'Lorem', message: 'Lorem ipsum dolor sit amet consectetur', endpoint: 'Lorem ipsum' },
     ],
     eventLog: [
-      { time: '12:56 PM', event: 'AI Agent answered inbound — PI auto accident, caller qualified', type: 'info' },
-      { time: '12:42 PM', event: 'Inbound call routed to AI Agent — employment inquiry', type: 'info' },
-      { time: '12:30 PM', event: 'AI Agent transferred to human intake — caller requested attorney', type: 'warning' },
-      { time: '12:05 PM', event: 'Inbound call answered — AI collected intake info, 3m 12s', type: 'info' },
-      { time: '11:40 AM', event: 'AI Agent handled inbound — workers comp, caller pre-qualified', type: 'info' },
-      { time: '11:15 AM', event: 'Inbound call — AI unable to classify case type, escalated to human', type: 'warning' },
-      { time: '10:15 AM', event: 'Inbound routing timeout — retried successfully after 2s', type: 'warning' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet consectetur', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'warning' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'warning' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'warning' },
     ],
     rootCause: null,
     recommendation: null,
     uptimeHistory: [
-      { date: 'Mon', pct: 100 }, { date: 'Tue', pct: 100 }, { date: 'Wed', pct: 99.9 },
-      { date: 'Thu', pct: 100 }, { date: 'Fri', pct: 100 }, { date: 'Sat', pct: 100 }, { date: 'Sun', pct: 100 },
+      { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 },
+      { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 },
     ],
   },
   {
@@ -144,25 +144,25 @@ const staticSystems: IntegrationSystem[] = [
     status: 'healthy',
     apiCalls: { success: 1542, failed: 8, total: 1550 },
     logsGenerated: 3210,
-    lastDataTimestamp: '3 mins ago',
-    lastDataLabel: 'Zap executed — New Intaker lead routed',
-    uptime: '99.94%',
-    latency: '320ms',
+    lastDataTimestamp: 'Lorem ipsum',
+    lastDataLabel: 'Lorem ipsum dolor sit amet',
+    uptime: 'Lorem',
+    latency: 'Lorem',
     recentErrors: [
-      { time: '7:22 AM', code: '429', message: 'Rate limit — throttled for 60s on bulk trigger', endpoint: 'POST /hooks/catch' },
+      { time: 'Lorem', code: 'Lorem', message: 'Lorem ipsum dolor sit amet', endpoint: 'Lorem ipsum' },
     ],
     eventLog: [
-      { time: '12:57 PM', event: 'Zap executed — Intaker lead routed to webhook', type: 'info' },
-      { time: '12:35 PM', event: 'Zap executed — CallRail call data forwarded', type: 'info' },
-      { time: '11:50 AM', event: 'Zap executed — New lead notification sent to Slack', type: 'info' },
-      { time: '10:20 AM', event: 'Zap executed — Salesforce record created from intake', type: 'info' },
-      { time: '7:22 AM', event: 'Rate limit hit on bulk trigger — retried after 60s', type: 'warning' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet consectetur', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'info' },
+      { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'warning' },
     ],
     rootCause: null,
     recommendation: null,
     uptimeHistory: [
-      { date: 'Mon', pct: 100 }, { date: 'Tue', pct: 100 }, { date: 'Wed', pct: 100 },
-      { date: 'Thu', pct: 99.9 }, { date: 'Fri', pct: 100 }, { date: 'Sat', pct: 100 }, { date: 'Sun', pct: 100 },
+      { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 },
+      { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 },
     ],
   },
 ];
@@ -281,20 +281,18 @@ export function SystemsHealthTab() {
         status: crStatus,
         apiCalls: { success: completedCalls, failed: missedCalls, total: callrailCalls.length },
         logsGenerated: callrailCalls.length,
-        lastDataTimestamp: lastCall ? timeAgo(lastCall.created_at) : 'Never',
-        lastDataLabel: lastCall
-          ? `${lastCall.direction === 'inbound' ? 'Inbound' : 'Outbound'} call — (888) 555-1212`
-          : 'No calls received',
-        uptime: crStatus === 'healthy' ? '99.9%' : crStatus === 'degraded' ? '97.4%' : '0%',
-        latency: crStatus === 'down' ? 'N/A' : '~200ms',
-        recentErrors: crErrors,
-        eventLog: crEventLog.slice(0, 12),
-        rootCause: crRootCause,
-        recommendation: crRecommendation,
+        lastDataTimestamp: 'Lorem ipsum',
+        lastDataLabel: 'Lorem ipsum',
+        uptime: 'Lorem',
+        latency: 'Lorem',
+        recentErrors: crErrors.map(e => ({ ...e, message: 'Lorem ipsum dolor sit amet', endpoint: 'Lorem ipsum' })),
+        eventLog: crEventLog.slice(0, 12).map(e => ({ ...e, time: 'Lorem', event: 'Lorem ipsum dolor sit amet' })),
+        rootCause: crRootCause ? 'Lorem ipsum dolor sit amet consectetur adipiscing elit' : null,
+        recommendation: crRecommendation ? 'Lorem ipsum dolor sit amet' : null,
         uptimeHistory: [
-          { date: 'Mon', pct: 100 }, { date: 'Tue', pct: 100 }, { date: 'Wed', pct: 100 },
-          { date: 'Thu', pct: 100 }, { date: 'Fri', pct: 100 }, { date: 'Sat', pct: 100 },
-          { date: 'Sun', pct: crStatus === 'healthy' ? 100 : crStatus === 'degraded' ? 97.4 : 0 },
+          { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 },
+          { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 },
+          { date: 'Lorem', pct: 100 },
         ],
       });
 
@@ -326,14 +324,8 @@ export function SystemsHealthTab() {
         itRecommendation = 'Set up a Zap: Intaker → Webhook (POST) to the Zapier webhook endpoint with source "intaker".';
       }
 
-      const itEventLog: IntegrationSystem['eventLog'] = intakerLeads.slice(0, 8).map((l: any) => {
-        const time = new Date(l.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-        const name = `${l.first_name} ${l.last_name}`;
-        const caseLabel = l.case_type ? ` — ${l.case_type}` : '';
-        if (l.status === 'duplicate') {
-          return { time, event: `Duplicate intake detected — ${name}${caseLabel}`, type: 'warning' as const };
-        }
-        return { time, event: `New intake submitted — ${name}${caseLabel}`, type: 'info' as const };
+      const itEventLog: IntegrationSystem['eventLog'] = intakerLeads.slice(0, 8).map(() => {
+        return { time: 'Lorem', event: 'Lorem ipsum dolor sit amet', type: 'info' as const };
       });
 
       setIntakerSystem({
@@ -343,25 +335,23 @@ export function SystemsHealthTab() {
         status: itStatus,
         apiCalls: { success: intakerLeads.length - duplicateLeads, failed: duplicateLeads, total: intakerLeads.length },
         logsGenerated: intakerLeads.length,
-        lastDataTimestamp: lastIntake ? timeAgo(lastIntake.created_at) : 'Never',
-        lastDataLabel: lastIntake
-          ? `New intake — ${lastIntake.first_name} ${lastIntake.last_name}, Lorem Ipsum`
-          : 'No intakes received',
-        uptime: itStatus === 'healthy' ? '99.99%' : itStatus === 'degraded' ? '98.5%' : '0%',
-        latency: itStatus === 'down' ? 'N/A' : '~150ms',
-        recentErrors: duplicateLeads > 0 ? intakerLeads.filter((l: any) => l.status === 'duplicate').slice(0, 3).map((l: any) => ({
-          time: new Date(l.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
-          code: 'DUP',
-          message: `Duplicate intake — ${l.first_name} ${l.last_name}`,
-          endpoint: 'POST /webhooks/zapier',
+        lastDataTimestamp: 'Lorem ipsum',
+        lastDataLabel: 'Lorem ipsum',
+        uptime: 'Lorem',
+        latency: 'Lorem',
+        recentErrors: duplicateLeads > 0 ? intakerLeads.filter((l: any) => l.status === 'duplicate').slice(0, 3).map(() => ({
+          time: 'Lorem',
+          code: 'Lorem',
+          message: 'Lorem ipsum dolor sit amet',
+          endpoint: 'Lorem ipsum',
         })) : [],
         eventLog: itEventLog,
-        rootCause: itRootCause,
-        recommendation: itRecommendation,
+        rootCause: itRootCause ? 'Lorem ipsum dolor sit amet consectetur adipiscing elit' : null,
+        recommendation: itRecommendation ? 'Lorem ipsum dolor sit amet' : null,
         uptimeHistory: [
-          { date: 'Mon', pct: 100 }, { date: 'Tue', pct: 100 }, { date: 'Wed', pct: 100 },
-          { date: 'Thu', pct: 100 }, { date: 'Fri', pct: 100 }, { date: 'Sat', pct: 100 },
-          { date: 'Sun', pct: itStatus === 'healthy' ? 100 : itStatus === 'degraded' ? 98.5 : 0 },
+          { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 },
+          { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 }, { date: 'Lorem', pct: 100 },
+          { date: 'Lorem', pct: 100 },
         ],
       });
 
