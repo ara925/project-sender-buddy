@@ -372,12 +372,12 @@ export function SystemsHealthTab() {
   }, []);
 
   const systems = [
+    staticSystems[0], // Salesforce
     staticSystems[2], // Website
+    staticSystems[4], // Zapier
+    ...(intakerSystem ? [intakerSystem] : [staticSystems[1]]),
     ...(callRailSystem ? [callRailSystem] : []),
     staticSystems[3], // Regal
-    staticSystems[0], // Salesforce
-    ...(intakerSystem ? [intakerSystem] : [staticSystems[1]]),
-    staticSystems[4], // Zapier
   ];
 
   const healthy = systems.filter(s => s.status === 'healthy').length;
